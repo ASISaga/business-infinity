@@ -96,3 +96,6 @@
 [submodule "CHRO"]
 	path = boardroom/c-suite/CHRO
 	url = https://github.com/ASISaga/CHRO
+[submodule "CTO"]
+	path = boardroom/c-suite/CTO
+	url = https://github.com/ASISaga/CTO
