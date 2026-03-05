@@ -1,19 +1,19 @@
 [submodule "cmo-agent"]
-	path = cmo-agent
-	url = ./cmo-agent
+	path = ./boardroom/c-suite/cmo-agent
+	url = https://github.com/ASISaga/cmo-agent
 
 [submodule "cso-agent"]
-	path = cso-agent
-	url = ./cso-agent
+	path = ./boardroom/c-suite/cso-agent
+	url = https://github.com/ASISaga/cso-agent
 
 [submodule "ceo-agent"]
-	path = ceo-agent
+	path = ./boardroom/c-suite/ceo-agent
 	url = https://github.com/ASISaga/ceo-agent
 
 [submodule "cfo-agent"]
-	path = cfo-agent
-	url = ./cfo-agent
+	path = ./boardroom/c-suite/cfo-agent
+	url = https://github.com/ASISaga/cfo-agent
 
 [submodule "cto-agent"]
-	path = cto-agent
-	url = ./cto-agent
+	path = boardroom/c-suite/cso-agent
+	url = https://github.com/ASISaga/cso-agent
