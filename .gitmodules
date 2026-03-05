@@ -63,3 +63,36 @@
 [submodule "businessagent"]
 	path = boardroom/businessagent
 	url = https://github.com/ASISaga/businessagent
+[submodule "boardroom/investor"]
+	path = boardroom/investor
+	url = https://github.com/ASISaga/investor
+[submodule "Investor"]
+	path = boardroom/Investor
+	url = https://github.com/ASISaga/Investor
+[submodule "Founder"]
+	path = boardroom/Founder
+	url = https://github.com/ASISaga/Founder
+[submodule "Mentor"]
+	path = boardroom/Mentor
+	url = https://github.com/ASISaga/Mentor
+[submodule "BusinessAgent"]
+	path = boardroom/BusinessAgent
+	url = https://github.com/ASISaga/BusinessAgent
+[submodule "CEO"]
+	path = boardroom/c-suite/CEO
+	url = https://github.com/ASISaga/CEO
+[submodule "CMO"]
+	path = boardroom/c-suite/CMO
+	url = https://github.com/ASISaga/CMO
+[submodule "CFO"]
+	path = boardroom/c-suite/CFO
+	url = https://github.com/ASISaga/CFO
+[submodule "COO"]
+	path = boardroom/c-suite/COO
+	url = https://github.com/ASISaga/COO
+[submodule "CSO"]
+	path = boardroom/c-suite/CSO
+	url = https://github.com/ASISaga/CSO
+[submodule "CHRO"]
+	path = boardroom/c-suite/CHRO
+	url = https://github.com/ASISaga/CHRO
