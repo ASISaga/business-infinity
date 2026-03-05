@@ -7,8 +7,8 @@ path = cso-agent
 url = https://github.com/ASISaga/cso-agent.git
 
 [submodule "ceo-agent"]
-path = ceo-agent
-url = https://github.com/ASISaga/ceo-agent.git
+	path = ceo-agent
+	url = ./ceo-agent
 
 [submodule "cfo-agent"]
 path = cfo-agent
