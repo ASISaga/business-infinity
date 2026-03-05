@@ -1,3 +1,5 @@
+# Boardroom Agents submodules
+
 [submodule "cmo-agent"]
 	path = boardroom/c-suite/cmo-agent
 	url = https://github.com/ASISaga/cmo-agent
