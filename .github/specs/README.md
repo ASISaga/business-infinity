@@ -26,6 +26,20 @@ This directory contains specifications and frameworks for the agent intelligence
   - Testing and validation workflows
   - Key design principles for agents and contributors
 
+- **`workflows.md`** - Business orchestration workflow specifications
+  - Core workflows: `strategic-review`, `market-analysis`, `budget-approval`
+  - C-suite agent selection pattern and fallback strategy
+  - Reusable `c_suite_orchestration` workflow template
+  - Orchestration update handler pattern and workflow variants
+
+- **`enterprise-capabilities.md`** - Enterprise capability workflow specifications
+  - Knowledge management (`knowledge-search`)
+  - Risk governance (`risk-register`, `risk-assess`)
+  - Decision audit trail (`log-decision`)
+  - Business covenants (`covenant-create`)
+  - Agent interaction (`ask-agent`)
+  - MCP server integration (`mcp-orchestration`, `erp-search`)
+
 ## Purpose
 
 Specifications define **how** systems work and **what** patterns to follow. Unlike instructions (which are path-activated for specific file types), specs are reference documents providing detailed technical specifications.
