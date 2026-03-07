@@ -1,161 +1,106 @@
-# Agent Quick Reference Card
+# Agent Quick Reference
 
-**Fast lookup for AI agents working with Genesis Semantic Design System**
-
-**Version**: 2.0 | **Last Updated**: 2026-02-10
-
----
-
-## Quick Decision Trees
-
-### "Should I create an Ontological Proposition PR?"
-
-```
-Is this about WHAT (semantic) or HOW (visual)?
-├─ HOW (colors/sizes/spacing) → ❌ NO PR, use existing mixins
-└─ WHAT (semantic role/state/interaction) → Continue
-    Can I combine existing mixins? → YES → ❌ Use combination
-    Would 3+ subdomains use this? → NO → ❌ Domain-specific solution
-                                  → YES → ✅ CREATE PR
-```
-
-### "Which ontological category?"
-
-```
-Spatial arrangement → Environment    Visual weight/presence → Entity
-Information type → Cognition         Interaction/navigation → Synapse
-Temporal state/condition → State     Emotional tone/vibe → Atmosphere
-```
+**Last Updated**: 2026-03-07  
+**Audience**: AI agents and contributors working with BusinessInfinity
 
 ---
 
-## Complete Ontology Cheat Sheet (31 variants)
+## Repository at a Glance
 
-### Environment (5) — Spatial Logic
-```scss
-@include genesis-environment('distributed');   // Auto-fit grid
-@include genesis-environment('focused');       // Single column, max 70ch
-@include genesis-environment('associative');   // Flexbox network
-@include genesis-environment('chronological'); // Vertical timeline
-@include genesis-environment('manifest');      // 12-column dashboard
-```
+| Concern | Where |
+|---------|-------|
+| Business workflows | `src/business_infinity/workflows.py` |
+| Azure Functions entry point | `function_app.py` |
+| Tests | `tests/test_workflows.py` |
+| Repository spec | `.github/specs/repository.md` |
+| Workflow spec | `.github/specs/workflows.md` |
+| Enterprise capabilities | `.github/specs/enterprise-capabilities.md` |
 
-### Entity (6) — Visual Presence
-```scss
-@include genesis-entity('primary');      // Main glassmorphism card
-@include genesis-entity('secondary');    // Supporting, lighter
-@include genesis-entity('imperative');   // Urgent, pulsing border
-@include genesis-entity('latent');       // Inactive, dimmed
-@include genesis-entity('aggregate');    // Container wrapper
-@include genesis-entity('ancestral');    // Archived, muted
-```
+---
 
-### Cognition (6) — Information Type
-```scss
-@include genesis-cognition('axiom');      // Headlines (2-3.5rem)
-@include genesis-cognition('discourse');  // Body text (1-1.125rem)
-@include genesis-cognition('protocol');   // Code/technical
-@include genesis-cognition('gloss');      // Metadata (0.8rem)
-@include genesis-cognition('motive');     // Instructional, accent
-@include genesis-cognition('quantum');    // Tags/chips, tiny
-```
+## Run Tests
 
-### Synapse (5) — Interaction
-```scss
-@include genesis-synapse('navigate');     // Link to other page
-@include genesis-synapse('execute');      // Action button
-@include genesis-synapse('inquiry');      // Search/expand
-@include genesis-synapse('destructive');  // Delete/remove
-@include genesis-synapse('social');       // Share/connect
-```
-
-### State (5) — Temporal Condition
-```scss
-@include genesis-state('stable');         // Normal, verified
-@include genesis-state('evolving');       // Updating/streaming
-@include genesis-state('deprecated');     // Outdated warning
-@include genesis-state('locked');         // Restricted access
-@include genesis-state('simulated');      // Preview/demo data
-```
-
-### Atmosphere (4) — Sensory Texture
-```scss
-@include genesis-atmosphere('neutral');   // Balanced default
-@include genesis-atmosphere('ethereal');  // Light, peaceful
-@include genesis-atmosphere('void');      // Dark, immersive
-@include genesis-atmosphere('vibrant');   // Energetic, neon
+```bash
+pip install -e ".[dev]"
+pytest tests/ -v                          # all tests
+pytest tests/ -v -k "test_name"           # targeted test
+pylint src/business_infinity/             # lint
 ```
 
 ---
 
-## v2.0 Additions
+## Add a New Workflow
 
-### Responsive Breakpoints
-```scss
-@include from(sm) { }  // ≥480px    @include tablet { }   // ≥768px
-@include from(md) { }  // ≥768px    @include desktop { }  // ≥1024px
-@include from(lg) { }  // ≥1024px   @include wide { }     // ≥1280px
-@include from(xl) { }  // ≥1280px
-@include from(2xl) { } // ≥1920px
+```python
+# 1. Add to src/business_infinity/workflows.py
+@app.workflow("my-workflow")
+async def my_workflow(request: WorkflowRequest) -> Dict[str, Any]:
+    agents = await select_c_suite_agents(request.client)
+    status = await request.client.start_orchestration(
+        agent_ids=[a.agent_id for a in agents],
+        purpose="Describe the perpetual goal",
+        context=request.body,
+    )
+    return {"orchestration_id": status.orchestration_id, "status": status.status.value}
+
+# 2. Run tests
+pytest tests/ -v
+
+# 3. Update test_workflow_count if needed
 ```
 
-### Futuristic Effects
-```scss
-@include glass-consciousness($blur: 24px, $opacity: 0.08);
-@include glow-essence($color, $intensity: 1);
-@include gradient-consciousness($angle: 135deg);
-@include hover-quantum;
-```
-
-### Fluid Spacing: `$space-3xs` through `$space-3xl`
+→ **Workflow spec**: `.github/specs/workflows.md`
 
 ---
 
-## Refactor Classification
+## Workflow Selection Quick Reference
 
+| Workflow type | `workflow=` param | Use case |
+|--------------|------------------|---------|
+| Perpetual (default) | *(omit)* | Strategic / cross-functional |
+| Hierarchical | `"hierarchical"` | One lead agent + coordinators |
+| Sequential | `"sequential"` | Ordered approval chains |
+
+---
+
+## C-Suite Agent Selection
+
+```python
+# Preferred: explicit IDs
+by_id = {a.agent_id: a for a in all_agents}
+selected = [by_id[aid] for aid in C_SUITE_AGENT_IDS if aid in by_id]
+
+# Fallback: type-based
+if not selected:
+    selected = [a for a in all_agents if a.agent_type in C_SUITE_TYPES]
+
+if not selected:
+    raise ValueError("No matching agents available in the catalog")
 ```
-Layout container → genesis-environment    Content block → genesis-entity
-Text/heading → genesis-cognition          Link/button → genesis-synapse
-Status indicator → genesis-state          Vibe/mood → genesis-atmosphere
+
+→ **C-suite pattern**: `.github/specs/workflows.md`
+
+---
+
+## Agent Quality Commands
+
+```bash
+./.github/skills/agent-evolution-agent/scripts/audit-agent-quality.sh
+./.github/skills/agent-evolution-agent/scripts/detect-duplication.sh
+./.github/skills/agent-evolution-agent/scripts/recommend-improvements.sh
 ```
 
-### Verification Checklist
-- [ ] Zero raw CSS properties (no px/rem/em/%, no color values)
-- [ ] Structure mirrors HTML
-- [ ] HTML untouched, visual fidelity maintained
-
 ---
 
-## Agent Quick Tips
+## Key Specs Quick Links
 
-| Agent | Key Principle |
-|-------|---------------|
-| **Theme Genome** | Reject visual-only requests; Redundancy → Generalization → Refactoring |
-| **Subdomain Evolution** | Try combinations before proposing new variants |
-| **SCSS Refactor** | Structure mirrors HTML exactly; zero raw CSS |
-
----
-
-## Essential Files
-
-| Category | File |
-|----------|------|
-| Philosophy | `.github/docs/agent-philosophy.md` |
-| Variant history | `GENOME.md` |
-| Complete API | `_sass/ontology/INTEGRATION-GUIDE.md` |
-| Review workflow | `.github/prompts/theme-genome-agent.prompt.md` |
-| PR creation | `.github/prompts/subdomain-evolution-agent.prompt.md` |
-| Migration guide | `.github/prompts/scss-refactor-agent.prompt.md` |
-| SCSS rules | `.github/instructions/scss.instructions.md` |
-| HTML patterns | `.github/instructions/html.instructions.md` |
-| Decisions | `.github/docs/decision-matrices.md` |
-| Workflows | `.github/docs/agent-workflows.md` |
-
----
-
-## Quick Links
-
-**Stuck on classification?** → `_sass/ontology/INTEGRATION-GUIDE.md`  
-**Creating PR?** → `.github/prompts/subdomain-evolution-agent.prompt.md`  
-**Reviewing PR?** → `.github/prompts/theme-genome-agent.prompt.md`  
-**Need refactor help?** → `.github/prompts/scss-refactor-agent.prompt.md`
+| What | Where |
+|------|-------|
+| Repository role & design principles | `.github/specs/repository.md` |
+| Business workflow patterns | `.github/specs/workflows.md` |
+| Enterprise capability patterns | `.github/specs/enterprise-capabilities.md` |
+| Agent file conventions | `.github/specs/agents.md` |
+| Prompt file conventions | `.github/specs/prompts.md` |
+| Skill file conventions | `.github/specs/skills.md` |
+| Instruction file conventions | `.github/specs/instructions.md` |
+| SDD methodology | `.github/specs/spec-driven-development.md` |

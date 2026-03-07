@@ -592,25 +592,30 @@ EOF
 ## Resources
 
 **Framework source:**
-- `.github/instructions/github-agent-system.instructions.md` - Complete generic template
+- `.github/docs/agent-intelligence-framework.md` - Complete framework guide
+- `.github/specs/agent-intelligence-framework.md` - Framework specification
 
 **Specifications:**
-- [Agent Skills](https://agentskills.io) - Skills specification
+- `.github/specs/agents.md` - Agent file specification
+- `.github/specs/prompts.md` - Prompt file specification
+- `.github/specs/skills.md` - Skill file specification
+- `.github/specs/instructions.md` - Instruction file specification
+- [Agent Skills](https://agentskills.io) - agentskills.io specification
 - [GitHub Copilot](https://docs.github.com/copilot) - Official docs
 
 **This repository:**
-- `.github/.github/docs/agent-philosophy.md` - Complete ecosystem architecture
-- `/docs/specifications/github-copilot-agent-guidelines.md` - Detailed guidelines
+- `.github/docs/agent-philosophy.md` - Ecosystem architecture
+- `.github/docs/path-specific-instructions.md` - Path-specific mechanism
 
 ## Support
 
 **Questions?**
-- Review `github-agent-system.instructions.md`
-- Check `/docs/specifications/` in this repository
+- Review `.github/specs/agent-intelligence-framework.md`
+- Check `.github/specs/` in this repository
 - Create an issue in your repository
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-02-13  
+**Version**: 1.1.0 - Updated to reference dedicated spec files  
+**Last Updated**: 2026-03-07  
 **License**: MIT - Free to use and adapt
