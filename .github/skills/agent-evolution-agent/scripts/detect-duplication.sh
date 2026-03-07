@@ -17,7 +17,7 @@ NC='\033[0m'
 echo "🔍 Agent Duplication Detection v1.0"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "Applying dogfooding principle: SCSS agents enforce zero-CSS → Agents enforce zero-duplication"
+echo "Applying dogfooding principle: Code agents enforce clean separation of concerns → Agents enforce zero-duplication"
 echo ""
 
 # Collect all agent files

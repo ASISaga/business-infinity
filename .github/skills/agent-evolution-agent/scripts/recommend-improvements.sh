@@ -107,12 +107,10 @@ analyze_file() {
         echo ""
         echo "  Dogfooding Principle Applied:"
         echo "    This agent should practice what it preaches:"
-        if echo "$file" | grep -q "scss"; then
-            echo "    - SCSS agents enforce zero-CSS → Minimize inline content, maximize spec refs"
-        elif echo "$file" | grep -q "html"; then
-            echo "    - HTML agents enforce semantic structure → Clear, semantic organization"
-        elif echo "$file" | grep -q "docs"; then
+        if echo "$file" | grep -q "docs"; then
             echo "    - Docs agents enforce spec references → Reference, don't duplicate"
+        else
+            echo "    - Code agents enforce clean separation → Minimize inline content, maximize spec refs"
         fi
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -149,7 +147,7 @@ if [ "$recommendations_count" -gt 0 ]; then
     echo "   a. Create/update relevant spec in .github/specs/ or /docs/specifications/"
     echo "   b. Extract content from agent to spec"
     echo "   c. Add spec reference to agent"
-    echo "   d. Run: npm test (validate)"
+    echo "   d. Run: pytest tests/ -v (validate)"
     echo "3. Re-run this script to verify improvements"
     echo "4. Run: ./.github/skills/agent-evolution-agent/scripts/audit-agent-quality.sh"
 else

@@ -43,9 +43,9 @@ After merge: /docs/archive/implementations/FEATURE-IMPLEMENTATION.md
 
 **Example:**
 ```
-Before v4.0: /docs/ONTOLOGY-v3.0-GUIDE.md
-After v4.0: /docs/archive/implementations/ONTOLOGY-v3.0-MIGRATION.md
-Current: /docs/specifications/scss-ontology-system.md (v4.0)
+Before v2.0: /docs/WORKFLOWS-v1.0-GUIDE.md
+After v2.0: /docs/archive/implementations/WORKFLOWS-v1.0-MIGRATION.md
+Current: /docs/specifications/workflows.md (v2.0)
 ```
 
 ### Audit Reports
@@ -57,8 +57,8 @@ Current: /docs/specifications/scss-ontology-system.md (v4.0)
 
 **Example:**
 ```
-After audit: /docs/archive/audits/SCSS-AUDIT-2026-01.md
-Active doc: /docs/specifications/scss-ontology-system.md (updated)
+After audit: /docs/archive/audits/AGENT-QUALITY-AUDIT-2026-01.md
+Active doc: /docs/specifications/architecture.md (updated)
 ```
 
 ### Refactoring Documentation
@@ -70,8 +70,8 @@ Active doc: /docs/specifications/scss-ontology-system.md (updated)
 
 **Example:**
 ```
-During refactor: /docs/SCSS-REFACTORING-PLAN.md
-After complete: /docs/archive/refactorings/SCSS-REFACTORING-2026-02.md
+During refactor: /docs/WORKFLOW-REFACTORING-PLAN.md
+After complete: /docs/archive/refactorings/WORKFLOW-REFACTORING-2026-02.md
 ```
 
 ### Do NOT Archive
@@ -89,18 +89,18 @@ After complete: /docs/archive/refactorings/SCSS-REFACTORING-2026-02.md
 ```
 /docs/archive/
 ├── implementations/      # Completed feature work
-│   ├── FEATURE-NAME-IMPLEMENTATION.md
-│   ├── FEATURE-v2.0-MIGRATION.md
+│   ├── WORKFLOW-IMPLEMENTATION.md
+│   ├── WORKFLOW-v1.0-MIGRATION.md
 │   └── PROJECT-COMPLETION-2026-01.md
 │
 ├── audits/              # Code quality assessments
-│   ├── SCSS-AUDIT-2026-01.md
-│   ├── HTML-ACCESSIBILITY-AUDIT.md
+│   ├── AGENT-QUALITY-AUDIT-2026-01.md
+│   ├── WORKFLOW-AUDIT-2026-Q1.md
 │   └── PERFORMANCE-AUDIT-Q1-2026.md
 │
 └── refactorings/        # Major refactoring records
-    ├── SCSS-REFACTORING-2026-02.md
-    ├── ANIMATION-SYSTEM-REFACTOR.md
+    ├── WORKFLOW-REFACTORING-2026-02.md
+    ├── SDK-MIGRATION.md
     └── DOCUMENTATION-REORGANIZATION.md
 ```
 
@@ -329,16 +329,16 @@ docs/
 **Before:**
 ```
 docs/
-  ONTOLOGY-v3.0-GUIDE.md
-  ONTOLOGY-v4.0-GUIDE.md
+  WORKFLOWS-v1.0-GUIDE.md
+  WORKFLOWS-v2.0-GUIDE.md
 ```
 
 **After:**
 ```
 docs/
-  specifications/scss-ontology-system.md (v4.0 content)
+  specifications/workflows.md (v2.0 content)
   archive/implementations/
-    ONTOLOGY-v3.0-MIGRATION.md (archived v3 → v4 migration)
+    WORKFLOWS-v1.0-MIGRATION.md (archived v1 → v2 migration)
 ```
 
 ### Scenario 3: Audit Complete
@@ -346,16 +346,16 @@ docs/
 **Before:**
 ```
 docs/
-  SCSS-AUDIT-REPORT.md
-  specifications/scss-ontology-system.md
+  AGENT-QUALITY-AUDIT-REPORT.md
+  specifications/architecture.md
 ```
 
 **After:**
 ```
 docs/
-  specifications/scss-ontology-system.md (updated based on audit)
+  specifications/architecture.md (updated based on audit)
   archive/audits/
-    SCSS-AUDIT-2026-02.md (preserved for historical record)
+    AGENT-QUALITY-AUDIT-2026-02.md (preserved for historical record)
 ```
 
 ### Scenario 4: Refactoring Done
@@ -363,17 +363,17 @@ docs/
 **Before:**
 ```
 docs/
-  REFACTORING-PLAN.md
-  REFACTORING-PROGRESS.md
-  specifications/animation-system.md
+  SDK-MIGRATION-PLAN.md
+  SDK-MIGRATION-PROGRESS.md
+  specifications/architecture.md
 ```
 
 **After:**
 ```
 docs/
-  specifications/animation-system.md (updated with new structure)
+  specifications/architecture.md (updated with new structure)
   archive/refactorings/
-    ANIMATION-REFACTORING-2026-02.md (consolidated plan + progress)
+    SDK-MIGRATION-2026-02.md (consolidated plan + progress)
 ```
 
 ## Checklist
@@ -396,5 +396,5 @@ Before archiving a document:
 - `.github/instructions/docs.instructions.md` - Core principles
 - `/docs/specifications/architecture.md` - System organization
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-02-10
+**Version**: 2.0.0  
+**Last Updated**: 2026-03-07

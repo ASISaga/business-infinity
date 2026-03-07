@@ -5,7 +5,7 @@
 set -e
 
 GITHUB_DIR=".github"
-METRICS_DIR=".github/skills/agent-evolution-agent/.metrics"
+METRICS_DIR=".github/metrics"
 METRICS_FILE="$METRICS_DIR/history.log"
 
 mkdir -p "$METRICS_DIR"

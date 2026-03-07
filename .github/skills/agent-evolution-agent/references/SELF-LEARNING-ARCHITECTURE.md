@@ -1,21 +1,21 @@
 # Agent Self-Learning Architecture
 
-**Version**: 1.0  
-**Last Updated**: 2026-02-10  
+**Version**: 2.0  
+**Last Updated**: 2026-03-07  
 **Status**: Active
 
 This document describes the dogfooding-based self-learning architecture that enables the agent intelligence system to continuously evolve.
 
 ## Philosophy
 
-The agent ecosystem implements **dogfooding** - agents use the same principles they enforce to improve themselves:
+The agent ecosystem implements **dogfooding** — agents use the same principles they enforce to improve themselves:
 
 | Principle | Applied to Code | Applied to Agents |
 |-----------|----------------|-------------------|
-| **Zero Duplication** | SCSS: No raw CSS in subdomains | Agents: No duplicate knowledge across files |
-| **Semantic Structure** | HTML: Meaningful class names | Agents: Clear role definitions |
-| **Spec References** | Code: Reference design tokens | Agents: Reference `/docs/specifications/` |
-| **Lean Context** | Files: Minimal line count | Agents: Optimized token usage |
+| **Zero Duplication** | Code: No repeated logic across modules | Agents: No duplicate knowledge across files |
+| **Semantic Structure** | Code: Meaningful names and clear organization | Agents: Clear role definitions and scope |
+| **Spec References** | Code: Reference authoritative specs | Agents: Reference `.github/specs/` |
+| **Lean Context** | Files: Minimal line count, high signal | Agents: Optimized token usage |
 
 ## Self-Learning Loop
 
@@ -82,17 +82,17 @@ git log --all --pretty=format:'' --name-only | sort | uniq -c | sort -rn
 ```
 
 **Example**:
-- 5 commits add `genesis-cognition('protocol')` → Update cognition variants spec
-- 3 HTML files use `<article class="research-card">` → Add to semantic patterns
+- 5 commits add a new workflow pattern → Update workflows spec
+- 3 files share the same orchestration boilerplate → Add to patterns spec
 
 ### 2. Specification Sync
 
-**Trigger**: New file in `/docs/specifications/`
+**Trigger**: New file in `.github/specs/`
 
 **Mechanism**:
 ```bash
 # On spec file change
-git diff --name-only HEAD~1 docs/specifications/
+git diff --name-only HEAD~1 .github/specs/
 
 # Find related agents
 ./scripts/find-related-agents.sh $spec_file
@@ -131,7 +131,7 @@ git diff --name-only HEAD~1 docs/specifications/
 - Document in specs
 
 **Example**:
-- `validate-scss.sh` fails on missing mixin → Update scss.instructions.md
+- `validate-spec.sh` fails on missing acceptance criteria → Update spec-manager instructions
 - Pattern repeated 3x → Create spec section on common mistakes
 
 ## Metrics & Monitoring
@@ -144,7 +144,7 @@ git diff --name-only HEAD~1 docs/specifications/
 | **Context Efficiency** | ≥75 score | Lines, refs, token usage combined |
 | **Duplication Ratio** | ≤10% | Repeated content across agents |
 | **Validation Pass Rate** | ≥95% | Script success percentage |
-| **Spec References** | ≥3 per agent | Count of `/docs/specifications/` links |
+| **Spec References** | ≥3 per agent | Count of `.github/specs/` links |
 
 ### Dashboard (Conceptual)
 
@@ -157,12 +157,12 @@ Duplication Ratio:    ██░░░░░░░░ 8%  ✓
 Validation Pass Rate: █████████░ 92% ✓
 
 Agents Needing Attention:
-  • scss-refactor-agent (verbose, 450 lines)
-  • theme-genome-agent (low spec refs, 2)
+  • documentation-manager-agent (verbose, 450 lines)
+  • spec-manager (low spec refs, 2)
 
 Recent Improvements:
-  • html-template-agent: +3 spec refs
-  • responsive-design-agent: -120 lines
+  • agent-evolution-agent: +3 spec refs
+  • python.instructions: -120 lines
 ```
 
 ## Evolution Triggers
@@ -178,7 +178,7 @@ Recent Improvements:
 
 1. **Weekly Quality Review** → Run `audit-agent-quality.sh`
 2. **Major Codebase Change** → Update related specs
-3. **New Design Pattern** → Document in specs
+3. **New Pattern Discovered** → Document in `.github/specs/`
 4. **Agent Feedback** → Incorporate learnings
 
 ## Best Practices
@@ -187,11 +187,11 @@ Recent Improvements:
 
 1. **Always reference specs first**
    ```markdown
-   → Complete guide: /docs/specifications/scss-ontology-system.md
+   → Complete guide: .github/specs/workflows.md
    ```
 
 2. **Extract, don't duplicate**
-   - Static knowledge → `/docs/specifications/`
+   - Static knowledge → `.github/specs/`
    - Activation logic → Agent prompts
    - Workflows → Agent skills
 
@@ -203,7 +203,7 @@ Recent Improvements:
 4. **Version your changes**
    ```markdown
    **Version History**:
-   - v1.1 (2026-02-10): Added spec references, reduced 150 lines
+   - v1.1 (2026-03-07): Added spec references, reduced 150 lines
    ```
 
 ### For Spec Writers
@@ -222,7 +222,7 @@ Recent Improvements:
 3. **Update agents when specs change**
    ```bash
    # After updating spec
-   ./scripts/find-related-agents.sh docs/specifications/my-spec.md
+   ./scripts/find-related-agents.sh .github/specs/my-spec.md
    ```
 
 ## Integration Points
@@ -233,7 +233,7 @@ Recent Improvements:
 |--------|-------------|
 | **Git** | Hooks detect pattern changes |
 | **CI/CD** | Runs quality audits on PR |
-| **npm** | Validation scripts in test suite |
+| **pytest** | Validation scripts in test suite |
 | **GitHub Actions** | Auto-generates improvement PRs |
 | **Copilot** | Uses evolved agents for better suggestions |
 
@@ -293,5 +293,7 @@ Recent Improvements:
 
 **References**:
 - Agent Evolution Skill: `.github/skills/agent-evolution-agent/SKILL.md`
-- Agent Guidelines: `/docs/specifications/github-copilot-agent-guidelines.md`
-- Ecosystem Overview: `.github/.github/docs/agent-philosophy.md`
+- Dogfooding Guide: `.github/docs/dogfooding-guide.md`
+- Agent Philosophy: `.github/docs/agent-philosophy.md`
+- Agent Spec: `.github/specs/agents.md`
+- Skill Spec: `.github/specs/skills.md`

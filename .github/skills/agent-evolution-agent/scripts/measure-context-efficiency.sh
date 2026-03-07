@@ -6,7 +6,7 @@ set -e
 
 if [ -z "$1" ]; then
     echo "Usage: $0 <agent-file>"
-    echo "Example: $0 .github/instructions/scss.instructions.md"
+    echo "Example: $0 .github/instructions/python.instructions.md"
     exit 1
 fi
 

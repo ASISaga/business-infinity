@@ -33,7 +33,7 @@ Deep analysis of a single agent's context window usage.
 
 **Example:**
 ```bash
-./measure-context-efficiency.sh .github/instructions/scss.instructions.md
+./measure-context-efficiency.sh .github/instructions/python.instructions.md
 ```
 
 **Outputs:**
@@ -62,7 +62,7 @@ Finds duplicate content blocks across agents.
 4. Reports sources and targets
 
 **Dogfooding principle applied:**
-- SCSS agents enforce zero-CSS in subdomains
+- Code agents enforce clean separation of concerns
 - Agent system enforces zero-duplication in prompts
 
 ---
@@ -117,7 +117,7 @@ Records and tracks quality metrics over time.
 - ↓ Red: Regressions (requires attention)
 
 **Data stored in:**
-`.github/skills/agent-evolution-agent/.metrics/history.log`
+`.github/metrics/history.log`
 
 ---
 
@@ -133,7 +133,7 @@ Identifies agents that should reference a given spec.
 
 **Example:**
 ```bash
-./find-related-agents.sh docs/specifications/scss-ontology-system.md
+./find-related-agents.sh .github/specs/workflows.md
 ```
 
 **How it works:**
@@ -271,7 +271,7 @@ chmod +x .github/skills/agent-evolution-agent/scripts/*.sh
 ```
 
 ### Unexpected metrics
-- Clear metrics history: `rm .github/skills/agent-evolution-agent/.metrics/history.log`
+- Clear metrics history: `rm .github/metrics/history.log`
 - Re-establish baseline: `./track-metrics.sh`
 
 ## Related Documentation

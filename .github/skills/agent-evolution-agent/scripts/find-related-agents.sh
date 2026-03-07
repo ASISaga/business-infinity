@@ -6,7 +6,7 @@ set -e
 
 if [ -z "$1" ]; then
     echo "Usage: $0 <spec-file>"
-    echo "Example: $0 docs/specifications/scss-ontology-system.md"
+    echo "Example: $0 .github/specs/workflows.md"
     exit 1
 fi
 
