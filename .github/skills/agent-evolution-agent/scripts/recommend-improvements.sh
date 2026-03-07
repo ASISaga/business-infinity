@@ -27,7 +27,7 @@ analyze_file() {
     fi
     
     local lines=$(wc -l < "$file" 2>/dev/null || echo "0")
-    local spec_refs=$(grep -c "/docs/specifications/" "$file" 2>/dev/null || echo "0")
+    local spec_refs=$(grep -cE "\.github/specs/|/docs/specifications/" "$file" 2>/dev/null || echo "0")
     local total_doc_refs=$(grep -c "/docs/" "$file" 2>/dev/null || echo "0")
     
     # Ensure numeric values
@@ -70,7 +70,7 @@ analyze_file() {
         
         if [ "$lines" -gt "$optimal_lines" ]; then
             excess=$((lines - optimal_lines))
-            echo "    1. Extract $excess+ lines of static content to /docs/specifications/"
+            echo "    1. Extract $excess+ lines of static content to .github/specs/ or /docs/specifications/"
             echo "       - Look for: detailed examples, comprehensive lists, reference tables"
             echo "       - Keep: activation logic, workflows, minimal examples"
             recommendations_count=$((recommendations_count + 1))
@@ -81,7 +81,7 @@ analyze_file() {
             echo "    2. Add $needed+ spec reference(s)"
             echo "       - Run: ./.github/skills/agent-evolution-agent/scripts/find-related-agents.sh"
             echo "       - Add to 'Related Documentation' or 'References' section"
-            echo "       - Format: → Complete guide: /docs/specifications/X.md"
+            echo "       - Format: → Complete guide: .github/specs/X.md"
             recommendations_count=$((recommendations_count + 1))
         fi
         
@@ -146,7 +146,7 @@ if [ "$recommendations_count" -gt 0 ]; then
     echo "Next Steps:"
     echo "1. Prioritize high-priority items first"
     echo "2. For each agent:"
-    echo "   a. Create/update relevant spec in /docs/specifications/"
+    echo "   a. Create/update relevant spec in .github/specs/ or /docs/specifications/"
     echo "   b. Extract content from agent to spec"
     echo "   c. Add spec reference to agent"
     echo "   d. Run: npm test (validate)"

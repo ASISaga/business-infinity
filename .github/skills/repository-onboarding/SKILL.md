@@ -71,8 +71,9 @@ mkdir -p .github/{instructions,specs,docs,agents,prompts,skills}
 
 ## References
 
-→ `/docs/specifications/github-copilot-agent-guidelines.md` — Agent standards  
-→ `/docs/specifications/architecture.md` — System architecture  
-→ `/docs/specifications/agent-self-learning-system.md` — Self-learning system  
-→ `.github/prompts/repository-onboarding.prompt.md` — Onboarding prompt  
-→ `.github/specs/agent-intelligence-framework.md` — Framework spec
+→ **Agent spec**: `.github/specs/agents.md` — Agent file format and conventions
+→ **Prompt spec**: `.github/specs/prompts.md` — Prompt file format and conventions
+→ **Skill spec**: `.github/specs/skills.md` — Skill file format and conventions
+→ **Instructions spec**: `.github/specs/instructions.md` — Instruction file format and conventions
+→ **Framework spec**: `.github/specs/agent-intelligence-framework.md` — Framework spec
+→ **Onboarding prompt**: `.github/prompts/repository-onboarding.prompt.md` — Onboarding prompt

@@ -92,7 +92,7 @@ This guide explains how the GitHub Copilot agent system practices **dogfooding**
 - Agent system enforces zero-duplication
 
 **Action if duplicates found:**
-1. Extract shared content to `/docs/specifications/`
+1. Extract shared content to `.github/specs/` (preferred) or `/docs/specifications/`
 2. Replace duplicates with spec references
 3. Re-run to verify
 
@@ -141,7 +141,7 @@ This guide explains how the GitHub Copilot agent system practices **dogfooding**
 
 **Example:**
 ```bash
-./scripts/find-related-agents.sh docs/specifications/scss-ontology-system.md
+./scripts/find-related-agents.sh .github/specs/workflows.md
 ```
 
 **Output:**
@@ -183,13 +183,13 @@ For each agent needing improvement:
 
 1. **Extract knowledge to specs:**
    - Identify static content (examples, lists, tables)
-   - Create/update relevant spec in `/docs/specifications/`
+   - Create/update relevant spec in `.github/specs/` (preferred) or `/docs/specifications/`
    - Move content from agent to spec
 
 2. **Add spec references:**
    - Find related specs: `./scripts/find-related-agents.sh <spec>`
    - Add to agent's "Related Documentation" section
-   - Format: `→ Complete guide: /docs/specifications/X.md`
+   - Format: `→ Complete guide: .github/specs/X.md`
 
 3. **Validate:**
    ```bash
@@ -214,11 +214,11 @@ For each agent needing improvement:
 
 ## When Specs Are Updated
 
-After adding/updating `/docs/specifications/` files:
+After adding/updating `.github/specs/` files:
 
 ```bash
 # 1. Find related agents
-./.github/skills/agent-evolution-agent/scripts/find-related-agents.sh docs/specifications/<new-spec>.md
+./.github/skills/agent-evolution-agent/scripts/find-related-agents.sh .github/specs/<new-spec>.md
 
 # 2. For each related agent:
 #    - Add spec reference
@@ -234,22 +234,22 @@ After adding/updating `/docs/specifications/` files:
 ### 1. Spec References Over Duplication
 ❌ **Don't:**
 ```markdown
-## SCSS Ontology Variants
+## Business Workflow Pattern
 
-The Genesis Ontology has 6 categories:
-- Environment: distributed, focused, associative...
-- Entity: primary, secondary, imperative...
-[... 50 lines of variants ...]
+The C-suite orchestration has 3 variants:
+- Perpetual: continuous strategic alignment...
+- Hierarchical: one lead agent + coordinators...
+[... 50 lines of pattern details ...]
 ```
 
 ✅ **Do:**
 ```markdown
-## SCSS Ontology Variants
+## Business Workflow Pattern
 
-Use Genesis Ontology mixins for all styling.
+Use the C-suite orchestration template for all business workflows.
 
-→ **Complete ontology reference**: `/docs/specifications/scss-ontology-system.md`
-→ **Integration guide**: `_sass/ontology/INTEGRATION-GUIDE.md`
+→ **Complete workflow patterns**: `.github/specs/workflows.md`
+→ **Enterprise capabilities**: `.github/specs/enterprise-capabilities.md`
 ```
 
 ### 2. Minimal Examples Inline
@@ -268,8 +268,7 @@ Use Genesis Ontology mixins for all styling.
 
 ### 4. Apply Dogfooding Principles
 For each agent type:
-- **SCSS agents**: Minimize inline CSS knowledge, maximize ontology refs
-- **HTML agents**: Semantic structure in agent organization
+- **Python/workflow agents**: Minimize inline workflow pattern details, reference `.github/specs/workflows.md`
 - **Docs agents**: Reference specs, don't duplicate
 - **GitHub agents**: Use validation scripts, track metrics
 
@@ -305,9 +304,9 @@ The agent system is designed to continuously improve:
 
 ## Related Documentation
 
-- `/docs/specifications/agent-self-learning-system.md` - Technical architecture
-- `/docs/specifications/github-copilot-agent-guidelines.md` - Agent standards
-- `.github/.github/docs/agent-philosophy.md` - Ecosystem overview
+- `.github/specs/agents.md` - Agent file specification
+- `.github/specs/skills.md` - Skill file specification
+- `.github/docs/agent-philosophy.md` - Ecosystem overview
 - `.github/skills/agent-evolution-agent/SKILL.md` - Meta-agent skill
 
 ---

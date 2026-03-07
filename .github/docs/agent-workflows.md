@@ -1,285 +1,156 @@
 # Agent Workflow Guide
 
-**Last Updated**: 2026-02-14  
-**Audience**: AI Agents and Human Developers
+**Last Updated**: 2026-03-07  
+**Audience**: AI agents and contributors working with BusinessInfinity
 
-Core workflows for the Genesis Semantic Design System agent ecosystem.
-
----
-
-## Workflow Overview
-
-```
-Subdomain Agents  ←→  Theme Genome Agent  ←→  Documentation
-     ↓                      ↓                       ↓
-SCSS Refactor          Review & Merge          GENOME.md
-HTML Template          Implement Engine        Guide Updates
-```
+Practical workflows for common tasks in the BusinessInfinity repository.
 
 ---
 
-## Workflow 1: Ontological Evolution
+## Workflow 1: Adding a Business Workflow
 
-**Trigger**: Developer encounters a semantic pattern not covered by existing ontology.
+**Trigger**: New business process needs to be orchestrated via C-suite agents.
 
-### Phase 1: Gap Identification
+### Steps
 
-**Agent**: Subdomain Evolution Agent
-
-1. **Identify the need** - Ask: "What am I trying to represent semantically?"
-
-2. **Review existing ontology** - Check all 31 variants in `_sass/ontology/INTEGRATION-GUIDE.md` and `/docs/specifications/scss-ontology-system.md`.
-
-3. **Try combinations first**:
-   ```scss
-   .my-element {
-     @include genesis-entity('primary');
-     @include genesis-state('evolving');
-     @include genesis-atmosphere('vibrant');
-   }
+1. **Read the workflow spec** to understand patterns:
+   ```bash
+   # Reference: .github/specs/workflows.md
    ```
 
-4. **Determine if gap is real**:
-   - Valid: Semantic meaning not expressible with combinations, appears in multiple contexts, universal across subdomains, represents intent not visual style
-   - Not valid: Just wants different colors/sizes, one-off edge case, achievable with mixin combination, purely visual preference
-
-### Phase 2: Proposition Creation
-
-5. **Draft proposition** using template from `.github/PULL_REQUEST_TEMPLATE/ontological_proposition.md`:
-   ```markdown
-   - Source Node: [subdomain name]
-   - Intent: [One sentence - WHAT it represents]
-   - Context: [2-3 sentences - WHY needed]
-   - Category: [Which of 6 categories]
-   - Suggested Label: `category('variant-name')`
-   - Use Cases: [3+ concrete examples]
-   - Universal Applicability: [How others use it]
+2. **Add `@app.workflow` decorator** in `src/business_infinity/workflows.py`:
+   ```python
+   @app.workflow("my-workflow")
+   async def my_workflow(request: WorkflowRequest) -> Dict[str, Any]:
+       agents = await select_c_suite_agents(request.client)
+       agent_ids = [a.agent_id for a in agents if agent_filter(a)]
+       if not agent_ids:
+           raise ValueError("No matching agents available in the catalog")
+       status = await request.client.start_orchestration(
+           agent_ids=agent_ids,
+           purpose="Perpetual goal description",
+           purpose_scope="Scope of agent responsibility",
+           context=request.body,
+       )
+       return {"orchestration_id": status.orchestration_id, "status": status.status.value}
    ```
 
-6. **Self-review checklist**:
-   - [ ] Describes semantic role, not visual style
-   - [ ] Cannot achieve with existing combinations
-   - [ ] Universal beyond my subdomain
-   - [ ] Fits clearly into one category
-   - [ ] No visual language (colors, sizes, etc.)
+3. **Run tests** to validate:
+   ```bash
+   pytest tests/ -v
+   pylint src/business_infinity/workflows.py
+   ```
 
-### Phase 3: Submission & Review
+4. **Update `test_workflow_count`** in `tests/test_workflows.py` if needed.
 
-7. **Create PR** to theme repository with label `ontological-proposition`.
-
-8. **Theme Genome Agent reviews** (see review workflow below).
-
-### Phase 4: Theme Genome Agent Review Process
-
-**Agent**: Theme Genome Agent
-
-1. **Semantic purity check** - Reject immediately if: contains color/pixel values, uses "modern"/"clean"/"pretty", requests visual changes without semantic meaning.
-
-2. **Redundancy analysis** - Can this be achieved with current variants or combinations? If yes, deny with code example showing how.
-
-3. **Generalization check** - Would 3+ subdomains use this? Is it universal or an edge case? Reject if too specific.
-
-4. **System impact assessment** - Does this reveal bloat? Should similar variants be merged? Is a new category needed?
-
-### Phase 5: Implementation
-
-If approved, the Theme Genome Agent:
-
-1. **Updates engine** (`_sass/ontology/_engines.scss`) with full doc comments including PR origin and intent.
-2. **Updates interface** (`_sass/ontology/_interface.scss`) with parameter docs.
-3. **Updates INTEGRATION-GUIDE.md** with usage examples.
-4. **Updates GENOME.md** with evolution history.
-5. **Version bumps**: Minor for new variants, patch for fixes, major for breaking changes.
-6. **Merges PR** and tags release.
+→ **Workflow patterns**: `.github/specs/workflows.md`
 
 ---
 
-## Workflow 2: SCSS Refactoring (Legacy to Ontology)
+## Workflow 2: Adding an Enterprise Capability
 
-**Trigger**: Need to migrate existing CSS to ontological system.  
-**Agent**: SCSS Refactor Agent
+**Trigger**: New capability (knowledge search, risk, MCP tool, etc.) is needed.
 
-### Step 1: Audit
+### Steps
 
-- Note all HTML classes and their semantic purpose
-- Analyze current CSS for intended meaning
-- Review ontology options and plan mixin combinations
+1. **Read the enterprise capabilities spec**:
+   ```bash
+   # Reference: .github/specs/enterprise-capabilities.md
+   ```
 
-### Step 2: Classify
+2. **Add the workflow** following the relevant pattern (knowledge, risk, MCP, etc.)
 
-Create a mapping table:
-```
-Class Name         -> Semantic Role      -> Ontological Mixin
-.article-grid      -> Layout grid        -> genesis-environment('distributed')
-.article-card      -> Content block      -> genesis-entity('primary')
-.article-title     -> Headline           -> genesis-cognition('axiom')
-.article-date      -> Metadata           -> genesis-cognition('gloss')
-.read-more         -> Navigation link    -> genesis-synapse('navigate')
-```
+3. **Register MCP tools if applicable**:
+   ```python
+   @app.mcp_tool("tool-name")
+   async def my_tool(request) -> Any:
+       return await request.client.call_mcp_tool("server", "method", request.body)
+   ```
 
-### Step 3: Implement
+4. **Run tests and lint**:
+   ```bash
+   pytest tests/ -v && pylint src/
+   ```
 
-Build new SCSS mirroring HTML structure with only mixin calls. Remove all raw CSS properties, imports, and variables.
-
-### Step 4: Verify
-
-- [ ] Zero raw CSS properties
-- [ ] No pixel/color values
-- [ ] Structure mirrors HTML
-- [ ] HTML unchanged
-- Run: `npm run test:scss && npm run lint:scss`
-
-### Step 5: Test & Document
-
-- Visual comparison with original
-- Responsive testing at 375px, 768px, 1440px
-- Document any unmappable patterns (potential ontological gaps)
+→ **Enterprise patterns**: `.github/specs/enterprise-capabilities.md`
 
 ---
 
-## Workflow 3: Validation & Quality Assurance
+## Workflow 3: Creating a Feature Specification (SDD)
 
-**Trigger**: Pre-deployment validation.
+**Trigger**: New feature needs structured specification before implementation.
 
-### Pre-Commit Checklists
+### Steps
 
-**Subdomain SCSS**:
-- Import only `ontology/index`
-- Zero raw CSS properties
-- All classes mapped to mixins
-- Structure mirrors HTML
-- Accessibility preserved
+1. **Invoke Spec Manager Agent**:
+   - Triggers `spec-create.prompt.md` → `spec-plan.prompt.md` → `spec-tasks.prompt.md`
 
-**Theme Engine**:
-- Interface layer has no CSS properties
-- Engine has all implementations
-- Documentation updated (GENOME.md, INTEGRATION-GUIDE.md)
-- Comments include PR origin
-- Backward compatibility maintained
+2. **Create feature branch and spec**:
+   ```bash
+   ./.github/skills/spec-manager/scripts/create-feature-branch.sh "<description>"
+   ```
 
-### Testing Protocol
+3. **Validate spec completeness**:
+   ```bash
+   ./.github/skills/spec-manager/scripts/validate-spec.sh specs/<NNN>-<slug>/spec.md
+   ```
+
+→ **SDD methodology**: `.github/docs/spec-driven.md`  
+→ **SDD spec**: `.github/specs/spec-driven-development.md`
+
+---
+
+## Workflow 4: Agent Quality Audit (Dogfooding)
+
+**Trigger**: Weekly or after making agent/skill/prompt changes.
+
+### Steps
 
 ```bash
-npm run test:scss    # Compilation check
-npm run lint:scss    # Style compliance
-npm test             # Full validation
+# 1. Full quality audit
+./.github/skills/agent-evolution-agent/scripts/audit-agent-quality.sh
+
+# 2. Check spec references
+./.github/skills/agent-evolution-agent/scripts/sync-agents-with-specs.sh
+
+# 3. Detect duplication
+./.github/skills/agent-evolution-agent/scripts/detect-duplication.sh
+
+# 4. Get recommendations
+./.github/skills/agent-evolution-agent/scripts/recommend-improvements.sh
+
+# 5. Track metrics over time
+./.github/skills/agent-evolution-agent/scripts/track-metrics.sh
 ```
 
-**Responsive**: Test at 375px, 768px, 1440px, 1920px+  
-**Accessibility**: Screen reader, keyboard-only, color contrast, focus indicators  
-**Browsers**: Chrome, Firefox, Safari, Edge (latest)
+→ **Dogfooding guide**: `.github/docs/dogfooding-guide.md`
 
 ---
 
-## Workflow 4: Documentation Maintenance
+## Workflow 5: Documentation Quality Check
 
-**Trigger**: Any ontological change.
+**Trigger**: Before committing documentation changes.
 
-**For new variants**, update:
-1. `GENOME.md` - Variant registry with origin and intent
-2. `_sass/ontology/INTEGRATION-GUIDE.md` - Usage examples
-3. `_sass/ontology/_interface.scss` - Parameter documentation
-4. `_sass/ontology/_engines.scss` - Implementation with doc comments
+```bash
+# Structure validation
+./.github/skills/documentation-manager-agent/scripts/validate-doc-structure.sh
 
-**For breaking changes**, also create a migration guide with before/after examples.
+# Link validation
+./.github/skills/documentation-manager-agent/scripts/validate-doc-links.sh docs/
 
----
+# Redundancy detection
+./.github/skills/documentation-manager-agent/scripts/detect-doc-redundancy.sh
 
-## Practical Example: Adding "Ancestral" Entity Variant
-
-This end-to-end example shows the ontological evolution workflow.
-
-### Scenario
-
-`docs.asisaga.com` needs to mark old API versions visually while keeping them accessible. `state('deprecated')` implies "don't use," but archived docs are still valid references.
-
-### Gap Analysis
-
-Review `/docs/specifications/scss-ontology-system.md`:
-- `state('deprecated')` - Too negative, implies broken
-- `state('stable')` - Doesn't convey historical nature
-- `entity('latent')` - Wrong category
-- **Conclusion**: Gap exists for representing historical content
-
-### Proposition PR
-
-```markdown
-## Ontological Proposition
-
-**Source Node**: docs.asisaga.com
-**Intent**: Represent archived/historical content
-**Context**: Old documentation should remain accessible but clearly marked
-as historical. Current options don't convey "valid but old" status.
-
-**Type**: Entity
-**Suggested Label**: `entity('ancestral')`
-
-**Use Cases**:
-1. Old API version documentation (still functional)
-2. Historical blog posts or announcements
-3. Archived project documentation
-
-**Universal Applicability**:
-- Research subdomain: Past experiments and results
-- Analytics subdomain: Historical data visualizations
-- Blog: Archive section
-```
-
-### Review Outcome
-
-Theme Genome Agent evaluates:
-- Redundancy: Not covered by `state('deprecated')` (different meaning) or `entity('latent')` (latent = low priority, not historical)
-- Generalization: Universal pattern - all sites have historical content
-- Semantic: Represents "content from the past, valid but not current"
-- **Decision: APPROVE**
-
-### Implementation
-
-Engine addition in `_sass/ontology/_engines.scss`:
-```scss
-/**
- * @category Entity
- * @variant 'ancestral'
- * @origin PR #145 (docs.asisaga.com)
- * @intent Represent historical/archived content
- * @since 2.8.0
- */
-@if $nature == 'ancestral' {
-  opacity: 0.7;
-  filter: grayscale(0.3);
-  border-color: var(--border-muted);
-  background-color: var(--background-muted);
-}
-```
-
-### Subdomain Adoption
-
-```scss
-// _sass/main.scss at docs.asisaga.com
-.archived-doc {
-  @include genesis-entity('ancestral');
-  @include genesis-cognition('discourse');
-}
+# Metadata validation
+./.github/skills/documentation-manager-agent/scripts/check-doc-metadata.sh docs/
 ```
 
 ---
 
-## Rejection Example: Visual-Only Request
+## Key References
 
-**Submitted**: "Make cards have rounded corners of 24px instead of 12px"
-
-**Why rejected**: This is a visual implementation detail, not a semantic meaning. Border radius is controlled by design tokens in `_sass/ontology/_variables.scss`.
-
-**Guidance provided**: Reframe as semantic need. Instead of "cards need bigger border radius," try "we need to represent highlighted community posts with more visual prominence than standard posts." Then review existing entity variants (`primary`, `secondary`, `imperative`) for combinations that may already solve the need.
-
----
-
-## References
-
-- `.github/docs/agent-philosophy.md` - Agent ecosystem architecture
-- `GENOME.md` - Evolutionary history
-- `/docs/specifications/scss-ontology-system.md` - Complete variant reference
-- `.github/prompts/theme-genome-agent.prompt.md` - Theme review agent
-- `.github/prompts/subdomain-evolution-agent.prompt.md` - Proposition creation agent
-- `.github/prompts/scss-refactor-agent.prompt.md` - Refactoring agent
-- `.github/instructions/scss.instructions.md` - SCSS coding standards
+- `.github/specs/repository.md` — Repository design principles
+- `.github/specs/workflows.md` — Business workflow patterns
+- `.github/specs/enterprise-capabilities.md` — Enterprise capability patterns
+- `.github/docs/conventional-tools.md` — All tool commands
+- `.github/docs/dogfooding-guide.md` — Agent quality workflows

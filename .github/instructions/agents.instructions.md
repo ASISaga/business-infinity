@@ -29,7 +29,7 @@ tools: ['*']  # or specific tools list
 ## Keep Concise
 
 Agent files should be minimal. For detailed patterns:
-→ **Specifications**: `.github/specs/agent-intelligence-framework.md`  
+→ **Specifications**: `.github/specs/agents.md`
 → **Documentation**: `.github/docs/`
 
 ## Related Files
@@ -39,10 +39,8 @@ Agent files should be minimal. For detailed patterns:
 
 ## Related Documentation
 
-→ **Agent framework**: `.github/specs/agent-intelligence-framework.md` - Complete agent system specification  
-→ **Agent guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md` - Standards and best practices  
-→ **Self-learning system**: `/docs/specifications/agent-self-learning-system.md` - Dogfooding and Ouroboros  
-→ **Architecture**: `/docs/specifications/architecture.md` - System architecture and organization  
+→ **Agent spec**: `.github/specs/agents.md` - Detailed agent file specification
+→ **Framework**: `.github/docs/agent-intelligence-framework.md` - Complete agent system framework
 → **Agent philosophy**: `.github/docs/agent-philosophy.md` - Core principles and vision
 
 ---

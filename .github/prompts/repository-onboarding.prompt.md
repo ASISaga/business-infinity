@@ -259,12 +259,13 @@ After onboarding:
 
 ## Related Documentation
 
-→ **Framework spec**: `.github/specs/agent-intelligence-framework.md`  
-→ **Extraction guide**: `.github/docs/TEMPLATE-EXTRACTION-GUIDE.md`  
-→ **Agent guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md`  
-→ **Architecture**: `/docs/specifications/architecture.md`  
-→ **Self-learning**: `/docs/specifications/agent-self-learning-system.md`  
-→ **Agent philosophy**: `.github/docs/agent-philosophy.md`
+→ **Agent spec**: `.github/specs/agents.md` — Agent file format and conventions
+→ **Prompt spec**: `.github/specs/prompts.md` — Prompt file format and conventions
+→ **Skill spec**: `.github/specs/skills.md` — Skill file format and conventions
+→ **Instructions spec**: `.github/specs/instructions.md` — Instruction file format and conventions
+→ **Framework spec**: `.github/specs/agent-intelligence-framework.md` — Framework templates
+→ **Extraction guide**: `.github/docs/TEMPLATE-EXTRACTION-GUIDE.md` — How to adapt templates
+→ **Agent philosophy**: `.github/docs/agent-philosophy.md` — Core principles
 
 ---
 

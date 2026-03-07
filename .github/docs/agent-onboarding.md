@@ -1,11 +1,11 @@
 # Agent Onboarding & Training
 
-**Last Updated**: 2026-02-14  
+**Last Updated**: 2026-03-07  
 **Audience**: New agents, contributors learning the system
 
 ## Overview
 
-Structured onboarding path for new agents (AI or human) joining the ASI Saga agent ecosystem.
+Structured onboarding path for new agents (AI or human) joining the BusinessInfinity agent ecosystem.
 
 ## Onboarding Checklist
 
@@ -17,139 +17,99 @@ Structured onboarding path for new agents (AI or human) joining the ASI Saga age
 
 ### Phase 2: Specifications (Required)
 
+- [ ] Read `.github/specs/repository.md` — Repository role, tech stack, design principles
+- [ ] Read `.github/specs/workflows.md` — Business workflow patterns
 - [ ] Read `.github/specs/agent-intelligence-framework.md` — Complete framework
-- [ ] Read `.github/specs/genesis-theme-repository.md` — Repository specifics
-- [ ] Review `/docs/specifications/scss-ontology-system.md` — All 31 variants
 
 ### Phase 3: Agent System (Required)
 
 - [ ] Review agents in `.github/agents/`, prompts in `.github/prompts/`, skills in `.github/skills/`
-- [ ] Understand handoff protocols: `.github/docs/agent-communication.md`
+- [ ] Read `.github/specs/agents.md` — Agent file conventions
+- [ ] Read `.github/specs/prompts.md` — Prompt file conventions
+- [ ] Read `.github/specs/skills.md` — Skill file conventions
+- [ ] Read `.github/specs/instructions.md` — Instruction file conventions
 
 ### Phase 4: Workflows (Required)
 
-- [ ] Read `.github/docs/ontological-proposition-guide.md` — PR workflow
 - [ ] Read `.github/docs/decision-matrices.md` — Quick decisions
 - [ ] Read `.github/docs/agent-workflows.md` — Practical examples
+- [ ] Run `pytest tests/ -v` and validation scripts to understand checks
 
 ### Phase 5: Quality & Evolution (Recommended)
 
 - [ ] Read `.github/docs/agent-metrics.md` — Quality measurement
 - [ ] Read `.github/docs/dogfooding-guide.md` — Self-improvement
-- [ ] Run `npm test` and validation scripts to understand checks
+- [ ] Run `./.github/skills/agent-evolution-agent/scripts/audit-agent-quality.sh`
 
 ## Training Scenarios
 
-### Scenario 1: Visual Request Recognition
+### Scenario 1: Adding a New Workflow
 
-**Setup**: Subdomain requests "dark mode toggle"
+**Setup**: A new business process (e.g., `risk-assessment`) needs to be orchestrated.
 
 <details>
 <summary>Answer</summary>
 
-Valid ontological request IF framed semantically. Guide to existing `genesis-atmosphere('void')`. Reject visual-only framing like "make background black and text white."
+1. Check `.github/specs/workflows.md` to see if existing patterns apply.
+2. Use `c_suite_orchestration` template — it encapsulates the select → filter → orchestrate pattern.
+3. Choose the appropriate variant (perpetual / hierarchical / sequential) based on the decision matrix.
+4. Run `pytest tests/ -v` after adding the workflow.
 
 → `.github/docs/decision-matrices.md`
 </details>
 
-### Scenario 2: Identifying Semantic Gaps
+### Scenario 2: Agent File Missing Spec References
 
-**Setup**: Subdomain needs to show "incomplete data being calculated"
+**Setup**: An agent file has less than 3 spec references.
 
 <details>
 <summary>Answer</summary>
 
-Try `cognition('protocol') + state('evolving')` combination first. If insufficient, propose new variant with semantic framing and universal applicability.
+1. Run `./.github/skills/agent-evolution-agent/scripts/recommend-improvements.sh`
+2. Identify which `.github/specs/` files are relevant to the agent's domain
+3. Add references to the "Related Documentation" section
+4. Re-run audit to verify improvement
 
-→ `.github/docs/ontological-proposition-guide.md`
+→ `.github/docs/dogfooding-guide.md`
 </details>
 
-### Scenario 3: SCSS Refactoring
+### Scenario 3: Creating a Feature Specification
 
-**Setup**: Convert `.alert-box { background: #ff0000; color: white; padding: 1rem; font-weight: bold; }`
-
-<details>
-<summary>Answer</summary>
-
-Red + bold = urgency. Convert to `@include genesis-entity('imperative'); @include genesis-cognition('protocol');`
-
-→ `.github/docs/decision-matrices.md`
-</details>
-
-### Scenario 4: Headline Sizing Request
-
-**Setup**: "We need bigger headlines"
+**Setup**: New feature request arrives without technical details.
 
 <details>
 <summary>Answer</summary>
 
-Use `genesis-cognition('axiom')` for primary headings. Guide toward semantic thinking — ask WHAT needs emphasis and WHY, not "bigger."
-</details>
+1. Invoke the Spec Manager Agent (or use `spec-create.prompt.md` directly)
+2. Transform the description into `specs/NNN-slug/spec.md`
+3. Mark all ambiguities with `[NEEDS CLARIFICATION]`
+4. Validate: `./.github/skills/spec-manager/scripts/validate-spec.sh`
 
-### Scenario 5: Multiple Mixins
-
-**Setup**: Card needs layout, visual style, and state indication
-
-<details>
-<summary>Answer</summary>
-
-Combine categories: `environment('distributed')` for layout, `entity('primary')` for visual, `state('stable')` for condition. Child elements get their own: `cognition('axiom')` for titles, `synapse('execute')` for buttons.
-
-→ `/docs/specifications/scss-ontology-system.md`
+→ `.github/specs/spec-driven-development.md`
 </details>
 
 ## Agent Role Quick Guide
 
-Each agent type has a specific focus. See the corresponding prompt file for full details.
+| Agent | Focus | Key Files |
+|-------|-------|-----------|
+| Agent Evolution | Quality metrics, duplication, spec coverage | `.github/docs/dogfooding-guide.md` |
+| Documentation Manager | Doc structure, links, metadata, archival | `.github/skills/documentation-manager-agent/SKILL.md` |
+| Repository Onboarding | Bootstrap agent system in new repos | `.github/skills/repository-onboarding/SKILL.md` |
+| Spec Manager | SDD workflow: Specify → Plan → Tasks | `.github/skills/spec-manager/SKILL.md` |
 
-| Agent | Focus | Key Prompt |
-|-------|-------|------------|
-| Theme Genome | PR review, ontological purity, GENOME.md | `theme-genome-agent.prompt.md` |
-| Subdomain Evolution | Identifying gaps, creating propositions | `subdomain-evolution-agent.prompt.md` |
-| SCSS Refactor | CSS→mixin conversion, zero-CSS enforcement | `scss-refactor-agent.prompt.md` |
-| HTML Template | Semantic structure, accessibility, BEM | `.github/instructions/html.instructions.md` |
-| Agent Evolution | Quality metrics, duplication elimination | `.github/docs/dogfooding-guide.md` |
+## Key Resources
 
-## Competency Levels
-
-| Level | Knowledge | Skills |
-|-------|-----------|--------|
-| **Beginner** | Three-tier architecture, 6 categories, semantic vs visual | Classify elements, identify obvious gaps |
-| **Intermediate** | All 31 variants, mixin combinations, PR process | Refactor simple CSS, write propositions, use validation tools |
-| **Advanced** | Ontological philosophy, edge cases, evolution principles | Complex PR reviews, legacy refactoring, system improvements |
-| **Expert** | Complete mastery, historical evolution, all edge cases | Evaluate any PR, design system components, evolve the system |
-
-## Quick Reference Card
-
-```
-ONTOLOGICAL CATEGORIES (6)
-━━━━━━━━━━━━━━━━━━━━━━━━
-Environment → Layout logic      Entity → Visual presence
-Cognition → Information type    Synapse → Interaction
-State → Temporal condition      Atmosphere → Sensory vibe
-
-DECISION SHORTCUTS
-━━━━━━━━━━━━━━━━━━
-Visual only? → REJECT           Semantic gap? → CONSIDER PR
-Existing coverage? → USE IT     Urgent? → entity('imperative')
-Title? → cognition('axiom')     Button? → synapse('execute')
-
-VALIDATION
-━━━━━━━━━━━━━━━━━━
-npm test          → Run all tests
-npm run test:scss → SCSS only
-npm run lint:scss → Style check
-```
-
-## References
-
-- `.github/copilot-instructions.md` — Start here
-- `.github/specs/agent-intelligence-framework.md` — Complete framework
-- `/docs/specifications/scss-ontology-system.md` — All 31 variants
-- `.github/docs/agent-workflows.md` — Practical examples
-- `GENOME.md` — Evolution history
+| Resource | Location |
+|----------|----------|
+| Repository spec | `.github/specs/repository.md` |
+| Workflow patterns | `.github/specs/workflows.md` |
+| Python standards | `.github/instructions/python.instructions.md` |
+| Azure Functions patterns | `.github/instructions/azure-functions.instructions.md` |
+| All tool commands | `.github/docs/conventional-tools.md` |
+| Dogfooding guide | `.github/docs/dogfooding-guide.md` |
 
 ---
 
-**Version**: 1.0  
+**Version**: 2.0 - Adapted to BusinessInfinity  
+**Last Updated**: 2026-03-07  
 **Purpose**: Structured onboarding and training for new agents

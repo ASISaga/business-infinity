@@ -25,16 +25,16 @@ Spec coverage >80%, context efficiency >50, file size <200 lines, clear referenc
 
 ## Health Indicators
 
-**Healthy**: Variants proposed from multiple subdomains, >70% PR acceptance, creative mixin combinations, docs current (<30 days), agent files getting smaller, spec files getting richer.
+**Healthy**: Agent files getting smaller, spec files getting richer, doc files current (<30 days), broken references absent, duplication absent.
 
-**Unhealthy**: Many visual-only PRs rejected, duplicate variants, interface bloat (>50 variants/category), outdated docs (>90 days), broken references accumulating.
+**Unhealthy**: Duplicate content accumulating, broken references growing, spec coverage declining, agent files growing in size.
 
 ## Quarterly Review
 
-### Theme Genome Agent
-- [ ] Identify unused variants (deprecation candidates) and overused ones (splitting candidates)
-- [ ] Check rejection rate (<30% = good semantic understanding)
-- [ ] Verify GENOME.md is current and subdomain SCSS is pure
+### Documentation Manager Agent
+- [ ] Run structure validation: `./.github/skills/documentation-manager-agent/scripts/validate-doc-structure.sh`
+- [ ] Check for redundancy: `./.github/skills/documentation-manager-agent/scripts/detect-doc-redundancy.sh`
+- [ ] Verify metadata: `./.github/skills/documentation-manager-agent/scripts/check-doc-metadata.sh`
 
 ### Agent Evolution Agent
 - [ ] Run full audit: `./audit-agent-quality.sh`
@@ -47,16 +47,13 @@ Spec coverage >80%, context efficiency >50, file size <200 lines, clear referenc
 ```bash
 # Quick health check (all metrics)
 cd .github/skills/agent-evolution-agent/scripts
-./quick-health-check.sh
+./audit-agent-quality.sh
 
-# Full report
-./generate-metrics-report.sh > /tmp/metrics-$(date +%Y%m%d).json
-
-# Single agent audit
-./audit-single-agent.sh theme-genome-agent
+# Track metrics over time
+./track-metrics.sh
 
 # Historical comparison
-./compare-metrics.sh /tmp/metrics-old.json /tmp/metrics-new.json
+./track-metrics.sh --history
 ```
 
 ## Improvement Workflows
@@ -69,9 +66,12 @@ cd .github/skills/agent-evolution-agent/scripts
 
 - `.github/docs/dogfooding-guide.md` — Self-improvement workflows
 - `.github/skills/agent-evolution-agent/SKILL.md` — Validation tools
+- `.github/specs/agents.md` — Agent file specification
+- `.github/specs/skills.md` — Skill file specification
 - `.github/specs/agent-intelligence-framework.md` — Framework spec
 
 ---
 
-**Version**: 1.0  
+**Version**: 2.0 - Adapted to BusinessInfinity  
+**Last Updated**: 2026-03-07  
 **Purpose**: Define and track agent ecosystem quality metrics

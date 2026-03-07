@@ -31,7 +31,7 @@ echo ""
 # Calculate metrics
 total_lines=$(wc -l < "$AGENT_FILE")
 total_chars=$(wc -c < "$AGENT_FILE")
-spec_references=$(grep -c "/docs/specifications/" "$AGENT_FILE" 2>/dev/null || echo "0")
+spec_references=$(grep -cE "\.github/specs/|/docs/specifications/" "$AGENT_FILE" 2>/dev/null || echo "0")
 doc_references=$(grep -c "/docs/" "$AGENT_FILE" 2>/dev/null || echo "0")
 code_blocks=$(grep -c '```' "$AGENT_FILE" 2>/dev/null || echo "0")
 code_blocks=$((code_blocks / 2)) # Each block has opening and closing
@@ -59,7 +59,7 @@ echo ""
 
 echo "Reference Metrics:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Spec References (/docs/specifications/): $spec_references"
+echo "Spec References (.github/specs/ or /docs/specifications/): $spec_references"
 echo "Total Doc References (/docs/): $doc_references"
 echo ""
 
@@ -160,12 +160,12 @@ echo "Recommendations:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 if [ "$total_lines" -gt "$optimal_lines" ]; then
-    echo "• Extract detailed content to /docs/specifications/"
+    echo "• Extract detailed content to .github/specs/ or /docs/specifications/"
     echo "• Keep only activation logic and workflows in agent"
 fi
 
 if [ "$spec_references" -lt 3 ]; then
-    echo "• Add more references to /docs/specifications/"
+    echo "• Add more references to .github/specs/ (agents.md, skills.md, prompts.md, instructions.md)"
     echo "• Replace inline knowledge with spec links"
 fi
 

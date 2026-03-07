@@ -40,9 +40,8 @@ description: "Brief description for agent discovery"
 
 | File | applyTo Pattern | Loads When Editing |
 |------|-----------------|-------------------|
-| `scss.instructions.md` | `**/*.{scss,sass,css},_sass/**,assets/css/**` | Any SCSS/CSS file |
-| `html.instructions.md` | `**/*.{html,liquid},_includes/**,_layouts/**` | Any HTML/Liquid template |
-| `js.instructions.md` | `**/*.js,assets/js/**` | Any JavaScript file |
+| `python.instructions.md` | `**/*.py` | Any Python file |
+| `azure-functions.instructions.md` | `src/**/*.py,function_app.py,tests/**/*.py` | Azure Functions / workflow files |
 | `docs.instructions.md` | `docs/**/*.md,*.md` | Documentation files |
 | `agents.instructions.md` | `.github/agents/*.agent.md` | Agent definition files |
 | `prompts.instructions.md` | `.github/prompts/*.prompt.md` | Prompt files |
@@ -266,9 +265,9 @@ description: "SCSS coding standards and ontology system"
 Detailed coding standards are in `.github/instructions/` 
 and are automatically activated by file path:
 
-- `scss.instructions.md` — SCSS ontology system
-- `html.instructions.md` — Semantic HTML & Jekyll
-- `js.instructions.md` — JavaScript patterns
+- `python.instructions.md` — Python coding standards
+- `azure-functions.instructions.md` — Azure Functions / AOS workflow patterns
+- `docs.instructions.md` — Documentation standards
 
 → **Mechanism**: `.github/docs/path-specific-instructions.md`
 ```
@@ -349,10 +348,9 @@ copilot-instructions.md (high-level overview)
 ├── copilot-instructions.md (150 lines)
 │   └── High-level architecture only
 └── instructions/
-    ├── scss.instructions.md (auto-loads for SCSS)
-    ├── html.instructions.md (auto-loads for HTML)
-    ├── js.instructions.md (auto-loads for JS)
-    └── docs.instructions.md (auto-loads for docs)
+    ├── python.instructions.md            (auto-loads for Python)
+    ├── azure-functions.instructions.md   (auto-loads for workflow files)
+    └── docs.instructions.md              (auto-loads for docs)
 ```
 
 **Benefits:**

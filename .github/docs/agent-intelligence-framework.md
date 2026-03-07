@@ -1,9 +1,7 @@
----
-applyTo: ".github/**/*.md,.github/**/*.prompt.md,.github/skills/**/*"
-description: "Generic GitHub Copilot agent intelligence system: Ouroboros dogfooding, agents, prompts, skills, and instructions"
----
-
 # GitHub Copilot Agent Intelligence System
+
+**Last Updated**: 2026-03-07  
+**Audience**: Developers, Agent System Architects
 
 **A reusable framework for establishing best-practice GitHub Copilot coding agent ecosystems**
 
@@ -668,15 +666,18 @@ npm test
 
 ## Related Documentation
 
-**This instruction file provides generic framework. For repository-specific guidance:**
+**For repository-specific guidance:**
 
-→ **Repository-specific patterns**: Other instruction files in `.github/instructions/`  
-→ **Complete guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md` (if exists)  
-→ **Ecosystem architecture**: `.github/.github/docs/agent-philosophy.md` (if exists)
+→ **Repository spec**: `.github/specs/repository.md`
+→ **Agent file spec**: `.github/specs/agents.md`
+→ **Prompt file spec**: `.github/specs/prompts.md`
+→ **Skill file spec**: `.github/specs/skills.md`
+→ **Instruction file spec**: `.github/specs/instructions.md`
+→ **Ecosystem architecture**: `.github/docs/agent-philosophy.md`
+→ **Path-specific mechanism**: `.github/docs/path-specific-instructions.md`
 
 ---
 
-**Applies to**: `.github/**/*.md`, `.github/**/*.prompt.md`, `.github/skills/**/*`  
-**Version**: 2.0.0 - Generic reusable framework (extracted from theme-specific v1.5)  
-**Last Updated**: 2026-02-13  
+**Version**: 2.1.0 - Removed instruction frontmatter; updated to reference dedicated spec files  
+**Last Updated**: 2026-03-07  
 **License**: MIT - Free to copy and adapt for any repository
