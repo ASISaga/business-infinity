@@ -1,30 +1,34 @@
-# GitHub Copilot Agent Intelligence System
+# GitHub Copilot Agent Meta-Intelligence System
 
-This repository uses a structured GitHub Copilot agent intelligence system for optimal AI-assisted development.
-
-→ **Repository-specific details**: `.github/specs/repository.md`
+This repository uses a structured GitHub Copilot Coding agent meta-intelligence system for optimal AI-assisted development.
 
 ## Directory Structure
 
-```
-.github/
-├── copilot-instructions.md     # This file - high-level architecture
-├── instructions/               # Path-activated coding standards (auto-load by glob)
-├── specs/                      # Detailed specifications & frameworks
-│   ├── repository.md           #   ← Repository-specific spec (update per repo)
-│   └── agent-intelligence-framework.md
-├── docs/                       # Implementation guides & references
-├── agents/                     # Custom agents (*.agent.md)
-├── prompts/                    # Agent prompts (*.prompt.md)
-└── skills/                     # Agent skills (SKILL.md + scripts)
-```
+### Specifications for repository for spec driven development
+.github/specs/repository.md         #   ← Repository-specific spec (update per repo), and may delegate to further specifications in this directory.
 
-- **Instructions** auto-load when editing matching file types
-- **Specs** define frameworks; **Docs** provide guides
-- **Agents/Prompts/Skills** provide executable capabilities
+### Specifications for spec driven development (Adhering to GitHub recommended Templates)
+.github/specs/agents.md             # Specifications for agent files in .github/agents directory 
+.github/specs/prompts.md            # Specifications for prompt files in .github/prompts directory
+.github/specs/skills.md             # Specifications for files in .github/skills directory
+.github/specs/instructions.md       # Specifications for files in .github/instructions directory
+
+# GitHub Copilot Coding Agent files
+.github/copilot-instructions.md     # This file - high-level GitHub Copilot Agent Meta-Intelligence System architecture
+.github/instructions/               # Path-specific GitHub Copilot Coding Agent custom intructions (auto-load by glob), for GitHub Copilot agent meta-intelligence system, as well as repository. They maintain lean structure, and mandatorily leaverage appropriate files in .github/specs.
+
+.github/docs/                       # Implementation guides & references
+.github/agents/                     # Copilot Custom agents (*.agent.md)
+.github/prompts/                    # Copilot Agent prompts (*.prompt.md)
+.github/skills/                     # Copilot Agent skills (SKILL.md + scripts) applicable to the meta-intelligence system, as well as repository-specific skills
+.github/workflows/                  # GitHub Workflows
+
+- **Instructions/Agents/Prompts/Skills** auto-loaded by GitHub Copilot Coding Agent during execution
+- **Specs** Are lean-and-mean, and define frameworks; **Docs** provide guides. This distinction is to be mandatorily maintained.
 - **Validation** via agent quality scripts ensures continuous quality
 
-→ **Framework**: `.github/specs/agent-intelligence-framework.md`  
+## References
+→ **Framework**: `.github/docs/agent-intelligence-framework.md`  
 → **Philosophy**: `.github/docs/agent-philosophy.md`  
 → **System overview**: `.github/docs/agent-system-overview.md`  
 → **Documentation index**: `.github/docs/README.md`
