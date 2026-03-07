@@ -132,19 +132,20 @@ Activate when:
 
 ## Resources
 
-**Complete Documentation System**:
+**Spec Files**:
+- `.github/specs/agents.md` - Agent file specification
+- `.github/specs/skills.md` - Skill file specification
+- `.github/specs/instructions.md` - Instruction file specification
+- `.github/specs/repository.md` - Repository structure and role
+
+**Documentation Standards**:
 - `references/DOCUMENTATION-GUIDE.md` - **Comprehensive standards**
 - `references/ARCHIVAL-WORKFLOW.md` - **Archival process**
 - `scripts/` - **All validation scripts**
-
-**Core Standards**:
 - `.github/instructions/docs.instructions.md` - Core documentation standards
-- `/docs/specifications/architecture.md` - System architecture
-- `/docs/specifications/agent-self-learning-system.md` - Dogfooding and Ouroboros
 - `.github/docs/dogfooding-guide.md` - Self-improvement workflows
-- `/docs/specifications/github-copilot-agent-guidelines.md` - Agent standards
 
-**Related Skills**: agent-evolution-agent, html-template-agent
+**Related Skills**: agent-evolution-agent, spec-manager
 
 ---
 

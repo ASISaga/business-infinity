@@ -29,7 +29,7 @@ total_spec_refs=0
 
 count_spec_references() {
     local file="$1"
-    local count=$(grep -c "/docs/specifications/" "$file" 2>/dev/null || echo "0")
+    local count=$(grep -cE "\.github/specs/|/docs/specifications/" "$file" 2>/dev/null || echo "0")
     echo "$count" | tr -d ' \n\t\r'
 }
 

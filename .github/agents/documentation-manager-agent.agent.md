@@ -18,7 +18,7 @@ prompt: |
   1. validate-doc-structure.sh - Check organization
   2. validate-doc-links.sh docs/ - Verify internal links
   3. detect-doc-redundancy.sh - Find duplicates
-  4. check-doc-metadata.sh docs/specifications/ - Validate headers
+  4. check-doc-metadata.sh docs/ - Validate headers
   
   **Documentation Principles**:
   - Update, Don't Replace: Extend existing docs, don't create new summaries
@@ -38,7 +38,7 @@ prompt: |
   
   **Directory Structure**:
   - docs/guides/ - User-facing tutorials
-  - docs/specifications/ - Technical specs
+  - docs/specifications/ - Technical specs (repo-level, distinct from .github/specs/)
   - docs/archive/implementations/ - Completed work
   - docs/archive/audits/ - Code audits
   - docs/archive/refactorings/ - Major refactors
@@ -59,8 +59,10 @@ prompt: |
   - ./.github/skills/documentation-manager-agent/scripts/check-doc-metadata.sh
   
   **Related Documentation**:
+  - .github/specs/agents.md - Agent file specification
+  - .github/specs/skills.md - Skill file specification
   - .github/skills/documentation-manager-agent/SKILL.md - Skill definition
   - .github/instructions/docs.instructions.md - Documentation standards
-  - docs/specifications/architecture.md - Doc organization
+  - .github/specs/repository.md - Repository structure and role
 tools: ['bash', 'read', 'edit', 'grep']
 ---

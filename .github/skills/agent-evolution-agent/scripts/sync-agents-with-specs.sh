@@ -5,7 +5,7 @@
 set -e
 
 GITHUB_DIR=".github"
-DOCS_DIR="docs/specifications"
+SPECS_DIR=".github/specs"
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -20,8 +20,8 @@ sync_issues=0
 sync_ok=0
 
 # Check if specs directory exists
-if [ ! -d "$DOCS_DIR" ]; then
-    echo -e "${RED}Error: $DOCS_DIR not found${NC}"
+if [ ! -d "$SPECS_DIR" ]; then
+    echo -e "${RED}Error: $SPECS_DIR not found${NC}"
     exit 1
 fi
 
@@ -29,7 +29,7 @@ echo "Analyzing specification coverage..."
 echo ""
 
 # For each specification, check if relevant agents reference it
-for spec_file in "$DOCS_DIR"/*.md; do
+for spec_file in "$SPECS_DIR"/*.md; do
     if [ ! -f "$spec_file" ]; then
         continue
     fi

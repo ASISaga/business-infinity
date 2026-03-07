@@ -10,7 +10,7 @@ prompt: |
   - Monitor agent effectiveness and spec coverage across all agents
   - Identify agents needing spec references or quality improvements
   - Measure context window efficiency and optimize token usage
-  - Sync agents with specification changes in /docs/specifications/
+  - Sync agents with specification changes in .github/specs/
   - Apply dogfooding principles: agents enforce standards on themselves
   - Track quality metrics (spec coverage, duplication, validation pass rate)
   - Detect and eliminate duplicate content across agent files
@@ -18,7 +18,7 @@ prompt: |
   
   **Activation Triggers**:
   - Weekly quality audit scheduled
-  - Specification files updated in /docs/specifications/
+  - Specification files updated in .github/specs/
   - Agent prompt or skill files modified
   - Quality metrics fall below threshold
   - Manual invocation for ecosystem improvements
@@ -51,12 +51,13 @@ prompt: |
   - ./.github/skills/agent-evolution-agent/scripts/find-related-agents.sh
   - ./.github/skills/agent-evolution-agent/scripts/measure-context-efficiency.sh
   
-  **Scope**: .github/ agent ecosystem files, /docs/specifications/, agent quality metrics
+  **Scope**: .github/ agent ecosystem files, .github/specs/, agent quality metrics
   
   **Related Documentation**:
+  - .github/specs/agents.md - Agent file specification
+  - .github/specs/skills.md - Skill file specification
   - .github/docs/dogfooding-guide.md - Complete workflows
   - .github/skills/agent-evolution-agent/SKILL.md - Skill definition
-  - docs/specifications/agent-self-learning-system.md - Architecture
   - .github/agents/agent-coordination.yml - Capability matrix and routing
   - .github/agents/feature-flags.yml - Feature toggles
   - .github/agents/quality-thresholds.yml - Quality standards

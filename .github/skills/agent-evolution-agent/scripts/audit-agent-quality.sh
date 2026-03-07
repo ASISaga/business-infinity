@@ -28,8 +28,8 @@ count_spec_references() {
         return
     fi
     
-    # Count references to /docs/specifications/
-    local count=$(grep -c "/docs/specifications/" "$file" 2>/dev/null || echo "0")
+    # Count references to .github/specs/ (dedicated spec files) or /docs/specifications/
+    local count=$(grep -cE "\.github/specs/|/docs/specifications/" "$file" 2>/dev/null || echo "0")
     echo "$count" | tr -d ' \n\t\r'
 }
 
@@ -134,7 +134,7 @@ echo ""
 echo "Recommendations:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 if [ "$agents_need_improvement" -gt 0 ]; then
-    echo "• Extract static knowledge to /docs/specifications/"
+    echo "• Extract static knowledge to .github/specs/ or /docs/specifications/"
     echo "• Add spec references to agent prompts"
     echo "• Target: ≥3 spec references per agent"
     echo "• Target: ≤400 lines for prompt files"

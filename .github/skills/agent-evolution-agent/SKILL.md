@@ -23,7 +23,7 @@ Meta-agent implementing **dogfooding principle**: agents improve agents using sa
 ## When to Use This Skill
 
 Activate when:
-- New specs added to `/docs/specifications/`
+- New specs added to `.github/specs/`
 - Agent prompts become outdated/verbose
 - Duplicate knowledge across agents/specs
 - Context window efficiency needs improvement
@@ -40,7 +40,7 @@ Activate when:
 **Continuous**: Auto-adapt to codebase changes  
 **Measurable**: Track quality metrics
 
-→ **Complete architecture**: `/docs/specifications/agent-self-learning-system.md`
+→ **Complete architecture**: `.github/docs/dogfooding-guide.md`
 
 ## Quick Workflows
 
@@ -111,18 +111,20 @@ npm test
 
 ## Resources
 
-**Complete Self-Learning System**:
-- `/docs/specifications/agent-self-learning-system.md` - **Complete architecture**
+**Spec Files**:
+- `.github/specs/agents.md` - Agent file specification
+- `.github/specs/skills.md` - Skill file specification
+- `.github/specs/prompts.md` - Prompt file specification
+- `.github/specs/instructions.md` - Instruction file specification
+
+**Documentation**:
 - `scripts/README.md` - **All validation scripts**
 - `references/SELF-LEARNING-ARCHITECTURE.md` - Detailed architecture
 - `.github/docs/dogfooding-guide.md` - Dogfooding workflows
-
-**Framework**:
-- `/docs/specifications/github-copilot-agent-guidelines.md` - Agent standards
-- `.github/.github/docs/agent-philosophy.md` - Ecosystem architecture
+- `.github/docs/agent-philosophy.md` - Ecosystem architecture
 - `.github/docs/agent-system-overview.md` - Agent catalog and navigation
 
-**Related Skills**: documentation-manager-agent, scss-refactor-agent
+**Related Skills**: documentation-manager-agent, spec-manager
 
 ---
 

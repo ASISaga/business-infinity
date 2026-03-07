@@ -96,6 +96,8 @@ Activate when:
 ## Resources
 
 → `.github/specs/spec-driven-development.md` — SDD principles and workflow
+→ `.github/specs/prompts.md` — Prompt file specification
+→ `.github/specs/agents.md` — Agent file specification
 → `.github/docs/spec-driven.md` — Full SDD methodology
 → `.github/agents/spec-manager.agent.md` — Agent definition
 → `.github/prompts/spec-create.prompt.md` — Create workflow

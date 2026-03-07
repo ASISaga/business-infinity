@@ -58,6 +58,8 @@ prompt: |
   - ./.github/skills/spec-manager/scripts/create-feature-branch.sh
 
   **Related Documentation**:
+  - .github/specs/prompts.md - Prompt file specification
+  - .github/specs/agents.md - Agent file specification
   - .github/specs/spec-driven-development.md - SDD principles and workflow
   - .github/docs/spec-driven.md - Full SDD methodology
   - .github/skills/spec-manager/SKILL.md - Skill definition
