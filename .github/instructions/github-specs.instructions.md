@@ -1,6 +1,6 @@
 ---
 applyTo: ".github/specs/*.md"
-description: "Standards for specification files in .github/specs/"
+description: "Standards for specification files in .github/specs/ including spec-driven development (SDD) workflow"
 ---
 
 # Specification Files Standards
@@ -8,6 +8,28 @@ description: "Standards for specification files in .github/specs/"
 ## Purpose
 
 Specification files in `.github/specs/` contain **detailed patterns and frameworks** that instruction files reference. They define the "what" and "how" of systems.
+
+Specifications are created and updated using the **Spec Manager Agent** (`/speckit.specify`, `/speckit.plan`, `/speckit.tasks`).
+
+→ **SDD workflow**: `.github/specs/spec-driven-development.md`
+→ **Spec manager agent**: `.github/agents/spec-manager.agent.md`
+
+## Spec-Driven Development (SDD) Workflow
+
+New specifications for this repository use the speckit commands:
+
+```bash
+# Create a new specification
+/speckit.specify <plain-language description>
+
+# Generate implementation plan from spec
+/speckit.plan <optional technical hints>
+
+# Derive executable task list from plan
+/speckit.tasks
+```
+
+All specs created via speckit are placed in `specs/<NNN>-<slug>/`. Specs in `.github/specs/` document the agent intelligence system itself and follow the standard format below.
 
 ## File Naming
 
@@ -74,12 +96,13 @@ Before committing:
 
 ## Related Documentation
 
-→ **Agent framework**: `.github/specs/agent-intelligence-framework.md` - Complete system specification  
-→ **Architecture**: `/docs/specifications/architecture.md` - System architecture and organization  
-→ **Self-learning system**: `/docs/specifications/agent-self-learning-system.md` - Dogfooding and Ouroboros  
+→ **SDD spec**: `.github/specs/spec-driven-development.md` - Spec-driven workflow and speckit commands
+→ **Agent framework**: `.github/specs/agent-intelligence-framework.md` - Complete system specification
+→ **Architecture**: `/docs/specifications/architecture.md` - System architecture and organization
+→ **Self-learning system**: `/docs/specifications/agent-self-learning-system.md` - Dogfooding and Ouroboros
 → **Agent guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md` - Standards and best practices
 
 ---
 
-**Version**: 1.1 - Added spec references for dogfooding  
-**Last Updated**: 2026-02-14
+**Version**: 1.2 - Added SDD workflow and speckit commands
+**Last Updated**: 2026-03-07
