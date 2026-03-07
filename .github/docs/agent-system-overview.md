@@ -19,7 +19,7 @@ Overview of the GitHub Copilot agent intelligence system: directory structure, a
 │   ├── prompts.instructions.md      #   Prompt file standards
 │   └── skills.instructions.md       #   Skill file standards
 ├── specs/                           # Detailed specifications & frameworks
-│   ├── business-infinity-repository.md  # Repository-specific spec
+│   ├── repository.md                    # Repository-specific spec (update per repo)
 │   └── agent-intelligence-framework.md  # Generic agent system framework
 ├── docs/                            # Documentation & guides (this directory)
 ├── agents/                          # Custom agents (*.agent.md)
@@ -100,7 +100,7 @@ Detailed guide: `.github/docs/path-specific-instructions.md`
 ### Adding a new workflow
 
 ```python
-# 1. Add @app.workflow decorator in src/business_infinity/workflows.py
+# 1. Add @app.workflow decorator in src/<package>/workflows.py
 @app.workflow("new-workflow")
 async def new_workflow(request: WorkflowRequest) -> Dict[str, Any]:
     ...
@@ -115,7 +115,7 @@ pytest tests/ -v
 
 ```bash
 pytest tests/ -v                        # Run all tests
-pylint src/business_infinity/           # Lint
+pylint src/                             # Lint
 ```
 
 ### Agent Quality (Dogfooding)
@@ -142,13 +142,13 @@ pylint src/business_infinity/           # Lint
 ### New Contributors
 
 1. Read `README.md` — project overview and architecture
-2. Read `.github/specs/business-infinity-repository.md` — repository-specific spec
+2. Read `.github/specs/repository.md` — repository-specific spec
 3. Read `agent-philosophy.md` — core principles
 4. Run `pytest tests/ -v` — verify your setup
 
 ### AI Agents
 
-1. Load `.github/specs/business-infinity-repository.md` for project context
+1. Load `.github/specs/repository.md` for project context
 2. Load `.github/instructions/python.instructions.md` when editing Python
 3. Load `.github/instructions/azure-functions.instructions.md` when editing workflows
 4. Run `pytest tests/ -v` to validate output
@@ -157,7 +157,7 @@ pylint src/business_infinity/           # Lint
 
 1. Run `pytest tests/ -v` before merging
 2. Run agent evolution scripts for agent quality
-3. Keep `business-infinity-repository.md` spec current
+3. Keep `repository.md` spec current
 
 ---
 
@@ -165,7 +165,7 @@ pylint src/business_infinity/           # Lint
 
 | Resource | Location |
 |----------|----------|
-| Repository Spec | `.github/specs/business-infinity-repository.md` |
+| Repository Spec | `.github/specs/repository.md` |
 | Python Standards | `.github/instructions/python.instructions.md` |
 | Azure Functions Patterns | `.github/instructions/azure-functions.instructions.md` |
 | Agent Framework Spec | `.github/specs/agent-intelligence-framework.md` |

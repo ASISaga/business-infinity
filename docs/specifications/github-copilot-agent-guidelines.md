@@ -6,11 +6,13 @@
 
 ## Overview
 
-Guidelines for GitHub Copilot coding agents working in the BusinessInfinity repository. These standards ensure agents produce high-quality, consistent code that aligns with the repository's architecture and principles.
+Guidelines for GitHub Copilot coding agents working in this repository. These standards ensure agents produce high-quality, consistent code that aligns with the repository's architecture and principles.
+
+→ **Repository-specific context**: `.github/specs/repository.md`
 
 ## Core Mandate
 
-**BusinessInfinity contains only business logic.** Agents must never:
+**This repository contains only business logic.** Agents must never:
 - Add Azure Functions boilerplate (triggers, bindings, decorators outside `@app.workflow`)
 - Implement agent lifecycle management (that's AOS's job)
 - Add infrastructure code (Service Bus, auth, storage)
@@ -40,7 +42,7 @@ Key patterns:
 
 ```bash
 pytest tests/ -v                      # Run all tests
-pylint src/business_infinity/         # Lint
+pylint src/         # Lint
 ```
 
 Both must pass with no errors before any code is committed.
@@ -86,7 +88,7 @@ When adding a new workflow:
 
 → **Architecture**: `/docs/specifications/architecture.md`  
 → **Build & deployment**: `/docs/specifications/build-deployment.md`  
-→ **Repository spec**: `.github/specs/business-infinity-repository.md`  
+→ **Repository spec**: `.github/specs/repository.md`  
 → **Agent framework**: `.github/specs/agent-intelligence-framework.md`  
 → **Python standards**: `.github/instructions/python.instructions.md`  
 → **Azure Functions patterns**: `.github/instructions/azure-functions.instructions.md`

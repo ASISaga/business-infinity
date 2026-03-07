@@ -1,6 +1,6 @@
 ---
 applyTo: "src/**/*.py,function_app.py,tests/**/*.py"
-description: "Azure Functions and AOS workflow patterns for BusinessInfinity"
+description: "Azure Functions and AOS workflow patterns for Python repositories"
 ---
 
 # Azure Functions & AOS Workflow Patterns
@@ -12,8 +12,9 @@ Every workflow module starts with a single `AOSApp` instance:
 ```python
 from aos_client import AOSApp, ObservabilityConfig
 
+# App name comes from repository spec — see .github/specs/repository.md
 app = AOSApp(
-    name="business-infinity",
+    name="<app-name>",
     observability=ObservabilityConfig(
         structured_logging=True,
         correlation_tracking=True,
@@ -40,7 +41,7 @@ async def workflow_fn(request: WorkflowRequest) -> Dict[str, Any]:
 
 ```python
 # function_app.py — zero boilerplate
-from business_infinity.workflows import app
+from <package>.workflows import app
 functions = app.get_functions()
 ```
 
@@ -146,12 +147,12 @@ async def c_suite_orchestration(request, agent_filter, purpose, purpose_scope):
 ```bash
 pytest tests/ -v                    # Run all tests
 pytest tests/ -v -k "workflow"      # Run workflow-specific tests
-pylint src/business_infinity/       # Lint workflows
+pylint src/                          # Lint workflows
 ```
 
 ## Related Documentation
 
-→ **Repository spec**: `.github/specs/business-infinity-repository.md`  
+→ **Repository spec**: `.github/specs/repository.md`  
 → **Python standards**: `.github/instructions/python.instructions.md`  
 → **Conventional tools**: `.github/docs/conventional-tools.md`  
 → **Architecture**: `/docs/specifications/architecture.md`  

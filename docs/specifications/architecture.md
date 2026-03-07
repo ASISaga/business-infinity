@@ -106,5 +106,5 @@ Tests validate:
 
 → **Build & deployment**: `/docs/specifications/build-deployment.md`  
 → **Agent guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md`  
-→ **Repository spec**: `.github/specs/business-infinity-repository.md`  
+→ **Repository spec**: `.github/specs/repository.md`  
 → **Conventional tools**: `.github/docs/conventional-tools.md`

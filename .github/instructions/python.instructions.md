@@ -1,6 +1,6 @@
 ---
 applyTo: "**/*.py"
-description: "Python coding standards for BusinessInfinity: async, type hints, PEP 8, AOS SDK patterns"
+description: "Python coding standards: PEP 8, async, type hints, AOS SDK patterns"
 ---
 
 # Python Coding Standards
@@ -52,8 +52,6 @@ import logging
 from typing import Any, Dict, List
 
 from aos_client import AOSApp, WorkflowRequest
-
-from business_infinity.workflows import app
 ```
 
 ## Logging
@@ -80,7 +78,7 @@ if not agent_ids:
 pip install -e ".[dev]"
 pytest tests/ -v                              # Run all tests
 pytest tests/ -v -k "test_name"              # Run specific test
-pylint src/business_infinity/                 # Lint
+pylint src/                                   # Lint
 ```
 
 - Use `pytest` classes (not `unittest.TestCase`)
@@ -97,7 +95,7 @@ pip install -e ".[dev]"   # Install dependencies
 
 ## Related Documentation
 
-→ **Repository spec**: `.github/specs/business-infinity-repository.md`  
+→ **Repository spec**: `.github/specs/repository.md`  
 → **Azure Functions patterns**: `.github/instructions/azure-functions.instructions.md`  
 → **Conventional tools**: `.github/docs/conventional-tools.md`  
 → **Agent guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md`  

@@ -107,5 +107,5 @@ async with AOSRegistration(aos_endpoint="https://my-aos.azurewebsites.net") as r
 
 → **Architecture**: `/docs/specifications/architecture.md`  
 → **Agent guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md`  
-→ **Repository spec**: `.github/specs/business-infinity-repository.md`  
+→ **Repository spec**: `.github/specs/repository.md`  
 → **CI workflow**: `.github/workflows/ci.yml`

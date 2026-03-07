@@ -5,7 +5,7 @@
 
 ## Vision: Living Intelligence Architecture
 
-BusinessInfinity operates as a **living intelligence system** — not a static codebase, but an evolving ecosystem where AI agents act as:
+This repository operates as a **living intelligence system** — not a static codebase, but an evolving ecosystem where AI agents act as:
 
 - **Architecture Guardians** - Maintaining the lean, SDK-delegated structure
 - **Evolution Facilitators** - Managing growth through PRs
@@ -75,7 +75,7 @@ Each pillar has a specific purpose and cross-references the others to maintain c
 
 ## Separation of Concerns
 
-At the heart of BusinessInfinity is a clear **separation of concerns** — business logic here, infrastructure in the SDK.
+At the heart of this repository is a clear **separation of concerns** — business logic here, infrastructure in the SDK.
 
 **Agents must**:
 - Keep workflow functions focused on business orchestration only
@@ -135,7 +135,7 @@ The system should grow organically based on real needs:
 ## References
 
 **Related Documentation**:
-- `.github/specs/business-infinity-repository.md` - Repository-specific spec
+- `.github/specs/repository.md` - Repository-specific spec
 - `.github/specs/agent-intelligence-framework.md` - Complete framework specification
 - `.github/docs/dogfooding-guide.md` - Self-improvement workflows
 - `.github/docs/agent-metrics.md` - Measuring system health
@@ -143,6 +143,6 @@ The system should grow organically based on real needs:
 
 ---
 
-**Version**: 2.0 - Adapted for BusinessInfinity  
+**Version**: 2.1 - Made repository-agnostic  
 **Last Updated**: 2026-03-07  
 **Purpose**: Define philosophical foundation for agent intelligence system

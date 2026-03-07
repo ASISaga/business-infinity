@@ -14,12 +14,11 @@ This directory contains specifications and frameworks for the agent intelligence
 
 ### Repository-Specific Specifications
 
-- **`business-infinity-repository.md`** - BusinessInfinity repository specifics
-  - Repository role in the AOS ecosystem
-  - Technology stack (Python 3.10+, aos-client-sdk, pytest, pylint)
-  - Directory structure and core patterns
+- **`repository.md`** - Repository-specific spec (one per repository, same standard name)
+  - Repository name, description, and role in the ecosystem
+  - Technology stack and coding patterns
   - Testing and validation workflows
-  - Key design principles
+  - Key design principles for agents and contributors
 
 ## Purpose
 

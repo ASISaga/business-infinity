@@ -26,14 +26,14 @@ All automation uses standard Python tooling:
 pip install -e ".[dev]"               # Install all dev dependencies
 pytest tests/ -v                      # Run all tests
 pytest tests/ -v -k "test_name"       # Run specific tests
-pylint src/business_infinity/         # Lint source code
+pylint src/         # Lint source code
 ```
 
 ### Recommended Workflow
 
 **Before committing:**
 ```bash
-pytest tests/ -v && pylint src/business_infinity/
+pytest tests/ -v && pylint src/
 ```
 
 **During development:**
@@ -44,7 +44,7 @@ pytest tests/ -v -k "relevant_test"   # Quick targeted check
 **Full validation:**
 ```bash
 pytest tests/ -v                      # All tests
-pylint src/business_infinity/         # Full lint
+pylint src/         # Full lint
 ```
 
 ## Tool Details
@@ -144,7 +144,7 @@ Custom validation scripts in `.github/skills/*/scripts/`:
 ### When making workflow changes (`workflows.py`):
 ```bash
 pytest tests/ -v                      # Verify registration + logic
-pylint src/business_infinity/         # Lint
+pylint src/         # Lint
 ```
 
 ### When adding a new workflow:
@@ -160,7 +160,7 @@ pytest tests/ -v                      # Full suite
 
 ### Before committing anything:
 ```bash
-pytest tests/ -v && pylint src/business_infinity/
+pytest tests/ -v && pylint src/
 ```
 
 ## Best Practices for Agents
@@ -228,7 +228,7 @@ ImportError: cannot import name 'NewClass'
 
 ## Related Documentation
 
-- **Repository spec**: `.github/specs/business-infinity-repository.md`
+- **Repository spec**: `.github/specs/repository.md`
 - **Dogfooding guide**: `.github/docs/dogfooding-guide.md` - Complete workflow
 - **Agent metrics**: `.github/docs/agent-metrics.md` - Metric definitions
 - **Agent philosophy**: `.github/docs/agent-philosophy.md` - Ouroboros pattern
@@ -236,6 +236,6 @@ ImportError: cannot import name 'NewClass'
 
 ---
 
-**Version**: 2.0.0 - Adapted for BusinessInfinity (Python/Azure Functions)  
+**Version**: 2.0.0 - Adapted for Python/Azure Functions repositories  
 **Last Updated**: 2026-03-07  
 **Mechanism**: Reference this file from `copilot-instructions.md` instead of duplicating tool lists
