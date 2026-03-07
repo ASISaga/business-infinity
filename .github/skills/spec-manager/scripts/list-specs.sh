@@ -17,7 +17,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 if [ ! -d "$SPECS_DIR" ]; then
-    echo -e "${YELLOW}No specs/ directory found. Run /speckit.specify to create the first feature spec.${NC}"
+    echo -e "${YELLOW}No specs/ directory found. Use the Spec Manager Agent (spec-create.prompt.md) to create the first feature spec.${NC}"
     echo ""
     echo "Next feature number: 001"
     exit 0

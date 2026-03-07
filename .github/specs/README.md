@@ -12,8 +12,8 @@ This directory contains specifications and frameworks for the agent intelligence
   - Validation workflows
   - Context window optimization
 
-- **`spec-driven-development.md`** - Specification-Driven Development (SDD) workflow
-  - speckit commands (`/speckit.specify`, `/speckit.plan`, `/speckit.tasks`)
+- **`spec-driven-development.md`** - Specification-Driven Development (SDD) principles and agent workflows
+  - Three SDD workflows via Spec Manager Agent (Specify → Plan → Tasks)
   - Feature directory structure (`specs/NNN-slug/`)
   - Constitutional principles (Nine Articles) and gate definitions
   - Validation scripts and quality standards
@@ -30,7 +30,7 @@ This directory contains specifications and frameworks for the agent intelligence
 
 Specifications define **how** systems work and **what** patterns to follow. Unlike instructions (which are path-activated for specific file types), specs are reference documents providing detailed technical specifications.
 
-New specs are created using the Spec Manager Agent via speckit commands.
+New feature specs are created using the Spec Manager Agent and its three SDD workflows.
 
 → **Create a spec**: `.github/agents/spec-manager.agent.md`
 → **SDD workflow**: `.github/specs/spec-driven-development.md`

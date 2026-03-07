@@ -9,27 +9,22 @@ description: "Standards for specification files in .github/specs/ including spec
 
 Specification files in `.github/specs/` contain **detailed patterns and frameworks** that instruction files reference. They define the "what" and "how" of systems.
 
-Specifications are created and updated using the **Spec Manager Agent** (`/speckit.specify`, `/speckit.plan`, `/speckit.tasks`).
+Specifications are created and updated using the **Spec Manager Agent** and its three SDD workflows.
 
 → **SDD workflow**: `.github/specs/spec-driven-development.md`
 → **Spec manager agent**: `.github/agents/spec-manager.agent.md`
 
 ## Spec-Driven Development (SDD) Workflow
 
-New specifications for this repository use the speckit commands:
+New feature specifications are created through the Copilot agent intelligence system:
 
-```bash
-# Create a new specification
-/speckit.specify <plain-language description>
+| Stage | Prompt | Output |
+|-------|--------|--------|
+| 1. Specify | `spec-create.prompt.md` | `specs/NNN-slug/spec.md` |
+| 2. Plan | `spec-plan.prompt.md` | `plan.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md` |
+| 3. Tasks | `spec-tasks.prompt.md` | `specs/NNN-slug/tasks.md` |
 
-# Generate implementation plan from spec
-/speckit.plan <optional technical hints>
-
-# Derive executable task list from plan
-/speckit.tasks
-```
-
-All specs created via speckit are placed in `specs/<NNN>-<slug>/`. Specs in `.github/specs/` document the agent intelligence system itself and follow the standard format below.
+All specs created by the agent are placed in `specs/<NNN>-<slug>/`. Specs in `.github/specs/` document the agent intelligence system itself and follow the standard format below.
 
 ## File Naming
 
@@ -96,7 +91,7 @@ Before committing:
 
 ## Related Documentation
 
-→ **SDD spec**: `.github/specs/spec-driven-development.md` - Spec-driven workflow and speckit commands
+→ **SDD spec**: `.github/specs/spec-driven-development.md` - SDD principles and agent workflows
 → **Agent framework**: `.github/specs/agent-intelligence-framework.md` - Complete system specification
 → **Architecture**: `/docs/specifications/architecture.md` - System architecture and organization
 → **Self-learning system**: `/docs/specifications/agent-self-learning-system.md` - Dogfooding and Ouroboros
@@ -104,5 +99,5 @@ Before committing:
 
 ---
 
-**Version**: 1.2 - Added SDD workflow and speckit commands
+**Version**: 1.3 - Adapted SDD workflow to Copilot agent meta-intelligence system
 **Last Updated**: 2026-03-07

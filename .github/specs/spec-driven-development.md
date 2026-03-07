@@ -1,116 +1,121 @@
 # Specification-Driven Development (SDD)
 
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Status**: Active
 **Last Updated**: 2026-03-07
 
 ## Overview
 
-Specification-Driven Development (SDD) inverts the traditional relationship between specs and code: specifications are the primary artifact; code is their generated expression. This spec defines how SDD is practiced in this repository through structured commands, templates, and constitutional principles.
+Specification-Driven Development (SDD) inverts the traditional relationship between specs and code: specifications are the primary artifact; code is their generated expression. This spec defines how SDD principles are practised in this repository through the GitHub Copilot coding agent meta-intelligence system.
 
 → **Full methodology**: `.github/docs/spec-driven.md`
 
 ## Scope
 
-- SDD workflow for the `.github/specs/` directory
-- speckit command definitions (`/speckit.specify`, `/speckit.plan`, `/speckit.tasks`)
-- Specification templates, constitutional gates, and validation rules
-- Integration with the GitHub Copilot agent intelligence system
+- SDD principles adopted for the `.github/specs/` directory
+- Three agent-driven SDD workflows: Specify → Plan → Tasks
+- Constitutional gates, clarification discipline, and quality standards
+- Integration with the Copilot agent intelligence system
 
-## The Three speckit Commands
+## The Three SDD Workflows
 
-### `/speckit.specify <description>`
+SDD is implemented through the **Spec Manager Agent** and three dedicated prompt workflows. Each stage produces a structured document that gates the next stage.
 
-Transforms a feature description into a complete, structured specification:
+### Stage 1 — Specify (`spec-create.prompt.md`)
 
-1. **Auto-number**: Scan `specs/` for the next feature number (e.g., `001`, `002`)
-2. **Branch**: Generate a semantic branch name and create it (`git checkout -b <NNN>-<slug>`)
-3. **Directory**: Create `specs/<NNN>-<slug>/`
-4. **Template**: Copy `.github/templates/spec.md` → `specs/<NNN>-<slug>/spec.md` and populate
-5. **Clarify**: Mark ambiguities with `[NEEDS CLARIFICATION: <question>]`
+Transforms a plain-language description into a complete, structured feature specification:
 
-### `/speckit.plan <hints>`
+1. **Auto-number**: Determine next feature number (`list-specs.sh`)
+2. **Branch**: Create `NNN-slug` branch and `specs/NNN-slug/` directory (`create-feature-branch.sh`)
+3. **Specify**: Create `specs/NNN-slug/spec.md` with user stories, acceptance criteria, NFRs
+4. **Clarify**: Mark every ambiguity with `[NEEDS CLARIFICATION: <question>]` — never guess
 
-Reads `spec.md` and produces a full implementation plan:
+### Stage 2 — Plan (`spec-plan.prompt.md`)
 
-1. **Parse spec**: Extract user stories, acceptance criteria, constraints
-2. **Constitutional gates** (Phase -1): Check Articles VII, VIII, IX
-3. **Generate plan**: Create `specs/<NNN>-<slug>/plan.md` from `.github/templates/plan.md`
-4. **Supporting docs**: Create `data-model.md`, `research.md`, `contracts/`, `quickstart.md`
+Reads `spec.md` (all clarification markers resolved) and produces a full implementation plan:
 
-### `/speckit.tasks`
+1. **Gate**: Run Phase -1 constitutional gates (Articles III, VII, VIII, IX)
+2. **Research**: Create `research.md` — library options, benchmarks, security, SDK constraints
+3. **Model**: Create `data-model.md` — entities, fields, relationships, all traced to user stories
+4. **Contracts**: Create `contracts/api.md` — API endpoints/events before any implementation
+5. **Plan**: Create `plan.md` — technology choices linked to requirements, implementation phases
+6. **Quickstart**: Create `quickstart.md` — key validation scenarios
 
-Reads `plan.md` (and optional `data-model.md`, `contracts/`, `research.md`) → writes `tasks.md`:
+### Stage 3 — Tasks (`spec-tasks.prompt.md`)
 
-1. **Derive tasks**: Convert contracts, entities, and scenarios into specific tasks
-2. **Parallelise**: Mark independent tasks `[P]` and group safe parallel clusters
-3. **Output**: `specs/<NNN>-<slug>/tasks.md` ready for a Task agent
+Reads `plan.md` and supporting documents → derives an executable task list:
+
+1. **Parse**: Extract tasks from contracts, data model, plan phases
+2. **Order**: Apply test-first ordering (contract tests → integration → implementation → e2e)
+3. **Parallelise**: Mark independent tasks `[P]` and group safe parallel clusters
+4. **Output**: Create `specs/NNN-slug/tasks.md` ready for coding agent execution
 
 ## Feature Directory Structure
 
 ```
 specs/
 └── NNN-feature-slug/
-    ├── spec.md                      ← Feature specification (from /speckit.specify)
-    ├── plan.md                      ← Implementation plan (from /speckit.plan)
-    ├── research.md                  ← Library/API research (from /speckit.plan)
-    ├── data-model.md                ← Entity schemas (from /speckit.plan)
-    ├── contracts/                   ← API/event contracts (from /speckit.plan)
+    ├── spec.md                      ← Feature specification (Stage 1)
+    ├── plan.md                      ← Implementation plan (Stage 2)
+    ├── research.md                  ← Library/API research (Stage 2)
+    ├── data-model.md                ← Entity schemas (Stage 2)
+    ├── contracts/                   ← API/event contracts (Stage 2)
     │   └── api.md
-    ├── quickstart.md                ← Key validation scenarios (from /speckit.plan)
-    ├── tasks.md                     ← Executable task list (from /speckit.tasks)
+    ├── quickstart.md                ← Key validation scenarios (Stage 2)
+    ├── tasks.md                     ← Executable task list (Stage 3)
     └── implementation-details/      ← Detailed technical content extracted from plan.md
         └── [component]-details.md
 ```
 
 ## Specification Templates
 
-| Template | Purpose | Command |
-|----------|---------|---------|
-| `.github/templates/spec.md` | Feature specification | `/speckit.specify` |
-| `.github/templates/plan.md` | Implementation plan | `/speckit.plan` |
-| `.github/templates/tasks.md` | Task list | `/speckit.tasks` |
-| `.github/templates/research.md` | Research document | `/speckit.plan` |
-| `.github/templates/data-model.md` | Data model | `/speckit.plan` |
+Used as structural guides by the agent when creating documents:
 
-## Constitutional Principles (Nine Articles)
+| Template | Stage | Purpose |
+|----------|-------|---------|
+| `.github/templates/plan.md` | Plan | Implementation plan with Phase -1 gates |
+| `.github/templates/tasks.md` | Tasks | Task list with parallelisation groups |
+| `.github/templates/research.md` | Plan | Library research, benchmarks, security |
+| `.github/templates/data-model.md` | Plan | Entity schemas, relationships, validation |
 
-These articles are enforced through Phase -1 gates in the implementation plan template.
+## Constitutional Principles (adopted from SDD)
+
+These articles are enforced through Phase -1 gates in the Plan stage.
 
 | Article | Principle | Enforcement |
 |---------|-----------|-------------|
 | I | Library-First: every feature starts as a standalone library | Spec checklist |
 | II | CLI Interface: every library exposes a CLI (stdin→stdout, JSON) | Plan gate |
-| III | Test-First: tests written and approved before any implementation code | Phase -1 gate |
+| III | Test-First: failing tests approved before any implementation code | Phase -1 gate |
 | VII | Simplicity: ≤3 projects for initial implementation | Simplicity gate |
 | VIII | Anti-Abstraction: use framework directly; single model representation | Anti-abstraction gate |
-| IX | Integration-First: real DBs/services over mocks; contract tests before implementation | Integration gate |
+| IX | Integration-First: real services over mocks; contract tests before code | Integration gate |
 
 ## Clarification Markers
 
-All ambiguities **must** be surfaced with:
+All ambiguities in a specification **must** be surfaced with:
 
 ```
 [NEEDS CLARIFICATION: <specific question about the missing or ambiguous detail>]
 ```
 
-**Never guess**. If the prompt doesn't specify something, mark it. The spec is blocked until all markers are resolved.
+**Never guess**. Specs with unresolved markers are blocked from proceeding to the Plan stage.
 
 ## Spec Quality Gates
 
-A spec is ready to proceed to planning when:
+A spec is ready to proceed to Stage 2 (Plan) when:
 
 - [ ] No `[NEEDS CLARIFICATION]` markers remain
 - [ ] All user stories follow `As a <role>, I want <goal>, so that <benefit>`
-- [ ] Acceptance criteria are measurable and testable
-- [ ] Non-functional requirements (performance, security, reliability) are explicit
-- [ ] No implementation details (no tech stack, APIs, or code structure in spec.md)
+- [ ] Acceptance criteria are measurable and testable (numbers, not adjectives)
+- [ ] Non-functional requirements have specific targets
+- [ ] No implementation details in spec.md (no tech stack, APIs, or code structure)
 - [ ] No speculative or "might need" features
 
 ## Validation
 
 ```bash
-# Validate a spec file for completeness
+# Validate a spec or plan file for completeness
 ./.github/skills/spec-manager/scripts/validate-spec.sh specs/<NNN>-<slug>/spec.md
 
 # List all feature specs and their status
@@ -124,8 +129,8 @@ A spec is ready to proceed to planning when:
 
 → **Full SDD methodology**: `.github/docs/spec-driven.md`
 → **Spec manager agent**: `.github/agents/spec-manager.agent.md`
-→ **speckit.specify prompt**: `.github/prompts/speckit.specify.prompt.md`
-→ **speckit.plan prompt**: `.github/prompts/speckit.plan.prompt.md`
-→ **speckit.tasks prompt**: `.github/prompts/speckit.tasks.prompt.md`
+→ **Create workflow**: `.github/prompts/spec-create.prompt.md`
+→ **Plan workflow**: `.github/prompts/spec-plan.prompt.md`
+→ **Tasks workflow**: `.github/prompts/spec-tasks.prompt.md`
 → **Agent framework**: `.github/specs/agent-intelligence-framework.md`
 → **Repository spec**: `.github/specs/repository.md`

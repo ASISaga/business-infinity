@@ -1,10 +1,10 @@
 ---
 name: spec-manager
-description: Manage specification-driven development workflow for .github/specs/. Create, validate, and update feature specifications, implementation plans, and task lists using speckit commands. Use when executing /speckit.specify, /speckit.plan, or /speckit.tasks to produce structured, executable specifications.
+description: Manage specification-driven development workflow for .github/specs/. Create, validate, and update feature specifications, implementation plans, and task lists. Use when creating or updating specs for the repository using the Copilot agent intelligence system.
 license: MIT
 metadata:
   author: ASISaga
-  version: "1.0"
+  version: "1.1"
   category: specification
   role: specification-engineer
 allowed-tools: Bash(git:*) Bash(mkdir:*) Bash(cp:*) Read Edit Create
@@ -14,25 +14,32 @@ allowed-tools: Bash(git:*) Bash(mkdir:*) Bash(cp:*) Read Edit Create
 
 **Role**: Specification Engineer for SDD Workflow
 **Scope**: `specs/`, `.github/specs/`, `.github/templates/`
-**Version**: 1.0
+**Version**: 1.1
 
 ## Purpose
 
-Implement the Specification-Driven Development (SDD) workflow through three speckit commands that transform plain-language descriptions into structured, executable specifications.
+Implement the Specification-Driven Development (SDD) workflow through three agent-driven stages that transform plain-language descriptions into structured, executable specifications.
 
-→ **Complete methodology**: `.github/docs/spec-driven.md`
-→ **SDD spec**: `.github/specs/spec-driven-development.md`
+→ **SDD principles**: `.github/specs/spec-driven-development.md`
+→ **Full methodology**: `.github/docs/spec-driven.md`
 
 ## When to Use This Skill
 
 Activate when:
-- User runs `/speckit.specify` to create a new feature spec
-- User runs `/speckit.plan` to generate an implementation plan
-- User runs `/speckit.tasks` to produce an executable task list
-- Validating spec completeness before planning
-- Listing existing specs to determine next feature number
+- A new feature needs a structured specification
+- An existing spec needs to be validated or refined
+- An implementation plan needs to be generated from a spec
+- A task list needs to be derived from a plan
 
-## Core Principles
+## Three SDD Workflows
+
+| Stage | Prompt | Output |
+|-------|--------|--------|
+| 1. Specify | `spec-create.prompt.md` | `specs/NNN-slug/spec.md` |
+| 2. Plan | `spec-plan.prompt.md` | `plan.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md` |
+| 3. Tasks | `spec-tasks.prompt.md` | `specs/NNN-slug/tasks.md` |
+
+## Core Principles (from SDD)
 
 **Spec-First**: Specifications drive code, not the reverse
 **Clarify, Don't Guess**: Mark all ambiguities with `[NEEDS CLARIFICATION]`
@@ -74,29 +81,6 @@ Activate when:
 # - specs/NNN-kebab-slug/ directory
 ```
 
-## speckit Workflow
-
-```bash
-# Step 1: Create specification (5 minutes)
-/speckit.specify Real-time agent status dashboard
-
-# Step 2: Generate implementation plan (5 minutes)
-/speckit.plan use WebSocket, Azure Functions, Service Bus
-
-# Step 3: Generate task list (5 minutes)
-/speckit.tasks
-```
-
-## Templates
-
-| Template | Used By |
-|----------|---------|
-| `.github/templates/spec.md` | `/speckit.specify` |
-| `.github/templates/plan.md` | `/speckit.plan` |
-| `.github/templates/tasks.md` | `/speckit.tasks` |
-| `.github/templates/research.md` | `/speckit.plan` |
-| `.github/templates/data-model.md` | `/speckit.plan` |
-
 ## Validation
 
 **Before committing spec changes:**
@@ -105,20 +89,21 @@ Activate when:
 # Validate spec completeness
 ./.github/skills/spec-manager/scripts/validate-spec.sh specs/<NNN>-<slug>/spec.md
 
-# List all specs
+# List all specs and their status
 ./.github/skills/spec-manager/scripts/list-specs.sh
 ```
 
 ## Resources
 
-→ `.github/specs/spec-driven-development.md` — SDD workflow and principles
+→ `.github/specs/spec-driven-development.md` — SDD principles and workflow
 → `.github/docs/spec-driven.md` — Full SDD methodology
 → `.github/agents/spec-manager.agent.md` — Agent definition
-→ `.github/prompts/speckit.specify.prompt.md` — Specify command
-→ `.github/prompts/speckit.plan.prompt.md` — Plan command
-→ `.github/prompts/speckit.tasks.prompt.md` — Tasks command
+→ `.github/prompts/spec-create.prompt.md` — Create workflow
+→ `.github/prompts/spec-plan.prompt.md` — Plan workflow
+→ `.github/prompts/spec-tasks.prompt.md` — Tasks workflow
 
 ---
 
 **Version History**:
+- **v1.1** (2026-03-07): Adapted to Copilot agent meta-intelligence system; removed speckit command references
 - **v1.0** (2026-03-07): Initial spec manager skill
