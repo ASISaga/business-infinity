@@ -1,267 +1,156 @@
 # Conventional Tools Reference
 
-**Last Updated**: 2026-02-14  
+**Last Updated**: 2026-03-07  
 **Audience**: Developers, Copilot Coding Agents
 
 ## Introduction
 
-This document catalogs all conventional (non-AI) software tools, utilities, linters, scripts, and npm commands that GitHub Copilot coding agents leverage in this repository. These tools provide automated validation, testing, and build processes that agents orchestrate rather than duplicate.
+This document catalogs all tools that GitHub Copilot coding agents leverage in this repository. These tools provide automated validation, testing, and build processes that agents orchestrate rather than duplicate.
 
 ## Philosophy: Tool Leverage
 
 **AI agents SUPERCHARGE existing tools** through orchestration:
 
-- **Never duplicate**: Reference npm scripts, don't reimplement
+- **Never duplicate**: Reference existing commands, don't reimplement
 - **Automate validation**: Use linters and validators already configured
 - **Compose workflows**: Chain existing tools for complex tasks
 - **Continuous feedback**: Run tools frequently during development
 
-## npm Scripts
+## Python Tools
 
-All automation is accessible through npm scripts defined in `package.json`:
+All automation uses standard Python tooling:
 
-### Primary Test Commands
-
-```bash
-npm test                    # Run all tests (SCSS compilation + linting)
-npm run dogfood             # Validate agent quality (Ouroboros self-improvement)
-npm run test:scss           # Sass compilation check (catches undefined mixins/vars)
-npm run lint:scss           # Stylelint for code quality
-npm run test:e2e            # Playwright E2E tests (live site)
-npm run test:e2e:local      # Playwright E2E tests (local Jekyll server)
-```
-
-### Agent Quality Validation (Dogfooding)
-
-**Ouroboros Pattern** - Agents improve agents using same standards they enforce:
+### Primary Commands
 
 ```bash
-npm run validate:agents              # Complete quality audit
-npm run validate:agents:duplicates   # Check for duplicate content
-npm run validate:agents:sync         # Verify spec synchronization
-npm run audit:agents                 # Get improvement recommendations
-npm run metrics:agents               # Track quality metrics
-npm run metrics:agents:history       # View historical trends
-npm run dogfood                      # Run all validations
-```
-
-**See**: `.github/docs/dogfooding-guide.md` for complete workflow
-
-### Detailed SCSS Testing
-
-```bash
-npm run test:scss:verbose   # Verbose Sass compilation with detailed output
-npm run lint:scss:fix       # Auto-fix Stylelint issues
-npm run lint:scss:report    # Verbose linting report
-```
-
-### E2E Testing Variants
-
-```bash
-npm run test:e2e:headed     # Run Playwright with browser visible
-npm run test:e2e:ui         # Run Playwright in UI mode (interactive)
-npm run test:e2e:report     # Show HTML test report
+pip install -e ".[dev]"               # Install all dev dependencies
+pytest tests/ -v                      # Run all tests
+pytest tests/ -v -k "test_name"       # Run specific tests
+pylint src/business_infinity/         # Lint source code
 ```
 
 ### Recommended Workflow
 
 **Before committing:**
 ```bash
-npm test                    # Fast check (SCSS + lint)
+pytest tests/ -v && pylint src/business_infinity/
 ```
 
 **During development:**
 ```bash
-npm run test:scss           # Quick compilation check
-npm run lint:scss:fix       # Auto-fix style issues
+pytest tests/ -v -k "relevant_test"   # Quick targeted check
 ```
 
 **Full validation:**
 ```bash
-npm test                    # SCSS + lint
-npm run test:e2e:local      # E2E tests (requires Jekyll running)
+pytest tests/ -v                      # All tests
+pylint src/business_infinity/         # Full lint
 ```
 
 ## Tool Details
 
-### 1. Sass Compiler (`sass`)
+### 1. pytest
 
-**Purpose**: Compiles SCSS to CSS and validates syntax
+**Purpose**: Unit and integration testing
+
+**Configuration**: `pyproject.toml` (`[tool.pytest.ini_options]`)
+
+```toml
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+```
 
 **Key features:**
-- Catches undefined variables (`$undefined-var`)
-- Detects undefined mixins (`@include non-existent`)
-- Validates SCSS syntax and structure
-- Faster than Stylelint for compilation errors
-
-**Configuration:**
-- Load path: `_sass/`
-- Test file: `_sass/_test-compile.scss`
-- Output: `/tmp/test-compile.css` (not committed)
+- `asyncio_mode = "auto"` enables async test functions without explicit decorators
+- Test discovery in `tests/` directory
+- Parametrize, fixtures, and class-based test organization
 
 **When agents should use:**
-- After making SCSS changes
-- Before committing SCSS files
-- When debugging "undefined mixin" errors
-- Fast validation loop during development
+- After making any code changes
+- Before committing Python files
+- When debugging test failures
+- To verify workflow registration
 
-### 2. Stylelint (`stylelint`)
+### 2. pylint
 
-**Purpose**: Enforces code quality and style standards for SCSS
+**Purpose**: Enforces code quality and style standards
 
-**Configuration file:** `.stylelintrc.yml`
+**Configuration**: Defaults (no `.pylintrc` — uses project standard)
 
-**Key rules enforced:**
-- **No `@extend`**: Forbidden (causes Jekyll build errors)
-- **Max nesting depth**: 3 levels maximum
-- **Import rules**: Specific patterns allowed/disallowed
-- **Code style**: Indentation, spacing, naming conventions
-- **SCSS best practices**: Property order, selector patterns
-
-**Limitations**: 
-- Cannot validate Sass compilation (missing vars/mixins)
-- Slower than Sass compiler
-- Use Sass compiler first, Stylelint second
-
-→ **Details**: `/docs/guides/STYLELINT.md`, `/docs/guides/STYLELINT-LIMITATIONS.md`
+**Key rules:**
+- PEP 8 compliance
+- Unused imports / variables
+- Missing docstrings
+- Type checking
 
 **When agents should use:**
-- After Sass compilation passes
-- Before committing SCSS changes
+- After making code changes
+- Before committing Python files
 - To enforce code quality standards
-- Auto-fix mode for quick style corrections
 
-### 3. Playwright (`@playwright/test`)
+### 3. pip / pyproject.toml
 
-**Purpose**: E2E testing and visual regression testing
+**Purpose**: Dependency and build management
 
-**Configuration file:** `playwright.config.js`
+**Configuration**: `pyproject.toml`
 
-**Test categories** (24 test cases across):
-1. Semantic HTML structure (4 tests)
-2. Accessibility landmarks (4 tests)
-3. Component structure (4 tests)
-4. Responsive behavior (3 tests)
-5. CSS/styling (2 tests)
-6. Content presence (3 tests)
-7. JavaScript/interactivity (2 tests)
-8. Performance/loading (2 tests)
+```bash
+pip install -e ".[dev]"    # Install with dev extras (pytest, pylint)
+pip install -e "."         # Production install only
+```
 
-**Test files:**
-- `tests/e2e/structural-regression.spec.js` - Main structural tests
-- `tests/e2e/dimensions-navbar.spec.js` - Dimension tests
-- `tests/e2e/navbar-visual.spec.js` - Navbar visual tests
-
-**Viewports tested:**
-- Desktop: 1440x900
-- Mobile: iPhone 12 (390x844)
-- Tablet: iPad Pro (1024x1366)
-
-**Environment variables:**
-- `TEST_LOCAL=1` - Test against `localhost:4000` instead of live site
-
-**When agents should use:**
-- After HTML/layout changes
-- Before committing component changes
-- To validate responsive behavior
-- To ensure accessibility compliance
-
-→ **Details**: `/docs/PLAYWRIGHT-TESTING.md`
+**Dependencies:**
+- `aos-client-sdk[azure]>=7.0.0` — SDK + Azure Functions + Service Bus + Auth
+- `pytest>=8.0.0` (dev)
+- `pytest-asyncio>=0.24.0` (dev)
+- `pylint>=3.0.0` (dev)
 
 ## Agent Validation Scripts
 
 Custom validation scripts in `.github/skills/*/scripts/`:
 
 ```bash
-./.github/skills/[skill-name]/scripts/validate-*.sh
+./.github/skills/agent-evolution-agent/scripts/audit-agent-quality.sh     # Quality audit
+./.github/skills/agent-evolution-agent/scripts/detect-duplication.sh      # Find duplicates
+./.github/skills/agent-evolution-agent/scripts/sync-agents-with-specs.sh  # Check spec refs
+./.github/skills/agent-evolution-agent/scripts/recommend-improvements.sh  # Get recommendations
+./.github/skills/agent-evolution-agent/scripts/track-metrics.sh           # Record metrics
 ```
-
-**Examples:**
-- Validate SCSS ontology usage
-- Check documentation structure
-- Verify agent file formats
-- Test subdomain templates
 
 **When agents should use:**
 - When working on agent system files
 - Before committing skill/agent changes
 - During agent ecosystem validation
 
+**See**: `.github/docs/dogfooding-guide.md` for complete dogfooding workflow.
+
 ## CI/CD Integration
 
-**GitHub Actions workflow:** `.github/workflows/playwright.yml`
+**GitHub Actions workflow:** `.github/workflows/ci.yml`
 
 **Triggers:**
-- Push/PR to main branch
-- Weekly on Sundays
-- Manual workflow dispatch
+- Push to `main`
+- Pull requests to `main`
 
-**Artifacts:**
-- HTML test reports (30-day retention)
-- Screenshots on failure (7-day retention)
+**Matrix:** Python 3.10, 3.11, 3.12
 
-→ **Details**: `/docs/PLAYWRIGHT-TESTING.md` (CI/CD Integration section)
-
-## Build Tools
-
-### Jekyll
-
-**Purpose**: Static site generator for theme builds
-
-**Configuration:** `_config.yml`
-
-**Not invoked via npm** - Agents should not run Jekyll directly. Use existing test infrastructure instead.
-
-### Vite (Optional)
-
-**Configuration files:**
-- `vite.config.js` - General Vite config
-- `vite.animations.config.js` - Animation-specific config
-
-**Not actively used** - Future enhancement for advanced builds
-
-## Dependencies
-
-### DevDependencies
-
-```json
-{
-  "@playwright/test": "^1.58.2",
-  "sass": "^1.97.2",
-  "stylelint": "^16.12.0",
-  "stylelint-config-standard-scss": "^13.1.0",
-  "stylelint-order": "^6.0.4",
-  "stylelint-scss": "^6.10.0"
-}
-```
-
-### Dependencies
-
-```json
-{
-  "motion": "^12.30.0"
-}
-```
+**Steps:**
+1. `pip install -e ".[dev]"`
+2. `pytest tests/ -v`
 
 ## Quick Reference for Agents
 
-### When making SCSS changes:
+### When making workflow changes (`workflows.py`):
 ```bash
-npm run test:scss       # First: Check compilation
-npm run lint:scss:fix   # Second: Auto-fix style issues
-npm test                # Third: Full validation
+pytest tests/ -v                      # Verify registration + logic
+pylint src/business_infinity/         # Lint
 ```
 
-### When making HTML/layout changes:
+### When adding a new workflow:
 ```bash
-npm run test:e2e:local  # Requires Jekyll running on :4000
-# OR
-npm run test:e2e        # Test against live site
-```
-
-### When making JavaScript changes:
-```bash
-npm run test:e2e:local  # E2E tests validate JS functionality
+pytest tests/ -v -k "test_workflow"   # Targeted test
+pytest tests/ -v                      # Full suite
 ```
 
 ### When making documentation changes:
@@ -271,122 +160,82 @@ npm run test:e2e:local  # E2E tests validate JS functionality
 
 ### Before committing anything:
 ```bash
-npm test                # Always run before commit
+pytest tests/ -v && pylint src/business_infinity/
 ```
 
 ## Best Practices for Agents
 
-1. **Run tools early and often** - Don't wait until the end
-2. **Use appropriate tool** - Sass for compilation, Stylelint for quality
-3. **Read error messages** - Tools provide specific guidance
-4. **Auto-fix when available** - Use `lint:scss:fix` to save time
-5. **Don't duplicate tools** - Reference existing scripts
-6. **Compose workflows** - Chain commands with `&&`
+1. **Run tests early and often** — Don't wait until the end
+2. **Use targeted tests** — `pytest -k "name"` for fast feedback
+3. **Read error messages** — pytest and pylint provide specific guidance
+4. **Compose workflows** — Chain commands with `&&`
+5. **Don't duplicate tools** — Reference existing test infrastructure
 
 ## Error Interpretation
 
-### Common Sass Errors
+### Common pytest Errors
 
-**"Undefined variable"**
+**`AssertionError` in workflow count test**
 ```
-Error: Undefined variable: "$undefined-var"
+AssertionError: assert 9 == 10
 ```
-→ Check variable is defined and imported
+→ A new workflow was added but `test_workflow_count` wasn't updated
 
-**"Undefined mixin"**
+**`ImportError`**
 ```
-Error: Undefined mixin: "genesis-environment"
+ImportError: cannot import name 'NewClass'
 ```
-→ Check mixin is defined and ontology imported
+→ Check `aos-client-sdk` version and import path
 
-### Common Stylelint Errors
+**`AttributeError: 'NoneType'...`**
+→ SDK mock is missing; check test fixtures
 
-**"@extend is not allowed"**
-```
-at-rule-disallowed-list: @extend is not allowed
-```
-→ Remove `@extend`, use mixins instead
+### Common pylint Errors
 
-**"Expected nesting depth to be no more than 3"**
-```
-max-nesting-depth: Expected nesting depth to be no more than 3
-```
-→ Flatten selector structure
+**`E0401: Unable to import 'aos_client'`**
+→ Run `pip install -e ".[dev]"` first
+
+**`C0114: Missing module docstring`**
+→ Add a module-level docstring at the top of the file
 
 ## Agent Validation Tools
 
-### 7. Agent Evolution Scripts
+### Agent Evolution Scripts
 
 **Purpose**: Self-improving agent quality validation (Ouroboros pattern)
 
 **Location**: `.github/skills/agent-evolution-agent/scripts/`
 
-**Key scripts:**
-
-**`audit-agent-quality.sh`** - Complete quality audit
-- Analyzes all instruction files, prompts, and skills
-- Calculates spec coverage and context efficiency
-- Identifies optimal vs needs-improvement agents
-- Run via: `npm run validate:agents`
-
-**`detect-duplication.sh`** - Find duplicate content
-- Scans for repeated content across agent files
-- Enforces zero-duplication principle (dogfooding)
-- Run via: `npm run validate:agents:duplicates`
-
-**`sync-agents-with-specs.sh`** - Check spec references
-- Verifies agents reference relevant specs
-- Detects missing spec coverage
-- Run via: `npm run validate:agents:sync`
-
-**`recommend-improvements.sh`** - Generate action items
-- Priority-ranked improvement recommendations
-- Specific actions for each agent
-- Dogfooding principles to apply
-- Run via: `npm run audit:agents`
-
-**`track-metrics.sh`** - Record quality trends
-- Tracks metrics over time
-- Shows historical improvements
-- Run via: `npm run metrics:agents`
-
-**`find-related-agents.sh`** - Spec relationship analysis
-- Find agents that should reference a spec
-- Useful when adding new specs
-- Direct execution: `./.github/skills/agent-evolution-agent/scripts/find-related-agents.sh <spec-file>`
-
-**`measure-context-efficiency.sh`** - Individual agent analysis
-- Calculate context efficiency score for single agent
-- Direct execution: `./.github/skills/agent-evolution-agent/scripts/measure-context-efficiency.sh <agent-file>`
+| Script | Purpose | How to Run |
+|--------|---------|------------|
+| `audit-agent-quality.sh` | Complete quality audit | Direct execution |
+| `detect-duplication.sh` | Find duplicate content | Direct execution |
+| `sync-agents-with-specs.sh` | Check spec references | Direct execution |
+| `recommend-improvements.sh` | Generate action items | Direct execution |
+| `track-metrics.sh` | Record quality trends | Direct execution |
+| `find-related-agents.sh <spec>` | Find agents for a spec | Direct execution |
+| `measure-context-efficiency.sh <file>` | Efficiency score | Direct execution |
 
 **Configuration**: None required, scripts are self-contained
 
-**CI/CD Integration**: `.github/workflows/agent-quality.yml` runs automatically on:
-- PRs affecting agent files
-- Weekly schedule (Sundays)
-- Manual workflow dispatch
-
-**Metrics Storage**: `.github/metrics/` directory stores historical data
+**Metrics Storage**: `.github/metrics/` directory
 
 **Best Practices:**
-1. **Run before agent changes** - `npm run validate:agents`
-2. **Track improvements** - `npm run metrics:agents:history`
-3. **Follow recommendations** - `npm run audit:agents`
-4. **Verify zero duplication** - `npm run validate:agents:duplicates`
-5. **Run full dogfooding check** - `npm run dogfood`
+1. Run before making agent system changes
+2. Track improvements with `track-metrics.sh --history`
+3. Follow recommendations from `recommend-improvements.sh`
+4. Verify zero duplication before committing
 
 ## Related Documentation
 
+- **Repository spec**: `.github/specs/business-infinity-repository.md`
 - **Dogfooding guide**: `.github/docs/dogfooding-guide.md` - Complete workflow
 - **Agent metrics**: `.github/docs/agent-metrics.md` - Metric definitions
 - **Agent philosophy**: `.github/docs/agent-philosophy.md` - Ouroboros pattern
-- **Stylelint guide**: `/docs/guides/STYLELINT.md`
-- **Stylelint limitations**: `/docs/guides/STYLELINT-LIMITATIONS.md`
-- **Playwright testing**: `/docs/PLAYWRIGHT-TESTING.md`
-- **Test organization**: `/tests/README.md`
+- **CI workflow**: `.github/workflows/ci.yml`
 
 ---
 
-**Version**: 1.1.0 - Added agent validation tools  
-**Last Updated**: 2026-02-14  
+**Version**: 2.0.0 - Adapted for BusinessInfinity (Python/Azure Functions)  
+**Last Updated**: 2026-03-07  
 **Mechanism**: Reference this file from `copilot-instructions.md` instead of duplicating tool lists

@@ -14,21 +14,12 @@ This directory contains specifications and frameworks for the agent intelligence
 
 ### Repository-Specific Specifications
 
-- **`genesis-theme-repository.md`** - Genesis Ontological Design System theme repository specifics
-  - Repository role and structure
+- **`business-infinity-repository.md`** - BusinessInfinity repository specifics
+  - Repository role in the AOS ecosystem
+  - Technology stack (Python 3.10+, aos-client-sdk, pytest, pylint)
+  - Directory structure and core patterns
   - Testing and validation workflows
-  - Subdomain template system
   - Key design principles
-
-- **`ontological-design-system.md`** - Genesis Ontological Design System specification
-  - Six semantic categories and 31 variants
-  - Three-tier architecture
-  - Ontological Proposition System
-
-- **`theme-subdomain-architecture.md`** - Theme-subdomain architecture pattern
-  - Repository responsibilities split
-  - Jekyll remote_theme mechanism
-  - Build and integration patterns
 
 ## Purpose
 
@@ -42,8 +33,7 @@ Reference these specs when:
 - Implementing validation workflows
 - Adapting system to new repositories
 - Learning repository-specific patterns
-- Understanding the ontological design system
 
-→ **Architecture**: `.github/.github/docs/agent-philosophy.md`  
+→ **Agent philosophy**: `.github/docs/agent-philosophy.md`  
 → **Documentation**: `.github/docs/`  
 → **Instructions**: `.github/instructions/`

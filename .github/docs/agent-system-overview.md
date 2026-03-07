@@ -1,6 +1,6 @@
 # Agent System Overview
 
-**Last Updated**: 2026-02-14
+**Last Updated**: 2026-03-07
 
 Overview of the GitHub Copilot agent intelligence system: directory structure, agent catalog, and learning paths.
 
@@ -12,29 +12,23 @@ Overview of the GitHub Copilot agent intelligence system: directory structure, a
 .github/
 ├── copilot-instructions.md          # High-level architecture context
 ├── instructions/                    # Path-activated coding standards (glob-based)
-│   ├── scss.instructions.md         #   SCSS/CSS patterns
-│   ├── html.instructions.md         #   HTML/Liquid templating
-│   ├── js.instructions.md           #   JavaScript patterns
+│   ├── python.instructions.md       #   Python coding standards (PEP 8, async, type hints)
+│   ├── azure-functions.instructions.md  #   Azure Functions / AOS workflow patterns
 │   ├── docs.instructions.md         #   Documentation standards
 │   ├── agents.instructions.md       #   Agent file standards
 │   ├── prompts.instructions.md      #   Prompt file standards
 │   └── skills.instructions.md       #   Skill file standards
 ├── specs/                           # Detailed specifications & frameworks
-│   └── agent-intelligence-framework.md
+│   ├── business-infinity-repository.md  # Repository-specific spec
+│   └── agent-intelligence-framework.md  # Generic agent system framework
 ├── docs/                            # Documentation & guides (this directory)
 ├── agents/                          # Custom agents (*.agent.md)
 ├── prompts/                         # Agent prompts (*.prompt.md)
-├── skills/                          # Agent skills (SKILL.md + scripts)
-│   └── {agent-name}/
-│       ├── SKILL.md
-│       ├── scripts/                 #   Validation & automation
-│       └── references/              #   Detailed specifications
-└── subdomain/                       # Reference intelligence for subdomain repos
-    ├── copilot-instructions.md
-    ├── agents/
-    ├── instructions/
-    ├── prompts/
-    └── skills/
+└── skills/                          # Agent skills (SKILL.md + scripts)
+    └── {agent-name}/
+        ├── SKILL.md
+        ├── scripts/                 #   Validation & automation
+        └── references/              #   Detailed specifications
 ```
 
 **Key principle**: Instructions auto-load via `applyTo` glob patterns. Specs and docs are referenced, never duplicated.
@@ -43,30 +37,20 @@ Overview of the GitHub Copilot agent intelligence system: directory structure, a
 
 ## Agent Catalog
 
-### Evolutionary Management
+### Meta-Intelligence
 
-| Agent | Skill | Prompt | Validation |
-|-------|-------|--------|------------|
-| Theme Genome | `.github/skills/theme-genome-agent/` | `theme-genome-agent.prompt.md` | `scripts/validate-ontology.sh` |
-| Subdomain Evolution | `.github/skills/subdomain-evolution-agent/` | `subdomain-evolution-agent.prompt.md` | — |
-| Agent Evolution | `.github/skills/agent-evolution-agent/` | — | 7 scripts (audit, sync, metrics, duplication, recommendations) |
-
-### Implementation Specialists
-
-| Agent | Skill | Prompt | Validation |
-|-------|-------|--------|------------|
-| SCSS Refactor | `.github/skills/scss-refactor-agent/` | `scss-refactor-agent.prompt.md` | `scripts/validate-scss.sh` |
-| HTML Template | `.github/skills/html-template-agent/` | — | `scripts/validate-html.sh` |
-| Responsive Design | `.github/skills/responsive-design-agent/` | `responsive-design-agent.prompt.md` | — |
-| Futuristic Effects | `.github/skills/futuristic-effects-agent/` | `futuristic-effects-agent.prompt.md` | — |
+| Agent | Skill | Purpose |
+|-------|-------|---------|
+| Agent Evolution | `.github/skills/agent-evolution-agent/` | Audits and improves the agent ecosystem (Ouroboros) |
 
 ### Support
 
-| Agent | Skill | Prompt | Validation |
-|-------|-------|--------|------------|
-| Documentation Manager | `.github/skills/documentation-manager-agent/` | — | 4 scripts (structure, links, redundancy, metadata) |
+| Agent | Skill | Purpose |
+|-------|-------|---------|
+| Documentation Manager | `.github/skills/documentation-manager-agent/` | Validates documentation structure, links, and metadata |
+| Repository Onboarding | `.github/skills/repository-onboarding/` | Bootstraps agent intelligence in new repositories |
 
-All prompts are in `.github/prompts/`. All validation scripts are under `.github/skills/{agent}/scripts/`.
+All prompts are in `.github/prompts/`. Validation scripts are under `.github/skills/{agent}/scripts/`.
 
 ---
 
@@ -88,31 +72,14 @@ The meta-intelligence agent audits and improves the agent ecosystem itself.
 
 ---
 
-## Subdomain Intelligence System
-
-**Location**: `.github/subdomain/`
-
-Subdomain repositories copy this directory into their `.github/` to get AI-assisted development aligned with the theme ontology.
-
-**Contents**: `copilot-instructions.md`, plus `agents/`, `instructions/`, `prompts/`, and `skills/` directories providing 3 agents (`content-author`, `scss-compliance`, `subdomain-evolution`) with matching skills and coding standards.
-
-**Setup**:
-```bash
-cp -r <theme-repo>/.github/subdomain/* <subdomain-repo>/.github/
-```
-
-Full guide: `.github/subdomain/README.md`
-
----
-
 ## Path-Activated Instructions
 
 Each instruction file has an `applyTo` glob pattern in its YAML frontmatter:
 
 ```yaml
 ---
-applyTo: "**/*.scss,_sass/**"
-description: "SCSS coding standards"
+applyTo: "**/*.py"
+description: "Python coding standards"
 ---
 ```
 
@@ -120,7 +87,7 @@ When editing a matching file, GitHub Copilot automatically loads the relevant in
 
 **Context loading order**:
 ```
-copilot-instructions.md  →  .github/instructions/  →  /docs/specifications/
+copilot-instructions.md  →  .github/instructions/  →  .github/specs/
 (high-level context)        (path-specific details)    (complete references)
 ```
 
@@ -130,29 +97,33 @@ Detailed guide: `.github/docs/path-specific-instructions.md`
 
 ## Common Workflows
 
-### New Feature Development
+### Adding a new workflow
 
-```bash
-# Validate HTML structure
-./.github/skills/html-template-agent/scripts/validate-html.sh template.html
+```python
+# 1. Add @app.workflow decorator in src/business_infinity/workflows.py
+@app.workflow("new-workflow")
+async def new_workflow(request: WorkflowRequest) -> Dict[str, Any]:
+    ...
 
-# Validate SCSS
-./.github/skills/scss-refactor-agent/scripts/validate-scss.sh styles.scss
+# 2. Run tests
+pytest tests/ -v
 
-# Run full test suite
-npm test
+# 3. Update test_workflow_count if needed
 ```
 
-### Ontological Evolution
+### Validating Python code
 
 ```bash
-# Validate current ontology
-./.github/skills/theme-genome-agent/scripts/validate-ontology.sh
+pytest tests/ -v                        # Run all tests
+pylint src/business_infinity/           # Lint
+```
 
-# After engine layer changes
-npm run test:scss
+### Agent Quality (Dogfooding)
 
-# Update GENOME.md and INTEGRATION-GUIDE.md
+```bash
+./.github/skills/agent-evolution-agent/scripts/audit-agent-quality.sh
+./.github/skills/agent-evolution-agent/scripts/detect-duplication.sh
+./.github/skills/agent-evolution-agent/scripts/recommend-improvements.sh
 ```
 
 ### Documentation Quality
@@ -164,39 +135,29 @@ npm run test:scss
 ./.github/skills/documentation-manager-agent/scripts/check-doc-metadata.sh docs/specifications/
 ```
 
-### Agent Quality (Dogfooding)
-
-```bash
-npm run validate:agents
-npm run validate:agents:duplicates
-npm run audit:agents
-npm run metrics:agents
-```
-
 ---
 
 ## Learning Paths
 
 ### New Contributors
 
-1. Read `agent-philosophy.md` — core principles
-2. Follow `agent-onboarding.md` — structured training
-3. Browse `.github/skills/` — available capabilities
-4. Run `npm test` — verify your setup
+1. Read `README.md` — project overview and architecture
+2. Read `.github/specs/business-infinity-repository.md` — repository-specific spec
+3. Read `agent-philosophy.md` — core principles
+4. Run `pytest tests/ -v` — verify your setup
 
 ### AI Agents
 
-1. Load `.github/skills/{agent-name}/SKILL.md`
-2. Check `.github/prompts/{agent-name}.prompt.md`
-3. Follow `.github/instructions/*.instructions.md` for the file type
-4. Run `scripts/validate-*.sh` to validate output
+1. Load `.github/specs/business-infinity-repository.md` for project context
+2. Load `.github/instructions/python.instructions.md` when editing Python
+3. Load `.github/instructions/azure-functions.instructions.md` when editing workflows
+4. Run `pytest tests/ -v` to validate output
 
-### Theme Maintainers
+### Repository Maintainers
 
-1. Use theme-genome-agent for PR reviews
-2. Run `./.github/skills/theme-genome-agent/scripts/validate-ontology.sh`
-3. Keep `GENOME.md` current
-4. Run `npm test` before merging
+1. Run `pytest tests/ -v` before merging
+2. Run agent evolution scripts for agent quality
+3. Keep `business-infinity-repository.md` spec current
 
 ---
 
@@ -204,12 +165,10 @@ npm run metrics:agents
 
 | Resource | Location |
 |----------|----------|
-| Ontology Integration Guide | `_sass/ontology/INTEGRATION-GUIDE.md` |
-| Evolution History | `GENOME.md` |
+| Repository Spec | `.github/specs/business-infinity-repository.md` |
+| Python Standards | `.github/instructions/python.instructions.md` |
+| Azure Functions Patterns | `.github/instructions/azure-functions.instructions.md` |
 | Agent Framework Spec | `.github/specs/agent-intelligence-framework.md` |
 | Agent Philosophy | `.github/docs/agent-philosophy.md` |
 | Conventional Tools | `.github/docs/conventional-tools.md` |
 | Dogfooding Guide | `.github/docs/dogfooding-guide.md` |
-| Agent Guidelines | `/docs/specifications/github-copilot-agent-guidelines.md` |
-| Component Patterns | `.github/skills/html-template-agent/references/COMPONENT-PATTERNS.md` |
-| Layout Patterns | `.github/skills/responsive-design-agent/references/LAYOUT-PATTERNS.md` |
