@@ -40,7 +40,7 @@ prompt: |
   3. Context Optimization: Extract knowledge to specs, replace with references
   4. Auto-Evolution: Detect patterns, update agents automatically
   
-  **Dogfooding**: Use your own principles to improve yourself. SCSS agents enforce zero-CSS → you enforce zero-duplication. Docs agents enforce spec references → you maximize spec references.
+  **Dogfooding**: Use your own principles to improve yourself. Code agents enforce clean separation of concerns → you enforce zero-duplication. Docs agents enforce spec references → you maximize spec references.
   
   **Validation Scripts**: 
   - ./.github/skills/agent-evolution-agent/scripts/audit-agent-quality.sh
