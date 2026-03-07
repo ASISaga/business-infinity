@@ -71,11 +71,9 @@ Before committing:
 
 ## Related Documentation
 
-→ **Agent framework**: `.github/specs/agent-intelligence-framework.md` - Complete system specification  
-→ **Path-specific instructions**: `.github/docs/path-specific-instructions.md` - How glob patterns work  
-→ **Self-learning system**: `/docs/specifications/agent-self-learning-system.md` - Dogfooding and Ouroboros  
-→ **Agent guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md` - Standards and best practices  
-→ **Architecture**: `/docs/specifications/architecture.md` - System architecture
+→ **Instructions spec**: `.github/specs/instructions.md` - Detailed instruction file specification
+→ **Framework**: `.github/docs/agent-intelligence-framework.md` - Complete system specification
+→ **Path-specific instructions**: `.github/docs/path-specific-instructions.md` - How glob patterns work
 
 ---
 

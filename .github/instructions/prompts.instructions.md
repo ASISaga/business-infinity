@@ -45,15 +45,13 @@ npm run lint:scss     # Stylelint validation
 ## Keep Focused
 
 Reference detailed patterns instead of duplicating:
-→ **Specifications**: `.github/specs/agent-intelligence-framework.md`  
+→ **Specifications**: `.github/specs/prompts.md`
 → **Documentation**: `.github/docs/`
 
 ## Related Documentation
 
-→ **Agent framework**: `.github/specs/agent-intelligence-framework.md` - Complete system specification  
-→ **Agent guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md` - Standards and best practices  
-→ **Self-learning system**: `/docs/specifications/agent-self-learning-system.md` - Dogfooding and Ouroboros  
-→ **Architecture**: `/docs/specifications/architecture.md` - System architecture  
+→ **Prompt spec**: `.github/specs/prompts.md` - Detailed prompt file specification
+→ **Framework**: `.github/docs/agent-intelligence-framework.md` - Complete system framework
 → **Agent philosophy**: `.github/docs/agent-philosophy.md` - Core principles
 
 ---

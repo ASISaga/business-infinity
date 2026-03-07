@@ -4,7 +4,27 @@ This directory contains specifications and frameworks for the agent intelligence
 
 ## Files
 
-### Agent System Specifications
+### Agent Intelligence System Specifications
+
+- **`agents.md`** - Specification for GitHub Copilot Custom Agent files (`.github/agents/*.agent.md`)
+  - YAML frontmatter requirements and required fields
+  - Naming conventions and prompt content structure
+  - Relationship between agent, prompt, and skill files
+
+- **`prompts.md`** - Specification for GitHub Copilot prompt files (`.github/prompts/*.prompt.md`)
+  - YAML frontmatter requirements and required fields
+  - Body structure and tool integration patterns
+  - Naming conventions and lean content guidelines
+
+- **`skills.md`** - Specification for GitHub Copilot skill files (`.github/skills/*/SKILL.md`)
+  - YAML frontmatter requirements following agentskills.io
+  - Directory structure, categories, and roles
+  - Validation script patterns
+
+- **`instructions.md`** - Specification for path-specific instruction files (`.github/instructions/*.instructions.md`)
+  - YAML frontmatter with `applyTo` glob patterns
+  - Content guidelines and the lean principle
+  - Naming conventions
 
 - **`agent-intelligence-framework.md`** - Complete reusable framework for establishing Copilot agent ecosystems
   - Five-pillar structure (agents, instructions, prompts, skills, copilot-instructions.md)

@@ -61,17 +61,15 @@ npm run lint:scss
 
 Detailed specifications belong in `references/` subdirectory, not in SKILL.md.
 
-→ **Specifications**: `.github/specs/agent-intelligence-framework.md`  
-→ **Documentation**: `.github/docs/`  
+→ **Specifications**: `.github/specs/skills.md`
+→ **Documentation**: `.github/docs/`
 → **agentskills.io spec**: https://agentskills.io
 
 ## Related Documentation
 
-→ `/docs/specifications/github-copilot-agent-guidelines.md` - Agent standards and practices  
-→ `/docs/specifications/agent-self-learning-system.md` - Ouroboros and self-improvement  
-→ `/docs/specifications/architecture.md` - System architecture overview  
-→ `.github/specs/agent-intelligence-framework.md` - Framework specification  
-→ `.github/docs/agent-philosophy.md` - Design principles
+→ **Skill spec**: `.github/specs/skills.md` - Detailed skill file specification
+→ **Framework**: `.github/docs/agent-intelligence-framework.md` - Framework specification
+→ **Agent philosophy**: `.github/docs/agent-philosophy.md` - Design principles
 
 ---
 

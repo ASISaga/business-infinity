@@ -92,12 +92,13 @@ Before committing:
 ## Related Documentation
 
 → **SDD spec**: `.github/specs/spec-driven-development.md` - SDD principles and agent workflows
-→ **Agent framework**: `.github/specs/agent-intelligence-framework.md` - Complete system specification
-→ **Architecture**: `/docs/specifications/architecture.md` - System architecture and organization
-→ **Self-learning system**: `/docs/specifications/agent-self-learning-system.md` - Dogfooding and Ouroboros
-→ **Agent guidelines**: `/docs/specifications/github-copilot-agent-guidelines.md` - Standards and best practices
+→ **Agent spec**: `.github/specs/agents.md` - Agent file specification
+→ **Prompt spec**: `.github/specs/prompts.md` - Prompt file specification
+→ **Skill spec**: `.github/specs/skills.md` - Skill file specification
+→ **Instructions spec**: `.github/specs/instructions.md` - Instruction file specification
+→ **Framework**: `.github/docs/agent-intelligence-framework.md` - Complete system framework
 
 ---
 
-**Version**: 1.3 - Adapted SDD workflow to Copilot agent meta-intelligence system
+**Version**: 1.4 - Updated references to use dedicated spec files
 **Last Updated**: 2026-03-07
