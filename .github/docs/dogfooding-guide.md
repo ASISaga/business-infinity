@@ -193,7 +193,7 @@ For each agent needing improvement:
 
 3. **Validate:**
    ```bash
-   npm test  # Ensure no breaking changes
+   pytest tests/ -v  # Ensure no breaking changes
    ./scripts/measure-context-efficiency.sh <agent>  # Verify improvement
    ```
 

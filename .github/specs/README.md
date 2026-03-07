@@ -14,21 +14,11 @@ This directory contains specifications and frameworks for the agent intelligence
 
 ### Repository-Specific Specifications
 
-- **`genesis-theme-repository.md`** - Genesis Ontological Design System theme repository specifics
-  - Repository role and structure
+- **`repository.md`** - Repository-specific spec (one per repository, same standard name)
+  - Repository name, description, and role in the ecosystem
+  - Technology stack and coding patterns
   - Testing and validation workflows
-  - Subdomain template system
-  - Key design principles
-
-- **`ontological-design-system.md`** - Genesis Ontological Design System specification
-  - Six semantic categories and 31 variants
-  - Three-tier architecture
-  - Ontological Proposition System
-
-- **`theme-subdomain-architecture.md`** - Theme-subdomain architecture pattern
-  - Repository responsibilities split
-  - Jekyll remote_theme mechanism
-  - Build and integration patterns
+  - Key design principles for agents and contributors
 
 ## Purpose
 
@@ -42,8 +32,7 @@ Reference these specs when:
 - Implementing validation workflows
 - Adapting system to new repositories
 - Learning repository-specific patterns
-- Understanding the ontological design system
 
-→ **Architecture**: `.github/.github/docs/agent-philosophy.md`  
+→ **Agent philosophy**: `.github/docs/agent-philosophy.md`  
 → **Documentation**: `.github/docs/`  
 → **Instructions**: `.github/instructions/`
