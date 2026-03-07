@@ -32,8 +32,8 @@ Activate when:
 ## Core Principles
 
 **Dogfooding**: Agents improve agents  
-- SCSS agents → zero-CSS | Agent prompts → zero-duplication  
-- HTML agents → semantic | Agent structure → semantic  
+- Code agents → clean separation | Agent prompts → zero-duplication  
+- Domain agents → semantic | Agent structure → semantic  
 - Docs agents → spec refs | Agent prompts → spec refs
 
 **Spec-Driven**: Detailed knowledge in specs, not prompts  

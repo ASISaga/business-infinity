@@ -1,9 +1,9 @@
 # Documentation Standards Guide
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-02-10
+**Version**: 2.0.0  
+**Last Updated**: 2026-03-07
 
-Complete documentation standards for the Genesis Design System repository. This guide complements `.github/instructions/docs.instructions.md` with detailed examples and patterns.
+Complete documentation standards for the BusinessInfinity repository. This guide complements `.github/instructions/docs.instructions.md` with detailed examples and patterns.
 
 ## Table of Contents
 
@@ -20,20 +20,20 @@ Complete documentation standards for the Genesis Design System repository. This 
 **Guides** (`/docs/guides/`):
 - `FEATURE-GUIDE.md` - Uppercase for primary guides
 - `feature-guide.md` - Lowercase acceptable for secondary guides
-- Examples: `QUICK-START.md`, `STYLELINT.md`, `deployment-guide.md`
+- Examples: `QUICK-START.md`, `deployment-guide.md`, `workflow-guide.md`
 
 **Specifications** (`/docs/specifications/`):
 - `feature.md` - Lowercase preferred
 - Descriptive names over abbreviations
-- Examples: `scss-ontology-system.md`, `html-semantic-patterns.md`
+- Examples: `architecture.md`, `build-deployment.md`, `agent-self-learning-system.md`
 
 **References** (`/docs/references/`):
 - `FEATURE-REFERENCE.md` - Uppercase for main references
 - Quick reference sheets and cheat sheets
-- Examples: `SCSS-QUICK-REFERENCE.md`, `COMPONENT-REFERENCE.md`
+- Examples: `WORKFLOW-REFERENCE.md`, `API-REFERENCE.md`
 
 **Systems** (`/docs/systems/`):
-- Domain-organized: `ontology/`, `animation/`, `layout/`
+- Domain-organized subdirectories as needed
 - Follow same naming as specifications within
 
 ### Archived Documentation
@@ -122,11 +122,11 @@ Every documentation file should meet these criteria:
 
 **Single Responsibility:**
 ```markdown
-# ✅ Good: SCSS Ontology System
-Complete guide to the Genesis Ontology system
+# ✅ Good: Business Workflow Specification
+Complete guide to the AOS orchestration workflow patterns
 
-# ❌ Bad: Web Design Guide
-(Too broad - covers SCSS, HTML, JS, etc.)
+# ❌ Bad: General Development Guide
+(Too broad - covers workflows, deployment, testing, etc.)
 ```
 
 **Purpose Statement:**
@@ -145,9 +145,9 @@ Complete guide to the Genesis Ontology system
 ```markdown
 ## Related Documentation
 
-- [SCSS Ontology System](specifications/scss-ontology-system.md)
-- [HTML Semantic Patterns](specifications/html-semantic-patterns.md)
-- [Component Library](specifications/component-library.md)
+- [Business Workflows Spec](specifications/workflows.md)
+- [Enterprise Capabilities](specifications/enterprise-capabilities.md)
+- [Architecture Overview](specifications/architecture.md)
 ```
 
 ### 3. Maintainability
@@ -178,20 +178,28 @@ Creating: FEATURE-UPDATE-2026-02-10.md
 
 ```markdown
 # ✅ Good Example
-\`\`\`scss
-@import "ontology/index";
+\`\`\`python
+from aos_client import AOSApp, WorkflowRequest
 
-.component {
-  @include genesis-environment('distributed');
-}
+app = AOSApp(name="business-infinity")
+
+@app.workflow("strategic-review")
+async def strategic_review(request: WorkflowRequest) -> dict:
+    agents = await request.client.list_agents()
+    status = await request.client.start_orchestration(
+        agent_ids=[a.agent_id for a in agents],
+        purpose="Drive strategic review and continuous organisational improvement",
+        purpose_scope="C-suite strategic alignment and cross-functional coordination",
+        context=request.body,
+    )
+    return {"orchestration_id": status.orchestration_id}
 \`\`\`
 
 # ❌ Bad Example
-\`\`\`scss
-// Incomplete, won't work
-.component {
-  @include genesis-environment('distributed');
-}
+\`\`\`python
+# Incomplete, won't work
+async def my_workflow(request):
+    agents = list_agents()  # Missing await, wrong call
 \`\`\`
 ```
 
@@ -261,18 +269,18 @@ archive/implementations/
 ❌ **DON'T:**
 ```
 docs/
-  ontology-v3.0.md
-  ontology-v4.0.md
-  ontology-v4.1.md
+  workflows-v1.0.md
+  workflows-v2.0.md
+  workflows-v2.1.md
 ```
 
 ✅ **DO:**
 ```
 docs/
-  specifications/scss-ontology-system.md  (current version inside)
+  specifications/workflows.md  (current version inside)
 
 archive/implementations/
-  ONTOLOGY-v3.0-MIGRATION.md  (if needed for historical reference)
+  WORKFLOWS-v1.0-MIGRATION.md  (if needed for historical reference)
 ```
 
 ### Pattern: Scattered Guides
@@ -280,16 +288,16 @@ archive/implementations/
 ❌ **DON'T:**
 ```
 docs/
-  scss-intro.md
-  scss-basics.md
-  scss-advanced.md
-  scss-tips.md
+  workflow-intro.md
+  workflow-basics.md
+  workflow-advanced.md
+  workflow-tips.md
 ```
 
 ✅ **DO:**
 ```
 docs/
-  specifications/scss-ontology-system.md  (comprehensive, all levels)
+  specifications/workflows.md  (comprehensive, all levels)
 ```
 
 ## Progressive Enhancement
@@ -331,27 +339,30 @@ Update metadata:
 Replace inline, don't create new files:
 
 ```markdown
-# Before (v2.0.0)
-\`\`\`scss
-.component {
-  margin: 1rem;
-  padding: 1rem;
-}
+# Before (v1.0.0)
+\`\`\`python
+async def strategic_review(request):
+    agents = await request.client.list_agents()
+    return {"agents": [a.agent_id for a in agents]}
 \`\`\`
 
-# After (v2.1.0) - Update in place
-\`\`\`scss
-@import "ontology/index";
-
-.component {
-  @include genesis-environment('focused');
-}
+# After (v2.0.0) - Update in place
+\`\`\`python
+@app.workflow("strategic-review")
+async def strategic_review(request: WorkflowRequest) -> dict:
+    agents = await request.client.list_agents()
+    status = await request.client.start_orchestration(
+        agent_ids=[a.agent_id for a in agents],
+        purpose="Drive strategic review",
+        context=request.body,
+    )
+    return {"orchestration_id": status.orchestration_id}
 \`\`\`
 ```
 
 Add version note if breaking change:
 ```markdown
-**Changed in v2.1.0**: Now uses ontology mixins instead of raw CSS.
+**Changed in v2.0.0**: Now uses `start_orchestration` for perpetual workflows.
 ```
 
 ### Expanding Sections

@@ -1,12 +1,12 @@
 # Agent Dogfooding Guide
 
-**Version**: 1.0  
-**Last Updated**: 2026-02-10  
+**Version**: 2.0  
+**Last Updated**: 2026-03-07  
 **Status**: Production Active
 
 ## Overview
 
-This guide explains how the GitHub Copilot agent system practices **dogfooding** - using the same principles it enforces on code to improve itself.
+This guide explains how the GitHub Copilot agent system practices **dogfooding** — using the same principles it enforces on code to continuously improve itself. The guide is actionable: every workflow maps to a real agent, script, or file in `.github/`.
 
 ## What is Dogfooding?
 
@@ -14,8 +14,8 @@ This guide explains how the GitHub Copilot agent system practices **dogfooding**
 
 | What Agents Enforce on Code | How Agents Apply to Themselves |
 |------------------------------|--------------------------------|
-| **Zero-CSS in subdomains** | Zero-duplication in agent prompts |
-| **Semantic HTML structure** | Semantic agent role definitions |
+| **Clean separation of concerns** | Zero-duplication in agent prompts |
+| **Semantic role definitions** | Clear scope per agent/prompt/skill |
 | **Spec references in code** | Maximum spec references in agents |
 | **Lean context usage** | Optimized token usage in prompts |
 | **Validation scripts** | Automated agent quality audits |
@@ -71,7 +71,7 @@ This guide explains how the GitHub Copilot agent system practices **dogfooding**
 
 **Example:**
 ```bash
-./scripts/measure-context-efficiency.sh .github/instructions/scss.instructions.md
+./scripts/measure-context-efficiency.sh .github/instructions/python.instructions.md
 ```
 
 **Scores:**
@@ -88,7 +88,7 @@ This guide explains how the GitHub Copilot agent system practices **dogfooding**
 ```
 
 **Applies dogfooding:**
-- SCSS agents enforce zero-CSS
+- Code agents enforce clean separation of concerns
 - Agent system enforces zero-duplication
 
 **Action if duplicates found:**
@@ -229,26 +229,75 @@ After adding/updating `.github/specs/` files:
 ./.github/skills/agent-evolution-agent/scripts/sync-agents-with-specs.sh
 ```
 
+## Invoking the Agent Intelligence System
+
+Dogfooding is implemented through specific agents and skills in `.github/`. Use them directly:
+
+### Run the Agent Evolution Agent
+
+```bash
+# Invoke via GitHub Copilot (Chat or agent mode)
+# Use skill: agent-evolution-agent
+```
+
+→ **Agent definition**: `.github/agents/agent-evolution-agent.agent.md`  
+→ **Skill**: `.github/skills/agent-evolution-agent/SKILL.md`
+
+### Update Specs (Spec Manager)
+
+When you discover new patterns or update technical knowledge:
+
+```bash
+# Invoke via GitHub Copilot agent mode
+# Use agent: spec-manager
+```
+
+→ **Agent**: `.github/agents/spec-manager.agent.md`  
+→ **Prompts**: `.github/prompts/spec-create.prompt.md`, `spec-plan.prompt.md`, `spec-tasks.prompt.md`
+
+### Validate Documentation (Documentation Manager)
+
+After updating agents/specs:
+
+```bash
+# Invoke via GitHub Copilot agent mode
+# Use agent: documentation-manager-agent
+```
+
+→ **Agent**: `.github/agents/documentation-manager-agent.agent.md`  
+→ **Skill**: `.github/skills/documentation-manager-agent/SKILL.md`
+
+## System Files Reference
+
+| Category | Location | Purpose |
+|----------|----------|---------|
+| Agent definitions | `.github/agents/*.agent.md` | Entry points for agent execution |
+| Prompt workflows | `.github/prompts/*.prompt.md` | Detailed task prompts |
+| Skills | `.github/skills/*/SKILL.md` | Executable capabilities with scripts |
+| Path instructions | `.github/instructions/*.instructions.md` | Auto-loaded coding standards |
+| Specifications | `.github/specs/*.md` | Authoritative technical frameworks |
+| Metrics history | `.github/metrics/` | Historical quality data |
+
 ## Best Practices
 
 ### 1. Spec References Over Duplication
 ❌ **Don't:**
 ```markdown
-## Business Workflow Pattern
+## Domain Pattern
 
-The C-suite orchestration has 3 variants:
-- Perpetual: continuous strategic alignment...
-- Hierarchical: one lead agent + coordinators...
+The pattern has 3 variants:
+- Variant 1: description...
+- Variant 2: description...
 [... 50 lines of pattern details ...]
 ```
 
 ✅ **Do:**
 ```markdown
-## Business Workflow Pattern
+## Domain Pattern
 
-Use the C-suite orchestration template for all business workflows.
+Use the pattern defined in the spec for all implementations.
 
-→ **Complete workflow patterns**: `.github/specs/workflows.md`
+→ **Complete patterns**: `.github/specs/workflows.md`
 → **Enterprise capabilities**: `.github/specs/enterprise-capabilities.md`
 ```
 
@@ -268,9 +317,9 @@ Use the C-suite orchestration template for all business workflows.
 
 ### 4. Apply Dogfooding Principles
 For each agent type:
-- **Python/workflow agents**: Minimize inline workflow pattern details, reference `.github/specs/workflows.md`
-- **Docs agents**: Reference specs, don't duplicate
-- **GitHub agents**: Use validation scripts, track metrics
+- **Workflow/domain agents**: Minimize inline implementation details, reference `.github/specs/workflows.md`
+- **Docs agents**: Reference specs, don't duplicate; invoke `documentation-manager-agent`
+- **Meta-intelligence agents**: Use validation scripts, track metrics; invoke `agent-evolution-agent`
 
 ## Success Metrics
 
@@ -304,11 +353,14 @@ The agent system is designed to continuously improve:
 
 ## Related Documentation
 
-- `.github/specs/agents.md` - Agent file specification
-- `.github/specs/skills.md` - Skill file specification
-- `.github/docs/agent-philosophy.md` - Ecosystem overview
-- `.github/skills/agent-evolution-agent/SKILL.md` - Meta-agent skill
+→ **Agent file spec**: `.github/specs/agents.md`  
+→ **Skill file spec**: `.github/specs/skills.md`  
+→ **Prompt file spec**: `.github/specs/prompts.md`  
+→ **Instructions spec**: `.github/specs/instructions.md`  
+→ **Agent philosophy**: `.github/docs/agent-philosophy.md`  
+→ **Meta-agent skill**: `.github/skills/agent-evolution-agent/SKILL.md`  
+→ **Agent system overview**: `.github/docs/agent-system-overview.md`
 
 ---
 
-**Remember**: Dogfooding isn't just about metrics - it's about building a self-improving intelligence system that continuously evolves to become more effective.
+**Remember**: Dogfooding isn't just about metrics — it's about building a self-improving intelligence system that continuously evolves to become more effective.
