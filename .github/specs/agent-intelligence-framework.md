@@ -53,11 +53,11 @@ description: "Brief description for agent discovery"
 - **Tool integration**: Reference npm scripts, linters, validators
 
 **Common instruction files:**
-- `scss.instructions.md` → SCSS/CSS patterns
-- `html.instructions.md` → HTML/Liquid/templating
-- `js.instructions.md` → JavaScript patterns
+- `<language>.instructions.md` → Language-specific coding standards (e.g. `python.instructions.md`)
+- `<framework>.instructions.md` → Framework/platform patterns (e.g. `azure-functions.instructions.md`)
 - `docs.instructions.md` → Documentation standards
-- `github-agent-system.instructions.md` → This file (agent ecosystem)
+- `github-specs.instructions.md` → Agent spec files
+- `github-instructions.instructions.md` → Instruction file standards
 
 ### 2. Prompts (`prompts/*.prompt.md`)
 
@@ -220,10 +220,12 @@ Use this agent when:
 
 ## Tool Integration
 
-**npm scripts:**
+**Build/test scripts:**
 ```bash
-npm test
-npm run lint
+# Run all tests
+<test-runner> tests/ -v
+# Lint/format source
+<linter> src/
 ```
 
 **Validation scripts:**
@@ -296,8 +298,8 @@ npm run test
 ## Tool Integration
 
 **Required tools:**
-- `npm test` - Description
-- `npm run lint` - Description
+- `<test-runner> tests/` - Run all tests
+- `<linter> src/` - Lint source files
 
 **Validation scripts:**
 ```bash
@@ -313,9 +315,9 @@ All changes must pass:
    ./.github/skills/skill-name/scripts/validate-*.sh
    ```
 
-2. **npm scripts:**
+2. **Test runner:**
    ```bash
-   npm test
+   <test-runner> tests/ -v
    ```
 
 3. **Manual checks:**
@@ -376,7 +378,7 @@ All changes must pass:
 
 3. **Run project tests:**
    ```bash
-   npm test
+   <test-runner> tests/
    ```
 
 4. **Test validation scripts:**
@@ -395,8 +397,8 @@ All changes must pass:
 
 1. **Duplicate tool functionality**
    ```bash
-   # DON'T create custom SCSS validator
-   # DO reference npm run lint:scss
+   # DON'T reimplement what a linter/validator already does
+   # DO call the existing tool via bash
    ```
 
 2. **Overlap agent responsibilities**
@@ -417,12 +419,12 @@ All changes must pass:
 
 ### ✅ DO
 
-1. **Reference npm scripts**
+1. **Reference build/test scripts**
    ```markdown
    Run validation:
    ```bash
-   npm test
-   npm run lint:scss
+   <test-runner> tests/
+   <linter> src/
    ```
    ```
 
@@ -483,7 +485,7 @@ Maintain ecosystem-level documentation:
 Instructions activate only when relevant files are edited:
 ```yaml
 ---
-applyTo: "**/*.scss,_sass/**"
+applyTo: "**/*.py,src/**"
 ---
 ```
 
@@ -528,17 +530,16 @@ Use tables, lists, and diagrams instead of prose:
 **Always reference, never reimplement:**
 
 ```bash
-npm test              # All tests
-npm run test:build    # Build validation
-npm run lint          # All linters
-npm run lint:fix      # Auto-fix
+<test-runner> tests/     # All tests
+<linter> src/            # All linters
+<formatter> src/         # Auto-fix
 ```
 
 **In prompts/skills:**
 ```markdown
 Run validation:
 ```bash
-npm test
+<test-runner> tests/
 ```
 ```
 
@@ -567,7 +568,7 @@ if [ -z "$FILE" ]; then
 fi
 
 # Use existing tool
-npm run lint:check "$FILE"
+<linter> "$FILE"
 
 exit $?
 ```
@@ -576,8 +577,8 @@ exit $?
 
 **Integrate with existing configuration:**
 
-- Configuration files: `.eslintrc.json`, `.stylelintrc.json`, etc.
-- Built-in compilers: `tsc`, `sass`, `babel`
+- Configuration files: language/framework-specific config (e.g. `pyproject.toml`, `package.json`, `.eslintrc.json`)
+- Built-in compilers and checkers: language/framework tools (e.g. `mypy`, `pylint`, `tsc`)
 - Custom validators: Project-specific scripts
 
 **Never duplicate linter logic** - always call via bash.
@@ -641,7 +642,7 @@ Replace with your repository's:
 Update `instructions/*.instructions.md`:
 - Keep generic patterns
 - Add domain-specific guidance
-- Update tool references (npm scripts)
+- Update tool references (test runner, linter for the chosen language/framework)
 - Adjust glob patterns
 
 ### 4. Create Domain Agents
@@ -662,7 +663,7 @@ Delete or adapt content that's specific to source repo:
 ### 6. Test & Validate
 
 ```bash
-npm test
+<test-runner> tests/
 ./.github/skills/*/scripts/validate-*.sh
 ```
 
@@ -677,6 +678,6 @@ npm test
 ---
 
 **Applies to**: `.github/**/*.md`, `.github/**/*.prompt.md`, `.github/skills/**/*`  
-**Version**: 2.0.0 - Generic reusable framework (extracted from theme-specific v1.5)  
-**Last Updated**: 2026-02-13  
+**Version**: 2.1.0 - Application-agnostic (removed HTML/CSS/npm-specific references)  
+**Last Updated**: 2026-03-07  
 **License**: MIT - Free to copy and adapt for any repository
