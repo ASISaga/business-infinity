@@ -136,7 +136,7 @@
 }
 
 .boardroom-toast {
-  @include genesis-entity('secondary');         // Transient notification           // Toast card
+  @include genesis-entity('secondary');         // Transient notification card
   
   &.boardroom-toast-info {
     @include genesis-entity('secondary');      // Info toast
