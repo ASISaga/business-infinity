@@ -1,0 +1,195 @@
+// Onboarding Page - Genesis Ontological SCSS
+
+.onboarding-page {
+  @include genesis-environment('focused');      // Centered flow
+}
+
+.onboarding-container {
+  @include genesis-environment('focused');      // Centered container
+}
+
+// Onboarding header - structural, layout only
+.onboarding-header {
+  // Structural header - no entity (visual recursion fix)
+  
+  h1 {
+    @include genesis-cognition('axiom');        // Welcome title
+  }
+  
+  .welcome-subtitle {
+    @include genesis-cognition('discourse');    // Welcome message
+  }
+  
+  .progress-bar {
+    @include genesis-state('evolving');         // Progress indicator
+    @include genesis-entity('secondary');       // Progress bar container
+    
+    .progress-fill {
+      @include genesis-entity('imperative');    // Progress fill
+      @include genesis-state('evolving');       // Animated progress
+    }
+    
+    .progress-label {
+      @include genesis-cognition('gloss');      // Progress text
+    }
+  }
+  
+  .step-indicator {
+    @include genesis-environment('associative'); // Step dots
+    
+    .step-dot {
+      @include genesis-synapse('step');         // Multi-step process navigation
+      
+      &.active {
+        @include genesis-state('active');       // Active step state
+      }
+      
+      &.completed {
+        @include genesis-state('stable');       // Completed step
+      }
+    }
+  }
+}
+
+.onboarding-step {
+  @include genesis-entity('primary');           // Step card
+  
+  .step-number {
+    @include genesis-cognition('quantum');      // Step number badge
+    @include genesis-entity('imperative');      // Badge styling
+  }
+  
+  .step-title {
+    @include genesis-cognition('motive');       // Step title
+  }
+  
+  .step-description {
+    @include genesis-cognition('discourse');    // Step instructions
+  }
+  
+  .step-illustration {
+    @include genesis-entity('secondary');       // Illustration area
+  }
+  
+  .step-form {
+    @include genesis-environment('interaction-form'); // Form layout
+    @include genesis-entity('secondary');       // Form area
+    
+    .form-group {
+      @include genesis-entity('secondary');     // Form field group
+      
+      label {
+        @include genesis-cognition('motive');   // Field label
+      }
+      
+      input, select, textarea {
+        @include genesis-synapse('input-primary'); // Responsive form input
+      }
+      
+      .field-help {
+        @include genesis-cognition('gloss');    // Help text
+      }
+      
+      .field-error {
+        @include genesis-entity('imperative');  // Error message
+        @include genesis-cognition('gloss');    // Error text
+      }
+    }
+  }
+  
+  .step-options {
+    @include genesis-environment('distributed'); // Option cards grid
+    
+    .option-card {
+      @include genesis-entity('secondary');     // Option card
+      @include genesis-synapse('execute');      // Selectable
+      
+      &:hover {
+        @include genesis-entity('primary');     // Hover state
+      }
+      
+      &.selected {
+        @include genesis-entity('imperative');  // Selected state
+      }
+      
+      .option-icon {
+        @include genesis-cognition('axiom');    // Option icon
+      }
+      
+      .option-title {
+        @include genesis-cognition('motive');   // Option title
+      }
+      
+      .option-description {
+        @include genesis-cognition('gloss');    // Option description
+      }
+    }
+  }
+}
+
+.onboarding-actions {
+  @include genesis-environment('associative');  // Button group
+  @include genesis-entity('secondary');         // Actions container
+  
+  .next-button {
+    @include genesis-synapse('execute');        // Next action
+  }
+  
+  .back-button {
+    @include genesis-synapse('inquiry');        // Back action
+  }
+  
+  .skip-button {
+    @include genesis-synapse('navigate');       // Skip action
+  }
+  
+  .finish-button {
+    @include genesis-synapse('execute');        // Finish action
+    @include genesis-entity('imperative');      // Emphasized finish
+  }
+}
+
+.onboarding-sidebar {
+  @include genesis-environment('navigation-sidebar'); // Sidebar navigation
+  @include genesis-entity('secondary');         // Sidebar panel
+  
+  .sidebar-title {
+    @include genesis-cognition('motive');       // Sidebar title
+  }
+  
+  .sidebar-steps {
+    @include genesis-environment('chronological'); // Steps list
+    
+    .sidebar-step {
+      @include genesis-synapse('step');         // Step indicator
+      
+      &.active {
+        @include genesis-state('active');       // Active step state
+      }
+      
+      &.completed {
+        @include genesis-state('stable');       // Completed step
+      }
+      
+      .step-name {
+        @include genesis-cognition('discourse'); // Step name
+      }
+    }
+  }
+  
+  .sidebar-help {
+    @include genesis-entity('secondary');       // Help section
+    
+    .help-title {
+      @include genesis-cognition('motive');     // Help title
+    }
+    
+    .help-text {
+      @include genesis-cognition('gloss');      // Help text
+    }
+    
+    .help-link {
+      @include genesis-synapse('navigate');     // Help link
+    }
+  }
+}

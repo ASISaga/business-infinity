@@ -1,0 +1,6 @@
+// Boardroom Chat Area Empty State - Genesis Ontological SCSS
+
+.boardroom-chat-empty-state {
+  @include genesis-entity('latent');            // Empty state
+  @include genesis-cognition('gloss');          // Empty message
+}

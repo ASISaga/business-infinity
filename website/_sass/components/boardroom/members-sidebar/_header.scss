@@ -1,0 +1,9 @@
+// Boardroom Members Sidebar Header - Genesis Ontological SCSS
+
+.boardroom-members-header {
+  @include genesis-entity('primary');           // Header
+  
+  .header-title {
+    @include genesis-cognition('motive');       // Title
+  }
+}

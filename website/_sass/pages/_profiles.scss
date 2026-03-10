@@ -1,0 +1,10 @@
+// Profiles Page - Genesis Ontological SCSS
+
+.profiles {
+  @include genesis-environment('distributed');  // Grid layout
+  
+  .card {
+    @include genesis-entity('primary');         // Profile card
+    @include genesis-cognition('motive');       // Profile text
+  }
+}

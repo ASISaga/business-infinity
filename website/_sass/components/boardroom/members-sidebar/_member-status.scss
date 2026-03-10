@@ -1,0 +1,13 @@
+// Boardroom Member Status - Genesis Ontological SCSS
+
+.member-status {
+  @include genesis-cognition('quantum');        // Status badge
+  
+  &.online {
+    @include genesis-state('stable');           // Online
+  }
+  
+  &.offline {
+    @include genesis-entity('latent');          // Offline
+  }
+}

@@ -1,0 +1,9 @@
+// Boardroom Chat Header - Genesis Ontological SCSS
+
+.boardroom-chat-header {
+  @include genesis-entity('secondary');         // Chat header
+  
+  .chat-title {
+    @include genesis-cognition('axiom');        // Title
+  }
+}

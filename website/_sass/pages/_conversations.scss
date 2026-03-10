@@ -1,0 +1,155 @@
+// Conversations Page - Genesis Ontological SCSS
+
+// .header is a structural section - layout only
+.header {
+  // Structural header - no entity/atmosphere (visual recursion fix)
+  
+  h1 {
+    @include genesis-cognition('axiom');        // Main heading
+  }
+  
+  p {
+    @include genesis-cognition('discourse');    // Header description
+  }
+}
+
+.dashboard {
+  @include genesis-environment('manifest');     // Dashboard grid layout
+}
+
+// Sidebar is a structural layout container
+.sidebar {
+  @include genesis-environment('navigation-sidebar'); // Sidebar navigation
+}
+
+// Main content area is structural - layout only
+.main-content {
+  // Structural content area - no entity (visual recursion fix)
+}
+
+.agent-list {
+  @include genesis-entity('aggregate');         // Agent list container
+}
+
+.agent-item {
+  @include genesis-entity('secondary');         // Agent item
+  @include genesis-synapse('navigate');         // Clickable item
+  
+  &:hover,
+  &:focus {
+    @include genesis-state('evolving');         // Hover state
+  }
+  
+  &.selected {
+    @include genesis-state('active');           // Active state
+  }
+}
+
+.agent-avatar {
+  @include genesis-entity('image-adaptive');    // Responsive image
+}
+
+.agent-info {
+  h4 {
+    @include genesis-cognition('motive');       // Agent name
+  }
+  
+  p {
+    @include genesis-cognition('gloss');        // Agent description
+  }
+}
+
+.conversation-list {
+  @include genesis-entity('aggregate');         // Conversation list
+}
+
+.conversation-item {
+  @include genesis-entity('secondary');         // Conversation card
+  
+  &:hover,
+  &:focus {
+    @include genesis-state('evolving');         // Hover state
+  }
+}
+
+.conversation-header {
+  @include genesis-environment('associative');  // Flex layout
+}
+
+.conversation-title {
+  @include genesis-cognition('motive');         // Conversation title
+}
+
+.conversation-status {
+  @include genesis-cognition('quantum');        // Status badge
+}
+
+.status-draft {
+  @include genesis-state('evolving');           // Draft state
+}
+
+.status-signed {
+  @include genesis-state('stable');             // Signed state
+}
+
+.status-completed {
+  @include genesis-state('stable');             // Completed state
+}
+
+.status-pending {
+  @include genesis-state('evolving');           // Pending state
+}
+
+.conversation-meta {
+  @include genesis-cognition('gloss');          // Metadata text
+}
+
+.conversation-content {
+  @include genesis-cognition('discourse');      // Conversation body
+}
+
+.conversation-signatures {
+  @include genesis-entity('aggregate');         // Signatures container
+}
+
+.signature {
+  @include genesis-cognition('gloss');          // Signature text
+}
+
+.signature-icon {
+  @include genesis-cognition('quantum');        // Signature icon
+}
+
+.controls {
+  @include genesis-environment('associative');  // Button group layout
+}
+
+.btn {
+  @include genesis-synapse('execute');          // Action button
+}
+
+.btn-primary {
+  @include genesis-entity('primary');           // Primary button
+}
+
+.btn-secondary {
+  @include genesis-entity('secondary');         // Secondary button
+}
+
+.loading {
+  @include genesis-entity('latent');            // Loading state
+  @include genesis-cognition('gloss');          // Loading text
+}
+
+.error {
+  @include genesis-entity('imperative');        // Error message
+  @include genesis-cognition('discourse');      // Error text
+}
+
+.empty-state {
+  @include genesis-entity('latent');            // Empty state
+  
+  h3 {
+    @include genesis-cognition('motive');       // Empty state heading
+  }
+}

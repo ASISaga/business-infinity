@@ -1,0 +1,5 @@
+// Boardroom Main - Genesis Ontological SCSS
+
+.boardroom-main {
+  @include genesis-environment('manifest');     // Dashboard layout
+}
