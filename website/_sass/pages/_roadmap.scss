@@ -1,0 +1,14 @@
+// Roadmap Page - Genesis Ontological SCSS
+
+h1 {
+  @include genesis-cognition('axiom');          // Main heading
+}
+
+#gantt {
+  @include genesis-entity('primary');           // Gantt chart container
+}
+
+.error {
+  @include genesis-entity('imperative');        // Error message
+  @include genesis-cognition('gloss');          // Small error text
+}

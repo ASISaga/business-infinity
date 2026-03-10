@@ -1,0 +1,42 @@
+// Mentor-mode Page - Genesis Ontological SCSS
+
+.mentor-mode-page {
+  @include genesis-environment('focused');      // Learning interface
+  
+  // Mentor header - structural, layout only
+  .mentor-header {
+    // Structural header - no entity (visual recursion fix)
+    
+    h1 {
+      @include genesis-cognition('axiom');      // Title
+    }
+  }
+  
+  .lesson-content {
+    @include genesis-entity('primary');         // Lesson container
+    
+    .lesson-title {
+      @include genesis-cognition('motive');     // Lesson title
+    }
+    
+    .lesson-text {
+      @include genesis-cognition('discourse');  // Lesson content
+    }
+  }
+  
+  .quiz-section {
+    @include genesis-entity('secondary');       // Quiz area
+    
+    .question {
+      @include genesis-cognition('motive');     // Question text
+    }
+    
+    .answer-options {
+      @include genesis-entity('aggregate');     // Options list
+    }
+    
+    .submit-button {
+      @include genesis-synapse('execute');      // Submit action
+    }
+  }
+}

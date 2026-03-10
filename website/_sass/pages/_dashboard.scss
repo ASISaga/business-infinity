@@ -1,0 +1,30 @@
+// Dashboard Page - Genesis Ontological SCSS
+
+.dashboard {
+  @include genesis-environment('manifest');     // Dashboard grid layout
+}
+
+.role-header {
+  @include genesis-entity('primary');           // Header section
+  @include genesis-cognition('axiom');          // Header text
+}
+
+.scope-toggle {
+  @include genesis-environment('associative');  // Button group
+  
+  button {
+    @include genesis-synapse('execute');        // Toggle button
+    
+    &.active {
+      @include genesis-entity('imperative');    // Active state
+    }
+  }
+}
+
+.panel {
+  @include genesis-entity('primary');           // Content panel
+}
+
+.actions button {
+  @include genesis-synapse('execute');          // Action button
+}

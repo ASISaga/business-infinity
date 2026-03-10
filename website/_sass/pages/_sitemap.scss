@@ -1,0 +1,31 @@
+// Sitemap Page - Genesis Ontological SCSS
+
+.sitemap-page {
+  @include genesis-environment('chronological'); // Hierarchical list
+  
+  // Sitemap header - structural, layout only
+  .sitemap-header {
+    // Structural header - no entity (visual recursion fix)
+    
+    h1 {
+      @include genesis-cognition('axiom');      // Title
+    }
+  }
+  
+  // Sitemap section - structural, layout only
+  .sitemap-section {
+    // Structural section - no entity (visual recursion fix)
+    
+    h2 {
+      @include genesis-cognition('motive');     // Section title
+    }
+    
+    .sitemap-list {
+      @include genesis-entity('aggregate');     // Link list
+      
+      a {
+        @include genesis-synapse('navigate');   // Page link
+      }
+    }
+  }
+}

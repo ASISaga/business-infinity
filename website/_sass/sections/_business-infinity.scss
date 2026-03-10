@@ -1,0 +1,185 @@
+// Business Infinity Section - Genesis Ontological SCSS
+
+.business-infinity-container {
+  @include genesis-environment('focused');     // Centered layout
+  
+  // Hero section
+  .hero-section {
+    @include genesis-entity('transcendent');    // Hero card (Rule 5: heroes keep entity)
+    @include genesis-atmosphere('ethereal');   // Light, uplifting
+    
+    .hero-title {
+      @include genesis-cognition('axiom');     // Large headline
+    }
+    
+    .hero-description {
+      @include genesis-cognition('discourse'); // Body text
+    }
+    
+    .hero-actions {
+      @include genesis-environment('associative'); // Action buttons group
+    }
+  }
+  
+  // Features section - structural container, feature cards keep styling
+  .features-section {
+    @include genesis-environment('distributed'); // Grid layout
+    
+    .section-title {
+      @include genesis-cognition('axiom');     // Section heading
+    }
+    
+    .features-grid {
+      @include genesis-environment('distributed'); // Card grid
+    }
+    
+    .feature-card {
+      @include genesis-entity('primary');      // Feature card
+      
+      .feature-title {
+        @include genesis-cognition('motive');  // Card title
+      }
+      
+      .feature-description {
+        @include genesis-cognition('discourse'); // Description
+      }
+      
+      .feature-benefits {
+        @include genesis-entity('aggregate');  // List container
+      }
+    }
+  }
+  
+  // Business feature section - structural container, feature cards keep styling
+  .business-feature-section {
+    // Structural section - no entity (visual recursion fix)
+    
+    .feature-row {
+      @include genesis-environment('distributed'); // Grid layout
+    }
+    
+    .feature-card {
+      @include genesis-entity('primary');      // Feature card
+      
+      .feature-icon {
+        @include genesis-cognition('axiom');   // Large icon
+      }
+      
+      .feature-title {
+        @include genesis-cognition('motive');  // Feature title
+      }
+      
+      .feature-description {
+        @include genesis-cognition('discourse'); // Description
+      }
+    }
+  }
+  
+  // Pricing section - structural container, pricing cards keep styling
+  .business-pricing-section {
+    // Structural section - no entity/atmosphere (visual recursion fix)
+    
+    .pricing-header {
+      @include genesis-entity('primary');      // Header area
+      
+      .pricing-title {
+        @include genesis-cognition('axiom');   // Main title
+      }
+      
+      .pricing-subtitle {
+        @include genesis-cognition('discourse'); // Subtitle
+      }
+    }
+    
+    .pricing-row {
+      @include genesis-environment('distributed'); // Pricing grid
+    }
+    
+    .pricing-plan {
+      @include genesis-entity('primary');      // Pricing card
+      
+      &.featured {
+        @include genesis-entity('imperative');  // Featured plan
+      }
+      
+      .pricing-name {
+        @include genesis-cognition('motive');  // Plan name
+      }
+      
+      .pricing-price {
+        @include genesis-cognition('axiom');   // Large price
+      }
+      
+      .pricing-features {
+        @include genesis-entity('aggregate');  // Feature list
+      }
+      
+      .pricing-button {
+        @include genesis-synapse('execute');   // Subscribe button
+        
+        &.secondary {
+          @include genesis-synapse('inquiry'); // Secondary action
+        }
+      }
+    }
+  }
+  
+  // Content section
+  .business-content-section {
+    @include genesis-environment('focused');   // Reading layout
+    
+    .content-title {
+      @include genesis-cognition('axiom');     // Page title
+    }
+    
+    .content-subtitle {
+      @include genesis-cognition('motive');    // Section heading
+    }
+    
+    .content-text {
+      @include genesis-cognition('discourse'); // Body text
+    }
+    
+    .content-list {
+      @include genesis-entity('aggregate');    // List container
+    }
+  }
+  
+  // Testimonials section - structural container, testimonial cards keep styling
+  .testimonials-section {
+    // Structural section - no entity/atmosphere (visual recursion fix)
+    
+    .section-title {
+      @include genesis-cognition('axiom');     // Section title
+    }
+    
+    .testimonial-card {
+      @include genesis-entity('secondary');    // Testimonial card
+      
+      .testimonial-text {
+        @include genesis-cognition('testimony'); // Quote text
+      }
+      
+      .testimonial-author {
+        @include genesis-cognition('motive');  // Author name
+      }
+    }
+  }
+  
+  // Use cases section - structural container, content keeps styling
+  .use-cases-section {
+    // Structural section - no entity/atmosphere (visual recursion fix)
+    
+    .section-title {
+      @include genesis-cognition('axiom');     // Section title
+    }
+    
+    .use-cases-nav {
+      @include genesis-environment('associative'); // Tab navigation
+      
+      .tab-link {
+        @include genesis-synapse('navigate');  // Tab link
+      }
+    }
+  }
+}

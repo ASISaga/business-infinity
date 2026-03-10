@@ -1,0 +1,21 @@
+// Features2 Page - Genesis Ontological SCSS
+
+.features2-page {
+  @include genesis-environment('distributed');  // Feature grid layout
+  
+  .feature-section {
+    @include genesis-entity('primary');         // Section card
+    
+    h2 {
+      @include genesis-cognition('axiom');      // Section title
+    }
+    
+    .feature-list {
+      @include genesis-entity('aggregate');     // Feature list
+      
+      .feature-item {
+        @include genesis-cognition('discourse'); // Feature text
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+// Chat Page - Genesis Ontological SCSS
+
+.chat-interface {
+  @include genesis-entity('primary');          // Main chat interface
+  
+  .start-chat {
+    @include genesis-synapse('invoke');          // AI chat start action
+  }
+  
+  .chat-window {
+    @include genesis-entity('secondary');      // Chat window container
+  }
+  
+  .messages {
+    @include genesis-environment('chronological'); // Message stream
+  }
+  
+  .msg {
+    @include genesis-cognition('discourse');   // Message text
+    
+    &.user-to-agent {
+      @include genesis-entity('primary');      // User message
+    }
+    
+    &.agent-to-user {
+      @include genesis-entity('secondary');    // Agent message
+    }
+    
+    &.agent-to-agent {
+      @include genesis-cognition('gloss');     // System message
+    }
+  }
+}

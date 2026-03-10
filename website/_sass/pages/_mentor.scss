@@ -1,0 +1,18 @@
+// Mentor Mode Page - Genesis Ontological SCSS
+
+.mentor-mode {
+  @include genesis-environment('focused');      // Reading/interaction layout
+  
+  textarea {
+    @include genesis-cognition('protocol');     // Input text area
+  }
+  
+  .answer {
+    @include genesis-entity('secondary');       // Answer display
+    @include genesis-cognition('discourse');    // Answer text
+  }
+  
+  .new-qa {
+    @include genesis-environment('associative'); // Q&A controls group
+  }
+}
