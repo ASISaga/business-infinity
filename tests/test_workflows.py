@@ -106,6 +106,8 @@ class TestBoardroomPhilosophy:
         assert CXO_DOMAINS["coo"]["archetype"] == "Deming"
         assert CXO_DOMAINS["cmo"]["archetype"] == "Ogilvy"
         assert CXO_DOMAINS["chro"]["archetype"] == "Drucker"
+        assert CXO_DOMAINS["cto"]["archetype"] == "Turing"
+        assert CXO_DOMAINS["cso"]["archetype"] == "Sun Tzu"
 
     def test_pathway_types(self):
         """Verify pathway types are derived from domain mappings."""

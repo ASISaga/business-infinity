@@ -91,4 +91,4 @@ BOARDROOM_DEBATE_SCOPE = (
 )
 
 #: All CXO pathway types derived from the philosophy.
-CXO_PATHWAY_TYPES = [domain["pathway"] for domain in CXO_DOMAINS.values()]
+CXO_PATHWAY_TYPES = list(dict.fromkeys(domain["pathway"] for domain in CXO_DOMAINS.values()))
