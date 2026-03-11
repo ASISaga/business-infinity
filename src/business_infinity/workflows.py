@@ -20,7 +20,7 @@ interaction, and network discovery.
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
 
 from aos_client import (
     AOSApp,
@@ -33,7 +33,12 @@ from aos_client import (
     workflow_template,
 )
 from aos_client.observability import ObservabilityConfig
-from typing import Callable
+
+from business_infinity.boardroom import (
+    BOARDROOM_DEBATE_PURPOSE,
+    BOARDROOM_DEBATE_SCOPE,
+    CXO_DOMAINS,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -49,10 +54,19 @@ app = AOSApp(
 # ── C-Suite Agent Selection ──────────────────────────────────────────────────
 
 #: Agent types considered part of the C-suite
-C_SUITE_TYPES = {"LeadershipAgent", "CMOAgent", "CEOAgent", "CFOAgent", "CTOAgent", "CSOAgent"}
+C_SUITE_TYPES = {
+    "LeadershipAgent",
+    "CEOAgent",
+    "CFOAgent",
+    "COOAgent",
+    "CMOAgent",
+    "CHROAgent",
+    "CTOAgent",
+    "CSOAgent",
+}
 
 #: Preferred C-suite agent IDs for BusinessInfinity orchestrations
-C_SUITE_AGENT_IDS = ["ceo", "cfo", "cmo", "coo", "cto", "cso"]
+C_SUITE_AGENT_IDS = ["ceo", "cfo", "coo", "cmo", "chro", "cto", "cso"]
 
 
 async def select_c_suite_agents(client: AOSClient) -> List[AgentDescriptor]:
@@ -195,6 +209,71 @@ async def budget_approval(request: WorkflowRequest) -> Dict[str, Any]:
         status.orchestration_id,
     )
     return {"orchestration_id": status.orchestration_id, "status": status.status.value}
+
+
+# ── Boardroom Debate (Philosophy Implementation) ────────────────────────────
+
+
+@app.workflow("boardroom-debate")
+async def boardroom_debate(request: WorkflowRequest) -> Dict[str, Any]:
+    """Start a purpose-driven boardroom debate orchestration.
+
+    Implements the core BusinessInfinity philosophy: a decision tree debate
+    where each CXO agent applies their domain leadership to propose pathways
+    in response to a business event.  Pathways are debated, scored for
+    resonance against the company's purpose, and the boardroom converges on
+    an autonomous action.
+
+    Request body::
+
+        {
+            "event": "Competitor launches aggressive campaign",
+            "event_source": "market",
+            "company_purpose": "Deliver reliable innovation that earns lasting trust",
+            "context": {"churn_rate": 0.12, "market": "EU SaaS"}
+        }
+    """
+    agents = await select_c_suite_agents(request.client)
+    agent_ids = [a.agent_id for a in agents]
+
+    if not agent_ids:
+        raise ValueError("No C-suite agents available for boardroom debate")
+
+    # Build domain context so each agent understands their role in the debate.
+    domain_context = {
+        aid: CXO_DOMAINS[aid]
+        for aid in agent_ids
+        if aid in CXO_DOMAINS
+    }
+
+    status = await request.client.start_orchestration(
+        agent_ids=agent_ids,
+        purpose=BOARDROOM_DEBATE_PURPOSE,
+        purpose_scope=BOARDROOM_DEBATE_SCOPE,
+        context={
+            "event": request.body.get("event", ""),
+            "event_source": request.body.get("event_source", ""),
+            "company_purpose": request.body.get("company_purpose", ""),
+            "debate_context": request.body.get("context", {}),
+            "cxo_domains": domain_context,
+        },
+    )
+    logger.info(
+        "Boardroom debate orchestration started: %s | agents=%s",
+        status.orchestration_id,
+        agent_ids,
+    )
+    return {"orchestration_id": status.orchestration_id, "status": status.status.value}
+
+
+@app.on_orchestration_update("boardroom-debate")
+async def handle_boardroom_debate_update(update) -> None:
+    """Handle intermediate updates from boardroom debate orchestrations."""
+    logger.info(
+        "Boardroom debate update from agent %s: %s",
+        getattr(update, "agent_id", "unknown"),
+        getattr(update, "output", ""),
+    )
 
 
 # ── Enterprise Capability Workflows (Enhancement #1–#12) ────────────────────

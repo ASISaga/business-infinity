@@ -4,8 +4,8 @@ build-backend = "setuptools.backends._legacy:_Backend"
 
 [project]
 name = "business-infinity"
-version = "4.0.0"
-description = "Lean Azure Functions client app powered by the Agent Operating System — orchestration managed internally by Foundry Agent Service"
+version = "5.0.0"
+description = "Purpose-driven boardroom of legendary CXO agents on the Agent Operating System — decision tree debates, resonance scoring, and autonomous action"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
