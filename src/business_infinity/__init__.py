@@ -1,8 +1,10 @@
-"""BusinessInfinity — lean Azure Functions client application.
+"""BusinessInfinity — purpose-driven boardroom on the Agent Operating System.
 
-BusinessInfinity demonstrates how a client application uses the Agent Operating
-System as an infrastructure service.  It contains only business logic — agent
-lifecycle, orchestration, messaging, and storage are handled by AOS.
+BusinessInfinity is a living boardroom of legendary CXO agents.  Each agent
+inherits the company's purpose, responds to events with domain leadership,
+and debates through a decision tree of pathways.  Resonance scoring ensures
+debates converge in seconds, and autonomous actions are taken with purpose
+front and centre.
 
 The ``aos-client-sdk`` provides the ``AOSApp`` framework that handles all
 Azure Functions scaffolding, Service Bus communication, authentication,
@@ -16,4 +18,4 @@ Usage::
     functions = app.get_functions()
 """
 
-__version__ = "2.0.0"
+__version__ = "5.0.0"
