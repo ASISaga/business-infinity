@@ -1,9 +1,0 @@
-// Boardroom Search Form - Genesis Ontological SCSS
-
-.boardroom-search-form {
-  @include genesis-entity('secondary');         // Search form
-  
-  .search-input {
-    @include genesis-cognition('discourse');    // Search input
-  }
-}

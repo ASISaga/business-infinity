@@ -1,6 +1,0 @@
-// Boardroom Toggle Strip - Genesis Ontological SCSS
-
-.boardroom-toggle-strip {
-  @include genesis-synapse('toggle');           // Toggle control
-  @include genesis-entity('secondary');         // Toggle strip
-}
