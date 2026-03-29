@@ -103,7 +103,7 @@ entrepreneurship and Leadership
 ### Step 6 — The Boardroom
 
 **Narrative**: What if I create an orchestration of such AI Agents — CFO (Warren
-Buffett), CMO (Seth Godin), CTO (Steve Jobs), etc — called Boardroom? Each CXO
+Buffett), CMO (Seth Godin), CTO (Alan Turing), etc — called Boardroom? Each CXO
 in this boardroom is perpetual and purpose driven, rather than task driven. And
 each CXO cascades its purpose from the purpose of the company — its vision,
 mission, and values.
