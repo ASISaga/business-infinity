@@ -1,0 +1,78 @@
+workflow_id: "crisis_response"
+version: "1.0.0"
+
+steps:
+  crisis_alert:
+    narrative: "A critical event has been detected. The boardroom is convening in emergency session. What is the nature of the crisis?"
+    response: "Speed matters, but reckless speed destroys trust. The boardroom will move fast—but every response will be scored against your purpose before execution."
+    actions: []
+    navigation:
+      next: "impact_assessment"
+
+  impact_assessment:
+    narrative: "All CXO agents are assessing the impact across their domains. CFO is calculating financial exposure. COO is evaluating operational disruption. CMO is monitoring customer and market sentiment. CTO is checking system integrity. CHRO is assessing people impact."
+    response: "A crisis is never single-domain. The boardroom's strength is that it sees the full picture simultaneously—financial, operational, reputational, technological, and human."
+    actions:
+      - label: "Impact Dashboard"
+        description: "Real-time cross-domain impact assessment"
+        url: "impact-dashboard"
+    navigation:
+      next: "containment_proposals"
+      back: "crisis_alert"
+
+  containment_proposals:
+    narrative: "Each CXO is proposing an immediate containment pathway. CMO: manage the narrative. CFO: protect cash flow. COO: stabilise operations. CTO: secure systems. CHRO: support affected people. CSO: assess competitive implications."
+    response: "Containment is not the solution—it's the breathing room that makes a thoughtful solution possible. Every containment action must still resonate with purpose."
+    actions:
+      - label: "Containment Options"
+        description: "View all CXO containment proposals and their resonance scores"
+        url: "containment-options"
+    navigation:
+      next: "rapid_debate"
+      back: "impact_assessment"
+
+  rapid_debate:
+    narrative: "The boardroom is in rapid debate mode. CXOs are challenging and refining each other's containment proposals. Time-to-resolution is critical, but purpose alignment is non-negotiable."
+    response: "Rapid debate compresses the normal decision tree into minutes. Each CXO's challenge sharpens the others' proposals. The purpose acts as a filter—not a brake."
+    actions:
+      - label: "Watch Debate"
+        description: "Follow the rapid debate in real time"
+        url: "boardroom-debate"
+    navigation:
+      next: "crisis_convergence"
+      back: "containment_proposals"
+
+  crisis_convergence:
+    narrative: "The boardroom has converged. The highest-resonance containment pathway has been selected. Here is the unified crisis response."
+    response: "This response was debated, scored, and converged in minutes—not days. And it was measured against your purpose, not just your panic."
+    actions:
+      - label: "Crisis Response Plan"
+        description: "The converged response with assigned CXOs and immediate actions"
+        url: "crisis-plan"
+    navigation:
+      next: "execute_response"
+      back: "rapid_debate"
+
+  execute_response:
+    narrative: "Executing the crisis response across all connected systems. CMO is issuing communications via email and LinkedIn. COO is adjusting operations via ERP. CTO is deploying technical fixes. CFO is activating financial safeguards. CHRO is launching people support."
+    response: "Autonomous execution means no handoff delays. The CRM, ERP, email, and messaging systems are already acting on the boardroom's decision."
+    actions:
+      - label: "Execution Status"
+        description: "Real-time execution status across all connected systems"
+        url: "execution-status"
+    navigation:
+      next: "monitor_recovery"
+      back: "crisis_convergence"
+
+  monitor_recovery:
+    narrative: "The initial response is deployed. The boardroom is now in continuous monitoring mode. All CXO agents are tracking recovery signals across their domains and will reconvene if conditions change."
+    response: "A crisis doesn't end with the first response. The boardroom stays vigilant—monitoring, adapting, and ensuring that recovery stays aligned with purpose."
+    actions:
+      - label: "Recovery Dashboard"
+        description: "Track recovery metrics and ongoing boardroom monitoring"
+        url: "recovery-dashboard"
+      - label: "Post-Mortem"
+        description: "Schedule a post-crisis review when recovery is confirmed"
+        url: "post-mortem"
+    navigation:
+      back: "execute_response"

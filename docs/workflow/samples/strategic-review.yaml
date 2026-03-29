@@ -1,0 +1,100 @@
+workflow_id: "quarterly_strategic_review"
+version: "1.0.0"
+
+steps:
+  review_opening:
+    narrative: "The quarterly strategic review is now in session. All CXO agents are present. Let's begin with the state of the business. What is the primary strategic question for this quarter?"
+    response: "A focused review starts with a focused question. The boardroom will evaluate every domain—finance, operations, market, technology, people, strategy—through the lens of this question."
+    actions: []
+    navigation:
+      next: "financial_health"
+
+  financial_health:
+    narrative: "CFO (Buffett), present the financial health of the organisation. Revenue, margins, cash flow, and any fiscal risks that the boardroom should weigh in its strategic decisions."
+    response: "The numbers tell a story, but they don't make decisions. The boardroom will use these financials as constraints and inputs for every domain's strategic pathway."
+    actions:
+      - label: "Financial Dashboard"
+        description: "Live financial metrics from connected ERP and accounting systems"
+        url: "financial-dashboard"
+    navigation:
+      next: "operational_performance"
+      back: "review_opening"
+
+  operational_performance:
+    narrative: "COO (Deming), report on operational performance. Throughput, efficiency, bottlenecks, and process health across the organisation."
+    response: "Operational excellence is the backbone. If the machine isn't running smoothly, no strategy—however brilliant—will land."
+    actions:
+      - label: "Operations Report"
+        description: "Operational KPIs and process health metrics"
+        url: "operations-report"
+    navigation:
+      next: "market_position"
+      back: "financial_health"
+
+  market_position:
+    narrative: "CMO (Ogilvy) and CSO (Sun Tzu), present the market position. Customer sentiment, competitive landscape, brand perception, and strategic opportunities or threats."
+    response: "Markets move fast. The boardroom needs to know where we stand relative to competitors, customers, and emerging trends—right now, not last quarter."
+    actions:
+      - label: "Market Intelligence"
+        description: "Competitive analysis and customer sentiment data"
+        url: "market-intelligence"
+    navigation:
+      next: "technology_innovation"
+      back: "operational_performance"
+
+  technology_innovation:
+    narrative: "CTO (Turing), what is the state of our technology platform? Innovation pipeline, technical debt, infrastructure reliability, and emerging capabilities."
+    response: "Technology is either an accelerant or a drag. The boardroom needs to understand which it is this quarter—and what investments will tip the balance."
+    actions:
+      - label: "Technology Review"
+        description: "Platform health, innovation pipeline, and technical debt assessment"
+        url: "technology-review"
+    navigation:
+      next: "people_culture"
+      back: "market_position"
+
+  people_culture:
+    narrative: "CHRO (Drucker), report on people and culture. Engagement, retention, talent pipeline, and cultural alignment with our stated purpose."
+    response: "People carry the purpose into the world. If the culture drifts from the purpose, every other strategy becomes hollow."
+    actions:
+      - label: "People Report"
+        description: "Engagement scores, retention rates, and culture alignment"
+        url: "people-report"
+    navigation:
+      next: "boardroom_debate"
+      back: "technology_innovation"
+
+  boardroom_debate:
+    narrative: "All domains have reported. CEO (Jobs), open the debate. Each CXO proposes a strategic pathway for the quarter. Pathways will be debated, challenged, and scored for resonance with our purpose."
+    response: "This is where the boardroom earns its name. Seven domain leaders, seven pathways, one purpose. The debate begins."
+    actions:
+      - label: "Start Debate"
+        description: "Initiate the multi-domain strategic debate"
+        url: "boardroom-debate"
+    navigation:
+      next: "resonance_convergence"
+      back: "people_culture"
+
+  resonance_convergence:
+    narrative: "The debate has concluded. Each pathway has been scored for resonance with our company's purpose. The boardroom will now converge on a unified strategic direction for the quarter."
+    response: "Convergence is not compromise. It's the synthesis of the highest-resonance pathways into a single, purpose-driven course of action."
+    actions:
+      - label: "View Resonance Scores"
+        description: "See resonance scores for each CXO's strategic pathway"
+        url: "resonance-scores"
+    navigation:
+      next: "strategic_actions"
+      back: "boardroom_debate"
+
+  strategic_actions:
+    narrative: "The boardroom has converged. Here are the autonomous actions for the quarter. Each action is mapped to a responsible CXO, a connected business system, and a resonance threshold for ongoing governance."
+    response: "These actions will be executed autonomously and continuously monitored for resonance. If conditions change, the boardroom will reconvene and adapt."
+    actions:
+      - label: "Action Plan"
+        description: "Quarterly action plan with assigned CXOs and execution timelines"
+        url: "action-plan"
+      - label: "Schedule Next Review"
+        description: "Set the date for the next quarterly strategic review"
+        url: "schedule-review"
+    navigation:
+      back: "resonance_convergence"

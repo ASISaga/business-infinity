@@ -1,0 +1,100 @@
+workflow_id: "marketing_business_infinity"
+version: "1.0.0"
+
+steps:
+  opening_question:
+    narrative: "How much time does your leadership team spend in meetings each week?"
+    response: "For most companies, the answer is 15 to 25 hours. That's half the working week spent aligning, debating, and deciding—instead of executing."
+    actions: []
+    navigation:
+      next: "the_problem"
+
+  the_problem:
+    narrative: "What if those meetings didn't just take time—they also introduced bias, politics, and delayed execution? Every hour of debate is an hour your competitor is acting."
+    response: "Traditional decision-making is sequential—propose, debate, approve, execute. Each handoff introduces latency, and each human layer introduces politics."
+    actions:
+      - label: "Decision Latency Report"
+        description: "Industry data on decision-making speed vs. execution outcomes"
+        url: "decision-latency"
+    navigation:
+      next: "the_vision"
+      back: "opening_question"
+
+  the_vision:
+    narrative: "What if your company had a boardroom that never sleeps? A C-suite of AI agents—each modelled after a legendary leader—that debates, decides, and acts autonomously, 24/7, guided entirely by your company's purpose?"
+    response: "That's Business Infinity. Not a chatbot. Not an analytics dashboard. A living, purpose-driven boardroom where every decision is measured against your vision, mission, and values."
+    actions:
+      - label: "Business Infinity Overview"
+        description: "Purpose-driven autonomous boardroom"
+        url: "business-infinity"
+    navigation:
+      next: "meet_the_boardroom"
+      back: "the_problem"
+
+  meet_the_boardroom:
+    narrative: "In your Business Infinity boardroom, the CEO is Steve Jobs—visionary narrative leadership. The CFO is Warren Buffett—disciplined resource allocation. The CMO is David Ogilvy—persuasive communication. Each CXO cascades its decisions from your company's stated purpose."
+    response: "These aren't generic AI assistants. Each agent carries the domain knowledge, decision-making style, and leadership philosophy of its archetype. And they work together—debating, challenging, and refining each other's proposals."
+    actions:
+      - label: "Meet the CXO Agents"
+        description: "Explore the seven legendary CXO archetypes"
+        url: "agent-catalogue"
+    navigation:
+      next: "how_it_works"
+      back: "the_vision"
+
+  how_it_works:
+    narrative: "Here's how it works. A business event occurs—a competitor launches a campaign, a key customer churns, a supply chain disrupts. Your CXO agents each propose a pathway from their domain. They debate. Each pathway is scored for resonance with your company's purpose. The boardroom converges. Action is taken—automatically."
+    response: "The entire cycle—event, debate, resonance scoring, convergence, execution—happens in seconds. No meetings. No approval chains. No politics."
+    actions:
+      - label: "See a Live Debate"
+        description: "Watch a boardroom debate unfold in real time"
+        url: "boardroom-demo"
+    navigation:
+      next: "mcp_integration"
+      back: "meet_the_boardroom"
+
+  mcp_integration:
+    narrative: "Your agents don't operate in a vacuum. Through MCP—Model Context Protocol—they connect to your ERP, CRM, MES, LinkedIn, email, messaging, and any business system you use. They see real data and take real action."
+    response: "MCP turns the boardroom from a strategic layer into an operational one. When the CMO decides on a retention campaign, the CRM executes it. When the COO optimises a workflow, the ERP adjusts. Instantly."
+    actions:
+      - label: "MCP Integrations"
+        description: "See all available business system connections"
+        url: "mcp-integrations"
+    navigation:
+      next: "resonance_governance"
+      back: "how_it_works"
+
+  resonance_governance:
+    narrative: "You might ask—how do you trust autonomous AI decisions? The answer is resonance. Every proposed action is scored against your company's purpose. If it doesn't resonate, it doesn't execute. Your purpose is the ultimate governor."
+    response: "Resonance isn't consensus. It's alignment with meaning. A high-resonance action might be bold and uncomfortable—but it will always be true to who your company is."
+    actions:
+      - label: "Resonance Explained"
+        description: "How purpose-driven scoring governs autonomous action"
+        url: "resonance"
+    navigation:
+      next: "the_proof"
+      back: "mcp_integration"
+
+  the_proof:
+    narrative: "ASI Saga, the company that built Business Infinity, runs on Business Infinity. The boardroom you're experiencing right now is the product itself. This conversation was initiated, orchestrated, and delivered by the boardroom's own agents."
+    response: "This is not a demo of a future product. This is the product, running live, demonstrating itself. If it can run the company that built it, it can run yours."
+    actions:
+      - label: "ASI Saga Case Study"
+        description: "How Business Infinity runs its own creator"
+        url: "asi-saga-loop"
+    navigation:
+      next: "call_to_action"
+      back: "resonance_governance"
+
+  call_to_action:
+    narrative: "Your company's purpose deserves more than a slide deck. It deserves a boardroom that lives it in every decision, every second of every day. Ready to set up your boardroom?"
+    response: "Onboarding takes minutes. Your boardroom starts running immediately. And it never stops."
+    actions:
+      - label: "Start Onboarding"
+        description: "Set up your Business Infinity boardroom now"
+        url: "onboarding"
+      - label: "Schedule a Deep Dive"
+        description: "Talk to our team about your specific use case"
+        url: "schedule"
+    navigation:
+      back: "the_proof"
