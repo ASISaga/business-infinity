@@ -1,5 +1,6 @@
 workflow_id: "onboard_new_business"
 version: "1.0.0"
+owner: "coo"
 
 steps:
   welcome:

@@ -1,5 +1,6 @@
 workflow_id: "crisis_response"
 version: "1.0.0"
+owner: "ceo"
 
 steps:
   crisis_alert:

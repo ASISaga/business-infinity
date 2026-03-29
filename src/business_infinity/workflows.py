@@ -41,6 +41,9 @@ from business_infinity.boardroom import (
     PITCH_ORCHESTRATION_PURPOSE,
     PITCH_ORCHESTRATION_SCOPE,
     PITCH_STEP_IDS,
+    WORKFLOW_REGISTRY,
+    get_workflow_metadata,
+    get_workflow_step_ids,
 )
 
 logger = logging.getLogger(__name__)
@@ -521,6 +524,117 @@ async def handle_pitch_update(update) -> None:
     """Handle intermediate updates from pitch orchestrations."""
     logger.info(
         "Pitch update from agent %s: step=%s",
+        getattr(update, "agent_id", "unknown"),
+        getattr(update, "output", ""),
+    )
+
+
+# ── Generic Workflow Orchestration ───────────────────────────────────────────
+#
+# A single generic endpoint that drives any registered structured workflow.
+# The workflow_id in the request body selects which YAML-defined workflow to
+# run.  The owner agent from the WORKFLOW_REGISTRY conducts the conversation.
+# This replaces the need for per-workflow Python endpoints.
+
+
+@app.workflow("workflow-orchestration")
+async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
+    """Start a structured workflow orchestration through the boardroom interface.
+
+    This is the generic entry point for all YAML-defined boardroom workflows.
+    The ``workflow_id`` in the request body determines which workflow to run.
+    The owning agent (defined in the workflow registry) conducts the
+    step-by-step conversation with the external entity.
+
+    Supported workflow IDs are registered in
+    ``src/business_infinity/boardroom.py`` → ``WORKFLOW_REGISTRY``.
+
+    Request body::
+
+        {
+            "workflow_id": "pitch_business_infinity",
+            "step_id": "paul_graham_intro",
+            "session_id": "optional-session-id",
+            "company_purpose": "Deliver reliable innovation that earns lasting trust"
+        }
+    """
+    workflow_id = request.body.get("workflow_id", "")
+    if not workflow_id:
+        raise ValueError("workflow_id is required in request body")
+
+    try:
+        metadata = get_workflow_metadata(workflow_id)
+    except KeyError:
+        registered = list(WORKFLOW_REGISTRY.keys())
+        raise ValueError(
+            f"Unknown workflow_id '{workflow_id}'. "
+            f"Registered workflows: {registered}"
+        )
+
+    owner_agent_id = metadata["owner"]
+
+    # Select the owner agent; fall back to CEO if owner is not available
+    agents = await select_c_suite_agents(request.client)
+    by_id = {a.agent_id: a for a in agents}
+    # Also check for founder agent (not in C-suite but used for pitch)
+    all_agents = await request.client.list_agents()
+    all_by_id = {a.agent_id: a for a in all_agents}
+
+    agent_ids = []
+    if owner_agent_id in all_by_id:
+        agent_ids = [owner_agent_id]
+    elif "ceo" in by_id:
+        agent_ids = ["ceo"]
+        logger.warning(
+            "Owner agent '%s' not found; falling back to CEO for workflow '%s'",
+            owner_agent_id,
+            workflow_id,
+        )
+
+    if not agent_ids:
+        raise ValueError(
+            f"Owner agent '{owner_agent_id}' and CEO fallback not available "
+            f"for workflow '{workflow_id}'"
+        )
+
+    step_ids = get_workflow_step_ids(workflow_id)
+    step_id = request.body.get("step_id", step_ids[0] if step_ids else "")
+
+    status = await request.client.start_orchestration(
+        agent_ids=agent_ids,
+        purpose=metadata["purpose"],
+        purpose_scope=metadata["scope"],
+        context={
+            "workflow_id": workflow_id,
+            "step_id": step_id,
+            "step_ids": step_ids,
+            "session_id": request.body.get("session_id", ""),
+            "company_purpose": request.body.get("company_purpose", ""),
+            "app_id": "boardroom_ui",
+        },
+    )
+    logger.info(
+        "Workflow orchestration started: %s | workflow=%s | step=%s | agent=%s",
+        status.orchestration_id,
+        workflow_id,
+        step_id,
+        agent_ids,
+    )
+    return {
+        "orchestration_id": status.orchestration_id,
+        "status": status.status.value,
+        "workflow_id": workflow_id,
+        "owner": owner_agent_id,
+        "step_id": step_id,
+        "total_steps": len(step_ids),
+    }
+
+
+@app.on_orchestration_update("workflow-orchestration")
+async def handle_workflow_update(update) -> None:
+    """Handle intermediate updates from generic workflow orchestrations."""
+    logger.info(
+        "Workflow update from agent %s: %s",
         getattr(update, "agent_id", "unknown"),
         getattr(update, "output", ""),
     )

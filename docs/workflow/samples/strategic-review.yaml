@@ -1,5 +1,6 @@
 workflow_id: "quarterly_strategic_review"
 version: "1.0.0"
+owner: "ceo"
 
 steps:
   review_opening:

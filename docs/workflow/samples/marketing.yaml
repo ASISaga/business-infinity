@@ -1,5 +1,6 @@
 workflow_id: "marketing_business_infinity"
 version: "1.0.0"
+owner: "cmo"
 
 steps:
   opening_question:
