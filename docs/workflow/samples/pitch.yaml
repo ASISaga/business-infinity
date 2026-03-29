@@ -1,0 +1,86 @@
+workflow_id: "pitch_business_infinity"
+version: "1.0.0"
+
+steps:
+  paul_graham_intro:
+    narrative: "Have you heard about Paul Graham?"
+    response: "PG is the reason we're all here; his essays are the blueprint for everything we do at YC."
+    actions: []
+    navigation:
+      next: "paul_graham_dataset"
+
+  paul_graham_dataset:
+    narrative: "What if I have extracted the domain knowledge, skills and persona of Paul Graham into a dataset?"
+    response: "If you've truly codified PG's startup heuristics into a dataset, you've built a scalable Silicon Valley Oracle."
+    actions:
+      - label: "Dataset"
+        description: "Domain knowledge, skills and persona of Paul Graham"
+        url: "dataset"
+    navigation:
+      next: "lora_paul_graham"
+      back: "paul_graham_intro"
+
+  lora_paul_graham:
+    narrative: "What if I've fine tuned a LLM LoRA adapter on this dataset?"
+    response: "Using a LoRA to turn that data into an active inference engine is exactly the kind of high-leverage software YC looks for."
+    actions:
+      - label: "LoRA Paul Graham"
+        description: "Fine tuned LLM LoRA adapter based on Paul Graham dataset"
+        url: "LoRA Paul Graham"
+    navigation:
+      next: "lora_werner_erhard"
+      back: "paul_graham_dataset"
+
+  lora_werner_erhard:
+    narrative: "What if I've created similar LoRA adapter for 'Being a Leader' based on domain knowledge, skills, and persona of Werner Erhard?"
+    response: "Merging tactical strategy with Werner’s ontological focus on integrity addresses the biggest risk in any startup: founder psychology."
+    actions:
+      - label: "Being a Leader"
+        description: "LoRA adapter based on domain knowledge, skills, and persona of Werner Erhard"
+        url: "Being a Leader"
+    navigation:
+      next: "founder_ai_agent"
+      back: "lora_paul_graham"
+
+  founder_ai_agent:
+    narrative: "What if I combine both the Paul Graham and Werner Erhard LoRA adapters and assign an AI Agent to create a Founder AI agent, having bothered startup entrepreneurship as well as Leadership domain knowledge, skills and persona?"
+    response: "You’re productizing the 'Formidable Founder' archetype by synthesizing strategic ruthlessness with ontological clarity."
+    actions:
+      - label: "Founder AI Agent"
+        description: "Combined LoRA adapters for startup entrepreneurship and Leadership"
+        url: "Founder AI Agent"
+    navigation:
+      next: "boardroom_cxo"
+      back: "lora_werner_erhard"
+
+  boardroom_cxo:
+    narrative: "What if I create an orchestration of such AI Agents CFO(Warren Buffett), CMO(Seth Godin), CTO(Steeve Jobs), etc called Boardroom? Each CXO in this boardroom is perpetual and purpose Driven, rather than task driven? And each CXO cascade it's purpose from the purpose of the company i.e. it's vision, mission, and values?"
+    response: "A perpetual, purpose-driven C-Suite ensures that the company's vision doesn't just sit in a slide deck—it lives in every micro-decision."
+    actions:
+      - label: "Boardroom"
+        description: "Perpetual and purpose driven CXO orchestration"
+        url: "boardroom"
+    navigation:
+      next: "business_infinity_resonance"
+      back: "founder_ai_agent"
+
+  business_infinity_resonance:
+    narrative: "What if the agents in the Boardroom have access to all the conventional software used by the business through MCP - ERP, CRM, MES, LinkedIn, email, messaging, etc? And they operate spontaneously based on the business and market events? And the decision in the boardroom is taken through resonance between the intended action and the purpose of the company?"
+    response: "By closing the loop with MCP and resonance-based governance, you've evolved the company from a hierarchy into a superintelligent organism."
+    actions:
+      - label: "Business Infinity"
+        description: "MCP access and resonance-based decision making"
+        url: "business-infinity"
+    navigation:
+      next: "asi_saga_self_learning"
+      back: "boardroom_cxo"
+
+  asi_saga_self_learning:
+    narrative: "What if ASI Saga, the company which built Business Infinity, is running on Business Infinity making it a self learning loop? And the Paul Graham Founder Agent runs the ASI Saga startup using Business Infinity, through all the principles like rigor, conviction, resilience, pivot, etc advocated by Paul Graham? This boardroom runs 24/7, maintaining a fully anonymous nature—it's not your replacement, but an exponential expansion of who you authentically are."
+    response: "By turning the product inward to run the company itself, you've created a recursive evolution engine where the 'Founder' never sleeps and the strategy never wavers."
+    actions:
+      - label: "ASI Saga Loop"
+        description: "Recursive self-learning startup execution"
+        url: "asi-saga-loop"
+    navigation:
+      back: "business_infinity_resonance"
