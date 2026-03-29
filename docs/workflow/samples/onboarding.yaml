@@ -1,0 +1,87 @@
+workflow_id: "onboard_new_business"
+version: "1.0.0"
+owner: "coo"
+
+steps:
+  welcome:
+    narrative: "Welcome to Business Infinity. We're about to set up a living, purpose-driven boardroom for your company. Before we begin—what is the name of your business?"
+    response: "Great. Every boardroom starts with a name. Let's make sure everything that follows is built around yours."
+    actions: []
+    navigation:
+      next: "define_purpose"
+
+  define_purpose:
+    narrative: "Every CXO agent in your boardroom cascades its decisions from a single source of truth—your company's purpose. What is your company's vision, mission, and core values?"
+    response: "Purpose is the gravitational centre of every decision your boardroom will make. Without it, agents optimise for metrics instead of meaning."
+    actions:
+      - label: "Purpose Framework"
+        description: "Guide for articulating vision, mission, and values"
+        url: "purpose-framework"
+    navigation:
+      next: "select_cxo_agents"
+      back: "welcome"
+
+  select_cxo_agents:
+    narrative: "Business Infinity provides seven CXO agents—CEO (Jobs), CFO (Buffett), COO (Deming), CMO (Ogilvy), CHRO (Drucker), CTO (Turing), and CSO (Sun Tzu). Each inherits your purpose and leads a domain autonomously. Which agents would you like to activate for your boardroom?"
+    response: "Each agent you activate becomes a perpetual leader in your organisation. They don't wait for tasks—they respond to events spontaneously, always through the lens of your purpose."
+    actions:
+      - label: "Agent Catalogue"
+        description: "Browse all available CXO agents and their domain expertise"
+        url: "agent-catalogue"
+    navigation:
+      next: "connect_systems"
+      back: "define_purpose"
+
+  connect_systems:
+    narrative: "Your CXO agents operate on real business data through MCP—Model Context Protocol. Which business systems should we connect? ERP, CRM, MES, email, LinkedIn, messaging, project management?"
+    response: "MCP connections turn your boardroom from a simulation into a live operating layer. Agents see what your business sees—orders, leads, support tickets, market signals—and act on them in real time."
+    actions:
+      - label: "MCP Integrations"
+        description: "Available MCP server connections for business systems"
+        url: "mcp-integrations"
+    navigation:
+      next: "configure_resonance"
+      back: "select_cxo_agents"
+
+  configure_resonance:
+    narrative: "Decisions in your boardroom are governed by resonance—a score measuring how fully an intended action aligns with your company's purpose. Would you like to set custom resonance thresholds, or start with the defaults?"
+    response: "Resonance ensures that speed never compromises integrity. Every autonomous action must clear your purpose threshold before execution."
+    actions:
+      - label: "Resonance Settings"
+        description: "Configure resonance thresholds and scoring parameters"
+        url: "resonance-settings"
+    navigation:
+      next: "invite_team"
+      back: "connect_systems"
+
+  invite_team:
+    narrative: "Business Infinity runs autonomously, but your human team can observe, override, and collaborate with the boardroom. Who on your team should have access to the boardroom interface?"
+    response: "Transparency is foundational. Your team sees every debate, every resonance score, and every autonomous action—in real time."
+    actions:
+      - label: "Team Access"
+        description: "Invite team members to the boardroom interface"
+        url: "team-access"
+    navigation:
+      next: "first_boardroom_session"
+      back: "configure_resonance"
+
+  first_boardroom_session:
+    narrative: "Your boardroom is configured. Let's run your first session. Provide a real business event—a competitor move, a customer complaint, a market shift—and watch your CXO agents debate, score, and converge on an action."
+    response: "This is the moment your boardroom comes alive. A real event, real agents, real resonance. The purpose you defined minutes ago is now the operating system of your company."
+    actions:
+      - label: "Start First Session"
+        description: "Trigger the first boardroom debate with a live event"
+        url: "boardroom-debate"
+    navigation:
+      next: "onboarding_complete"
+      back: "invite_team"
+
+  onboarding_complete:
+    narrative: "Your Business Infinity boardroom is live. Your CXO agents are perpetual—they don't clock out. They monitor your connected systems 24/7, debate spontaneously, and act with purpose. Welcome to a company that runs itself."
+    response: "Onboarding is complete, but the boardroom never stops. Every event from this moment forward will be met with purpose-driven, autonomous leadership."
+    actions:
+      - label: "Open Boardroom"
+        description: "Launch the live boardroom interface"
+        url: "boardroom"
+    navigation:
+      back: "first_boardroom_session"

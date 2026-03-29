@@ -1,5 +1,6 @@
 workflow_id: "pitch_business_infinity"
 version: "1.0.0"
+owner: "founder"
 
 steps:
   paul_graham_intro:

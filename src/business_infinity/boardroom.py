@@ -5,12 +5,27 @@ decision tree debate where each CXO agent applies domain leadership to propose
 pathways, which are evaluated through resonance scoring against the company's
 purpose, and synthesised into autonomous action.
 
+The boardroom chat interface supports two modes through the same ``<chatroom>``
+Web Component:
+
+1. **Structured workflow** — A workflow-owner agent conducts a step-by-step
+   conversation with an external entity (investor, customer, new business).
+   Steps are loaded from YAML files in ``docs/workflow/samples/``.
+
+2. **Dynamic discussion** — The full boardroom of CXO agents engages in
+   purpose-driven debate for business decision-making.  No YAML steps; the
+   conversation is orchestrated dynamically by AOS.
+
+Both modes use MCP app payloads (``app_id: "boardroom_ui"``) delivered via
+SSE through the Agent Operating System.  All conversations are persisted by
+``subconscious.asisaga.com``.
+
 See ``docs/philosophy.md`` for the full philosophy specification.
 """
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Any, Dict, List
 
 # ── CXO Domain Leadership ───────────────────────────────────────────────────
 #
@@ -92,3 +107,162 @@ BOARDROOM_DEBATE_SCOPE = (
 
 #: All CXO pathway types derived from the philosophy.
 CXO_PATHWAY_TYPES = list(dict.fromkeys(domain["pathway"] for domain in CXO_DOMAINS.values()))
+
+
+# ── Structured Workflow Registry ─────────────────────────────────────────────
+#
+# Each structured workflow is owned by a boardroom agent and conducts a
+# step-by-step conversation with an external entity.  The registry maps
+# workflow IDs to their metadata.  Steps are loaded from YAML at runtime.
+
+#: Registry of structured boardroom workflows.
+#: Each entry maps a workflow_id to its owner agent, purpose, scope, and
+#: the path to its YAML definition.
+WORKFLOW_REGISTRY: Dict[str, Dict[str, str]] = {
+    "pitch_business_infinity": {
+        "owner": "founder",
+        "purpose": (
+            "Deliver the Business Infinity pitch as an interactive, step-by-step "
+            "narrative through the boardroom interface, progressively revealing the "
+            "product philosophy from LoRA-based founder agents through a purpose-driven "
+            "C-suite boardroom to the self-learning ASI Saga loop."
+        ),
+        "scope": (
+            "Interactive pitch delivery: load pitch workflow steps, present narratives "
+            "with action buttons and navigation through the boardroom UI via MCP app "
+            "payloads, and conclude with a live product demonstration reveal."
+        ),
+        "yaml_path": "docs/workflow/samples/pitch.yaml",
+    },
+    "onboard_new_business": {
+        "owner": "coo",
+        "purpose": (
+            "Onboard a new business to Business Infinity by guiding them through "
+            "purpose definition, CXO agent selection, MCP system connections, "
+            "resonance configuration, and their first live boardroom session."
+        ),
+        "scope": (
+            "Interactive onboarding: define company purpose, select CXO agents, "
+            "connect business systems via MCP, configure resonance thresholds, "
+            "invite team members, and launch the first boardroom debate."
+        ),
+        "yaml_path": "docs/workflow/samples/onboarding.yaml",
+    },
+    "marketing_business_infinity": {
+        "owner": "cmo",
+        "purpose": (
+            "Market Business Infinity to a potential customer by revealing the "
+            "pain of slow decision-making, introducing the purpose-driven boardroom "
+            "concept, and demonstrating live product capabilities."
+        ),
+        "scope": (
+            "Interactive marketing narrative: problem framing, product vision, "
+            "CXO agent introduction, MCP integration, resonance governance, "
+            "live proof via ASI Saga self-loop, and onboarding call-to-action."
+        ),
+        "yaml_path": "docs/workflow/samples/marketing.yaml",
+    },
+    "crisis_response": {
+        "owner": "ceo",
+        "purpose": (
+            "Activate the boardroom in emergency mode to assess crisis impact "
+            "across all CXO domains, propose containment pathways, conduct rapid "
+            "debate, and execute autonomous response with purpose alignment."
+        ),
+        "scope": (
+            "Crisis activation: cross-domain impact assessment, CXO containment "
+            "proposals, rapid debate, resonance-scored convergence, autonomous "
+            "execution across connected systems, and recovery monitoring."
+        ),
+        "yaml_path": "docs/workflow/samples/crisis-response.yaml",
+    },
+    "quarterly_strategic_review": {
+        "owner": "ceo",
+        "purpose": (
+            "Conduct a quarterly strategic review where each CXO agent reports "
+            "on their domain, proposes strategic pathways, debates cross-functionally, "
+            "and converges on a unified direction scored for purpose resonance."
+        ),
+        "scope": (
+            "Quarterly review: domain reports from all CXOs, multi-domain strategic "
+            "debate, resonance scoring, boardroom convergence, and quarterly "
+            "action plan with autonomous execution governance."
+        ),
+        "yaml_path": "docs/workflow/samples/strategic-review.yaml",
+    },
+    "product_launch": {
+        "owner": "ceo",
+        "purpose": (
+            "Orchestrate a cross-functional product launch through the boardroom, "
+            "assessing readiness across market, finance, technology, operations, "
+            "people, and strategy domains before converging on a go-to-market plan."
+        ),
+        "scope": (
+            "Product launch orchestration: domain readiness assessments, cross-CXO "
+            "launch debate, resonance-scored convergence, and unified go-to-market "
+            "execution across all connected business systems."
+        ),
+        "yaml_path": "docs/workflow/samples/product-launch.yaml",
+    },
+}
+
+
+def get_workflow_metadata(workflow_id: str) -> Dict[str, str]:
+    """Return metadata for a registered structured workflow.
+
+    Raises :class:`KeyError` if the workflow ID is not registered.
+    """
+    return WORKFLOW_REGISTRY[workflow_id]
+
+
+def get_workflow_step_ids(workflow_id: str) -> List[str]:
+    """Return ordered step IDs for a registered structured workflow.
+
+    This reads the YAML file at runtime to extract the step order.
+    Falls back to :data:`_PITCH_STEP_IDS` for the pitch workflow
+    to maintain backward compatibility during the transition.
+
+    Raises :class:`NotImplementedError` for non-pitch workflows until
+    the aos-client-sdk YAML loader is available.
+    """
+    if workflow_id == "pitch_business_infinity":
+        return list(_PITCH_STEP_IDS)
+    # For other workflows, step IDs will be resolved at runtime from YAML
+    # by the aos-client-sdk YAML loader once it is available.
+    raise NotImplementedError(
+        f"Runtime YAML step loading for '{workflow_id}' requires the "
+        f"aos-client-sdk workflow loader (see docs/workflow/pr/aos-client-sdk/)."
+    )
+
+
+def list_registered_workflows() -> Dict[str, Dict[str, str]]:
+    """Return the full workflow registry."""
+    return dict(WORKFLOW_REGISTRY)
+
+
+# ── Backward Compatibility ───────────────────────────────────────────────────
+#
+# The following constants are preserved for backward compatibility with
+# existing tests and the current pitch-orchestration workflow.  New code
+# should use WORKFLOW_REGISTRY and the helper functions above.
+
+#: Purpose statement for pitch delivery through the boardroom interface.
+PITCH_ORCHESTRATION_PURPOSE = WORKFLOW_REGISTRY["pitch_business_infinity"]["purpose"]
+
+#: Scope of the pitch orchestration.
+PITCH_ORCHESTRATION_SCOPE = WORKFLOW_REGISTRY["pitch_business_infinity"]["scope"]
+
+#: Pitch step IDs in presentation order, matching ``pitch.yaml``.
+_PITCH_STEP_IDS = [
+    "paul_graham_intro",
+    "paul_graham_dataset",
+    "lora_paul_graham",
+    "lora_werner_erhard",
+    "founder_ai_agent",
+    "boardroom_cxo",
+    "business_infinity_resonance",
+    "asi_saga_self_learning",
+    "final_reveal",
+]
+
+PITCH_STEP_IDS = list(_PITCH_STEP_IDS)

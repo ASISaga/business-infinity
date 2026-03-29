@@ -1,0 +1,101 @@
+workflow_id: "product_launch"
+version: "1.0.0"
+owner: "ceo"
+
+steps:
+  launch_brief:
+    narrative: "A new product or feature is ready for launch. The boardroom will orchestrate the go-to-market strategy across every domain. What is the product and what problem does it solve?"
+    response: "Every launch starts with purpose alignment. If the product doesn't serve the company's reason for being, no amount of marketing will create lasting value."
+    actions: []
+    navigation:
+      next: "market_readiness"
+
+  market_readiness:
+    narrative: "CMO (Ogilvy), assess market readiness. What does customer research say? Is there demand? How does this product position against competitors? What's the narrative?"
+    response: "Market readiness isn't just demand validation—it's about whether this product can carry the company's purpose into a new conversation with customers."
+    actions:
+      - label: "Market Research"
+        description: "Customer research, competitive positioning, and demand signals"
+        url: "market-research"
+    navigation:
+      next: "financial_model"
+      back: "launch_brief"
+
+  financial_model:
+    narrative: "CFO (Buffett), present the financial model. Pricing strategy, revenue projections, unit economics, and the investment required for a successful launch."
+    response: "A launch without financial discipline is a gamble. Buffett's lens ensures that boldness is backed by numbers, not just enthusiasm."
+    actions:
+      - label: "Financial Model"
+        description: "Pricing, projections, and unit economics for the launch"
+        url: "financial-model"
+    navigation:
+      next: "technical_readiness"
+      back: "market_readiness"
+
+  technical_readiness:
+    narrative: "CTO (Turing), confirm technical readiness. Is the product stable? Scalable? Secure? What are the known risks, and what is the rollback plan?"
+    response: "Technology failures on launch day erode trust faster than anything else. The boardroom needs confidence that the platform will hold."
+    actions:
+      - label: "Technical Checklist"
+        description: "Stability, scalability, security, and rollback readiness"
+        url: "technical-checklist"
+    navigation:
+      next: "operational_plan"
+      back: "financial_model"
+
+  operational_plan:
+    narrative: "COO (Deming), outline the operational plan. Fulfilment, support readiness, supply chain, and the workflow changes needed to support the new product."
+    response: "Operations is where promises become reality. If the machine can't deliver what the market demands, the launch creates problems instead of solving them."
+    actions:
+      - label: "Operations Plan"
+        description: "Fulfilment, support, and operational workflow adjustments"
+        url: "operations-plan"
+    navigation:
+      next: "people_readiness"
+      back: "technical_readiness"
+
+  people_readiness:
+    narrative: "CHRO (Drucker), assess people readiness. Does the team understand the product? Are they aligned with its purpose? Is support staffed and trained?"
+    response: "People are the bridge between the product and the customer. If the team doesn't believe in the launch, neither will the market."
+    actions:
+      - label: "People Readiness"
+        description: "Team alignment, training status, and support staffing"
+        url: "people-readiness"
+    navigation:
+      next: "strategic_positioning"
+      back: "operational_plan"
+
+  strategic_positioning:
+    narrative: "CSO (Sun Tzu), present the strategic positioning. How does this launch shift our competitive landscape? What moves should we anticipate from competitors, and how do we stay two steps ahead?"
+    response: "A launch is a competitive signal. Sun Tzu's lens ensures we're not just entering the market—we're shaping it."
+    actions:
+      - label: "Strategic Position"
+        description: "Competitive implications and strategic positioning analysis"
+        url: "strategic-position"
+    navigation:
+      next: "launch_debate"
+      back: "people_readiness"
+
+  launch_debate:
+    narrative: "All domains have reported. CEO (Jobs), open the launch debate. Each CXO will propose their go-to-market pathway. The boardroom will debate, challenge, and score each for resonance with our purpose."
+    response: "The best launches are cross-functional symphonies. The debate ensures that no domain operates in a silo—and that the launch serves purpose, not just revenue."
+    actions:
+      - label: "Start Debate"
+        description: "Initiate the cross-domain launch debate"
+        url: "boardroom-debate"
+    navigation:
+      next: "launch_convergence"
+      back: "strategic_positioning"
+
+  launch_convergence:
+    narrative: "The boardroom has converged on the go-to-market strategy. Resonance scores confirm alignment with our purpose. Here is the unified launch plan."
+    response: "This launch plan was debated by seven domain leaders, scored for purpose alignment, and synthesised into a single coherent strategy. Execution begins now."
+    actions:
+      - label: "Launch Plan"
+        description: "The converged go-to-market plan with timelines and ownership"
+        url: "launch-plan"
+      - label: "Execute Launch"
+        description: "Deploy the launch plan across all connected systems"
+        url: "execute-launch"
+    navigation:
+      back: "launch_debate"

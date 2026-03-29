@@ -1,7 +1,32 @@
+# Boardroom Workflow YAML Schema
+#
+# Every workflow YAML follows this schema.  The boardroom chat interface serves
+# two modes through the same <chatroom> component:
+#
+#   1. **Structured workflow** — A workflow-owner agent (e.g. Founder, CMO)
+#      conducts a step-by-step conversation with an external entity (investor,
+#      customer, new business).  Steps are defined in YAML.
+#
+#   2. **Dynamic discussion** — The full boardroom of CXO agents engages in
+#      purpose-driven debate for business decision-making.  No YAML steps;
+#      the conversation is orchestrated dynamically by AOS.
+#
+# Both modes use MCP app payloads (app_id: "boardroom_ui") delivered via SSE
+# through the Agent Operating System.  Conversations are persisted by
+# subconscious.asisaga.com.
+
 workflow_id: "boardroom_initiation"
+version: "1.0.0"
+
+# The boardroom agent that owns and conducts this workflow.
+# In structured mode, this agent leads the conversation with the external entity.
+# Must reference an agent_id from the boardroom roster (e.g. "founder", "cmo").
+owner: "agent_id"
+
 steps:
   step_id:
     narrative: "Text block for the user."
+    response: "Agent response to the narrative."
     actions:
       - label: "Button Text"
         description: "Contextual info appearing above the button."
