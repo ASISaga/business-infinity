@@ -1,25 +1,46 @@
-# business-infinity.asisaga.com — Boardroom Pitch Interface
+# business-infinity.asisaga.com — Generic Boardroom Interface
 
 ## Objective
 
 Configure the `<chatroom>` Web Component on business-infinity.asisaga.com to
-render the Business Infinity pitch as an interactive boardroom session.
+serve as the generic boardroom interface, supporting any registered workflow
+(pitch, marketing, onboarding, etc.) and dynamic CXO discussions through the
+same page.
+
+## Context
+
+The boardroom page is the single entry point for all boardroom interactions.
+It supports two modes:
+
+1. **Structured workflow** — Selected via URL parameter (e.g.
+   `?workflow=pitch_business_infinity`).  The owner agent conducts the
+   step-by-step conversation.
+2. **Dynamic discussion** — No workflow parameter.  The full C-suite
+   engages in purpose-driven debate.
 
 ## Requirements
 
-### 1. Boardroom Pitch Page
+### 1. Generic Boardroom Page
 
-Create a dedicated boardroom page (e.g. `/boardroom/`) that initialises the
-`<chatroom>` component with the AOS API endpoint for the `pitch-orchestration`
-workflow.
+Create a single boardroom page (`/boardroom/`) that initialises the
+`<chatroom>` component dynamically based on the URL:
 
 ```html
+<!-- Structured workflow mode -->
 <chatroom
-  api-endpoint="https://business-infinity.azurewebsites.net/api/workflows/pitch-orchestration"
+  api-endpoint="https://business-infinity.azurewebsites.net/api/workflows/workflow-orchestration"
   app-id="boardroom_ui"
   workflow-id="pitch_business_infinity">
 </chatroom>
+
+<!-- Dynamic discussion mode (no workflow-id) -->
+<chatroom
+  api-endpoint="https://business-infinity.azurewebsites.net/api/workflows/boardroom-debate"
+  app-id="boardroom_ui">
+</chatroom>
 ```
+
+The page reads `?workflow=<workflow_id>` from the URL to determine the mode.
 
 ### 2. Authentication Bridge
 
@@ -39,28 +60,43 @@ Listen for `mcp_app` payloads where `app_id === "boardroom_ui"` and render:
 - **Navigation** → Render "Next" and "Back" as `<sl-button variant="default">`.
   Clicking these sends `cmd:next` or `cmd:back` through the chat stream.
 
-### 4. Step Tracking
+### 4. Workflow Selection
+
+Support workflow selection via:
+- URL parameter: `?workflow=marketing_business_infinity`
+- JavaScript API: `chatroom.setAttribute('workflow-id', 'onboard_new_business')`
+- Landing page with workflow cards showing all available workflows
+
+### 5. Step Progress Indicator
 
 Display a step progress indicator (e.g. "Step 3 of 9") using the `step_id`
-and `total_steps` returned by the pitch-orchestration workflow response.
+and `total_steps` returned by the `workflow-orchestration` response.
+Hide the indicator for dynamic discussion mode.
 
-### 5. SCSS Theming
+### 6. Owner Agent Display
+
+Show the workflow owner's name and role (e.g. "CMO — David Ogilvy") in the
+chat header during structured workflows.  Show "Boardroom" for dynamic
+discussions.
+
+### 7. SCSS Theming
 
 Apply "Boardroom" aesthetic overrides to the Shadow DOM:
 - Brand colours from the ASI Saga identity
 - Formal typography
 - Minimal border radii
-- Dark mode support for the pitch environment
+- Dark mode support for the boardroom environment
 
 ## Dependencies
 
 - `theme.asisaga.com` — `<chatroom>` Web Component and Shoelace integration
 - `agent-operating-system` — MCP SSE endpoint for payload delivery
-- `business-infinity` — `pitch-orchestration` workflow backend
+- `business-infinity` — `workflow-orchestration` and `boardroom-debate` backends
 
 ## References
 
 → **Frontend prompt**: `docs/workflow/prompts/frontend.md`
-→ **Pitch document**: `docs/workflow/samples/pitch.md`
-→ **Pitch workflow**: `docs/workflow/samples/pitch.yaml`
+→ **Workflow YAML samples**: `docs/workflow/samples/`
+→ **Boardroom schema**: `docs/workflow/boardroom.yaml`
 → **Communication protocol**: `docs/workflow/Communication.md`
+→ **Multi-repo roadmap**: `docs/multi-repository-implementation.md`
