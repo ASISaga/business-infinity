@@ -38,6 +38,9 @@ from business_infinity.boardroom import (
     BOARDROOM_DEBATE_PURPOSE,
     BOARDROOM_DEBATE_SCOPE,
     CXO_DOMAINS,
+    PITCH_ORCHESTRATION_PURPOSE,
+    PITCH_ORCHESTRATION_SCOPE,
+    PITCH_STEP_IDS,
 )
 
 logger = logging.getLogger(__name__)
@@ -449,6 +452,78 @@ async def mcp_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
         "status": status.status.value,
         "mcp_servers_configured": configured_servers,
     }
+
+
+# ── Pitch Orchestration (Boardroom Interface) ───────────────────────────────
+
+
+@app.workflow("pitch-orchestration")
+async def pitch_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
+    """Start a pitch delivery orchestration through the boardroom interface.
+
+    Orchestrates the Business Infinity pitch as an interactive narrative
+    delivered step-by-step through the ``<chatroom>`` Web Component on
+    business-infinity.asisaga.com.  The Founder agent presents each step,
+    with actions and navigation rendered via MCP app payloads.
+
+    The pitch workflow steps are defined in
+    ``docs/workflow/samples/pitch.yaml``.
+
+    Request body::
+
+        {
+            "step_id": "paul_graham_intro",
+            "session_id": "optional-session-id",
+            "company_purpose": "Deliver reliable innovation that earns lasting trust"
+        }
+    """
+    agents = await select_c_suite_agents(request.client)
+
+    # The Founder agent delivers the pitch; fall back to CEO
+    founder_ids = [a.agent_id for a in agents if a.agent_id == "founder"]
+    ceo_ids = [a.agent_id for a in agents if a.agent_id == "ceo"]
+    agent_ids = founder_ids or ceo_ids
+
+    if not agent_ids:
+        raise ValueError("Founder or CEO agent not available for pitch delivery")
+
+    step_id = request.body.get("step_id", PITCH_STEP_IDS[0])
+
+    status = await request.client.start_orchestration(
+        agent_ids=agent_ids,
+        purpose=PITCH_ORCHESTRATION_PURPOSE,
+        purpose_scope=PITCH_ORCHESTRATION_SCOPE,
+        context={
+            "workflow_id": "pitch_business_infinity",
+            "step_id": step_id,
+            "step_ids": PITCH_STEP_IDS,
+            "session_id": request.body.get("session_id", ""),
+            "company_purpose": request.body.get("company_purpose", ""),
+            "app_id": "boardroom_ui",
+        },
+    )
+    logger.info(
+        "Pitch orchestration started: %s | step=%s | agent=%s",
+        status.orchestration_id,
+        step_id,
+        agent_ids,
+    )
+    return {
+        "orchestration_id": status.orchestration_id,
+        "status": status.status.value,
+        "step_id": step_id,
+        "total_steps": len(PITCH_STEP_IDS),
+    }
+
+
+@app.on_orchestration_update("pitch-orchestration")
+async def handle_pitch_update(update) -> None:
+    """Handle intermediate updates from pitch orchestrations."""
+    logger.info(
+        "Pitch update from agent %s: step=%s",
+        getattr(update, "agent_id", "unknown"),
+        getattr(update, "output", ""),
+    )
 
 
 # ── MCP Tool Integration (Enhancement #7) ───────────────────────────────────

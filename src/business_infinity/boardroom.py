@@ -92,3 +92,34 @@ BOARDROOM_DEBATE_SCOPE = (
 
 #: All CXO pathway types derived from the philosophy.
 CXO_PATHWAY_TYPES = list(dict.fromkeys(domain["pathway"] for domain in CXO_DOMAINS.values()))
+
+
+# ── Pitch Orchestration Constants ────────────────────────────────────────────
+
+#: Purpose statement for pitch delivery through the boardroom interface.
+PITCH_ORCHESTRATION_PURPOSE = (
+    "Deliver the Business Infinity pitch as an interactive, step-by-step "
+    "narrative through the boardroom interface, progressively revealing the "
+    "product philosophy from LoRA-based founder agents through a purpose-driven "
+    "C-suite boardroom to the self-learning ASI Saga loop."
+)
+
+#: Scope of the pitch orchestration.
+PITCH_ORCHESTRATION_SCOPE = (
+    "Interactive pitch delivery: load pitch workflow steps, present narratives "
+    "with action buttons and navigation through the boardroom UI via MCP app "
+    "payloads, and conclude with a live product demonstration reveal."
+)
+
+#: Pitch step IDs in presentation order, matching ``pitch.yaml``.
+PITCH_STEP_IDS = [
+    "paul_graham_intro",
+    "paul_graham_dataset",
+    "lora_paul_graham",
+    "lora_werner_erhard",
+    "founder_ai_agent",
+    "boardroom_cxo",
+    "business_infinity_resonance",
+    "asi_saga_self_learning",
+    "final_reveal",
+]
