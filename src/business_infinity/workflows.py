@@ -573,17 +573,15 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
 
     owner_agent_id = metadata["owner"]
 
-    # Select the owner agent; fall back to CEO if owner is not available
-    agents = await select_c_suite_agents(request.client)
-    by_id = {a.agent_id: a for a in agents}
-    # Also check for founder agent (not in C-suite but used for pitch)
+    # Resolve the owner agent.  list_agents() returns all agents including
+    # non-C-suite agents like "founder".  We call it once and filter.
     all_agents = await request.client.list_agents()
     all_by_id = {a.agent_id: a for a in all_agents}
 
     agent_ids = []
     if owner_agent_id in all_by_id:
         agent_ids = [owner_agent_id]
-    elif "ceo" in by_id:
+    elif "ceo" in all_by_id:
         agent_ids = ["ceo"]
         logger.warning(
             "Owner agent '%s' not found; falling back to CEO for workflow '%s'",
@@ -597,7 +595,10 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
             f"for workflow '{workflow_id}'"
         )
 
-    step_ids = get_workflow_step_ids(workflow_id)
+    try:
+        step_ids = get_workflow_step_ids(workflow_id)
+    except NotImplementedError:
+        step_ids = []
     step_id = request.body.get("step_id", step_ids[0] if step_ids else "")
 
     status = await request.client.start_orchestration(

@@ -221,13 +221,18 @@ def get_workflow_step_ids(workflow_id: str) -> List[str]:
     This reads the YAML file at runtime to extract the step order.
     Falls back to :data:`_PITCH_STEP_IDS` for the pitch workflow
     to maintain backward compatibility during the transition.
+
+    Raises :class:`NotImplementedError` for non-pitch workflows until
+    the aos-client-sdk YAML loader is available.
     """
     if workflow_id == "pitch_business_infinity":
         return list(_PITCH_STEP_IDS)
-    # For other workflows, step IDs are resolved at runtime from YAML
-    # by the aos-client-sdk YAML loader.  This function returns an empty
-    # list as a placeholder until the SDK provides the loader.
-    return []
+    # For other workflows, step IDs will be resolved at runtime from YAML
+    # by the aos-client-sdk YAML loader once it is available.
+    raise NotImplementedError(
+        f"Runtime YAML step loading for '{workflow_id}' requires the "
+        f"aos-client-sdk workflow loader (see docs/workflow/pr/aos-client-sdk/)."
+    )
 
 
 def list_registered_workflows() -> Dict[str, Dict[str, str]]:
