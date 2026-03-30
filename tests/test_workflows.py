@@ -20,6 +20,8 @@ from business_infinity.boardroom import (
     get_workflow_metadata,
     get_workflow_step_ids,
     list_registered_workflows,
+    load_workflow_yaml,
+    save_workflow_yaml,
 )
 
 
@@ -59,7 +61,7 @@ class TestAOSAppWorkflows:
         assert "budget-approval" in names
 
     def test_workflow_count(self):
-        assert len(app.get_workflow_names()) == 13
+        assert len(app.get_workflow_names()) == 16
 
     def test_new_workflows_registered(self):
         names = app.get_workflow_names()
@@ -241,3 +243,87 @@ class TestWorkflowRegistry:
     def test_workflow_orchestration_update_handler(self):
         """Generic workflow-orchestration update handler is registered."""
         assert "workflow-orchestration" in app.get_update_handler_names()
+
+class TestWorkflowEditor:
+    """Test workflow editor endpoint registration and YAML I/O helpers."""
+
+    def test_editor_endpoints_registered(self):
+        """All three workflow editor endpoints are registered."""
+        names = app.get_workflow_names()
+        assert "workflow-editor-list" in names
+        assert "workflow-editor-get" in names
+        assert "workflow-editor-save" in names
+
+    def test_load_workflow_yaml_pitch(self):
+        """load_workflow_yaml returns full structured data for pitch workflow."""
+        data = load_workflow_yaml("pitch_business_infinity")
+        assert data["workflow_id"] == "pitch_business_infinity"
+        assert data["owner"] == "founder"
+        assert "steps" in data
+        assert len(data["steps"]) == 9
+        assert "paul_graham_intro" in data["steps"]
+        assert "final_reveal" in data["steps"]
+
+    def test_load_workflow_yaml_step_fields(self):
+        """Each step has narrative, response, actions, and navigation."""
+        data = load_workflow_yaml("pitch_business_infinity")
+        for step_id, step in data["steps"].items():
+            assert "narrative" in step, f"{step_id} missing narrative"
+            assert "response" in step, f"{step_id} missing response"
+            assert "actions" in step, f"{step_id} missing actions"
+            assert isinstance(step["actions"], list), f"{step_id} actions not a list"
+
+    def test_load_workflow_yaml_all_six(self):
+        """load_workflow_yaml works for all six registered workflows."""
+        for workflow_id in WORKFLOW_REGISTRY:
+            data = load_workflow_yaml(workflow_id)
+            assert data["workflow_id"] == workflow_id
+            assert "steps" in data
+            assert len(data["steps"]) > 0
+
+    def test_load_workflow_yaml_unknown(self):
+        """load_workflow_yaml raises KeyError for an unknown workflow."""
+        with pytest.raises(KeyError):
+            load_workflow_yaml("nonexistent_workflow")
+
+    def test_save_workflow_yaml_roundtrip(self, tmp_path, monkeypatch):
+        """save_workflow_yaml writes valid data that load_workflow_yaml can read back."""
+        import shutil
+        from pathlib import Path
+        import business_infinity.boardroom as boardroom_module
+
+        # Copy the real YAML into a temp project layout
+        real_yaml = Path(__file__).parent.parent / "docs/workflow/samples/pitch.yaml"
+        fake_project = tmp_path / "project"
+        fake_samples = fake_project / "docs" / "workflow" / "samples"
+        fake_samples.mkdir(parents=True)
+        shutil.copy(real_yaml, fake_samples / "pitch.yaml")
+
+        # Patch the boardroom module's __file__ so _resolve_yaml_path points at
+        # our temp directory (two levels up from a fake src/business_infinity/).
+        fake_pkg = fake_project / "src" / "business_infinity" / "boardroom.py"
+        monkeypatch.setattr(boardroom_module, "__file__", str(fake_pkg))
+
+        original = load_workflow_yaml("pitch_business_infinity")
+        # Mutate one step's narrative
+        original["steps"]["paul_graham_intro"]["narrative"] = "Updated narrative"
+        save_workflow_yaml("pitch_business_infinity", original)
+
+        reloaded = load_workflow_yaml("pitch_business_infinity")
+        assert reloaded["steps"]["paul_graham_intro"]["narrative"] == "Updated narrative"
+
+    def test_save_workflow_yaml_missing_workflow_id(self):
+        """save_workflow_yaml raises ValueError when workflow_id is absent."""
+        with pytest.raises(ValueError, match="workflow_id"):
+            save_workflow_yaml("pitch_business_infinity", {"steps": {}})
+
+    def test_save_workflow_yaml_invalid_step(self):
+        """save_workflow_yaml raises ValueError for a step missing required fields."""
+        bad_data = {
+            "workflow_id": "pitch_business_infinity",
+            "steps": {
+                "bad_step": {"narrative": "ok"},  # missing response + actions
+            },
+        }
+        with pytest.raises(ValueError, match="response"):
+            save_workflow_yaml("pitch_business_infinity", bad_data)
