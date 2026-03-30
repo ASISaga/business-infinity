@@ -44,6 +44,8 @@ from business_infinity.boardroom import (
     WORKFLOW_REGISTRY,
     get_workflow_metadata,
     get_workflow_step_ids,
+    load_workflow_yaml,
+    save_workflow_yaml,
 )
 
 logger = logging.getLogger(__name__)
@@ -648,3 +650,145 @@ async def handle_workflow_update(update) -> None:
 async def erp_search(request) -> Any:
     """Search ERP via MCP server."""
     return await request.client.call_mcp_tool("erpnext", "search", request.body)
+
+
+# ── Workflow Editor Endpoints ─────────────────────────────────────────────────
+#
+# Three HTTP endpoints that enable step-wise, form-based editing of the
+# workflow YAML files in docs/workflow/samples/ through the
+# business-infinity.asisaga.com website.  Each endpoint is intentionally
+# simple so the frontend can render a structured step editor rather than a
+# free-text YAML editor.
+
+
+@app.workflow("workflow-editor-list")
+async def workflow_editor_list(request: WorkflowRequest) -> Dict[str, Any]:
+    """Return metadata for all registered workflows.
+
+    The frontend calls this endpoint to populate the workflow selection
+    panel in the step-wise editor.
+
+    Response::
+
+        {
+            "workflows": [
+                {
+                    "workflow_id": "pitch_business_infinity",
+                    "owner": "founder",
+                    "yaml_path": "docs/workflow/samples/pitch.yaml"
+                },
+                ...
+            ]
+        }
+    """
+    workflows = [
+        {
+            "workflow_id": wf_id,
+            "owner": meta["owner"],
+            "yaml_path": meta["yaml_path"],
+        }
+        for wf_id, meta in list_registered_workflows().items()
+    ]
+    logger.info("Workflow editor list requested: %d workflows", len(workflows))
+    return {"workflows": workflows}
+
+
+@app.workflow("workflow-editor-get")
+async def workflow_editor_get(request: WorkflowRequest) -> Dict[str, Any]:
+    """Return the full structured content of a workflow for step-wise editing.
+
+    The frontend calls this endpoint when the user selects a workflow to
+    edit.  The response is the parsed YAML data — one step per key under
+    ``steps`` — which the editor renders as individual forms rather than raw
+    text.
+
+    Request body::
+
+        {"workflow_id": "pitch_business_infinity"}
+
+    Response mirrors the boardroom YAML schema::
+
+        {
+            "workflow_id": "pitch_business_infinity",
+            "version": "1.0.0",
+            "owner": "founder",
+            "steps": {
+                "paul_graham_intro": {
+                    "narrative": "...",
+                    "response": "...",
+                    "actions": [],
+                    "navigation": {"next": "paul_graham_dataset"}
+                },
+                ...
+            }
+        }
+    """
+    workflow_id = request.body.get("workflow_id", "")
+    if not workflow_id:
+        raise ValueError("workflow_id is required in request body")
+    try:
+        data = load_workflow_yaml(workflow_id)
+    except KeyError:
+        registered = list(WORKFLOW_REGISTRY.keys())
+        raise ValueError(
+            f"Unknown workflow_id '{workflow_id}'. "
+            f"Registered workflows: {registered}"
+        )
+    logger.info(
+        "Workflow editor get: %s (%d steps)",
+        workflow_id,
+        len(data.get("steps", {})),
+    )
+    return data
+
+
+@app.workflow("workflow-editor-save")
+async def workflow_editor_save(request: WorkflowRequest) -> Dict[str, Any]:
+    """Validate and save an updated workflow structure to its YAML file.
+
+    The frontend calls this endpoint when the user submits their edits from
+    the step-wise editor.  The payload must contain the full workflow
+    structure including all steps; partial updates are not supported.
+    Validation is applied before writing so the file is never overwritten
+    with a structurally invalid document.
+
+    Request body mirrors the boardroom YAML schema (same shape as the
+    response from ``workflow-editor-get``)::
+
+        {
+            "workflow_id": "pitch_business_infinity",
+            "version": "1.0.0",
+            "owner": "founder",
+            "steps": {
+                "paul_graham_intro": {
+                    "narrative": "...",
+                    "response": "...",
+                    "actions": [],
+                    "navigation": {"next": "paul_graham_dataset"}
+                },
+                ...
+            }
+        }
+
+    Response::
+
+        {"status": "saved", "workflow_id": "pitch_business_infinity", "step_count": 9}
+    """
+    workflow_id = request.body.get("workflow_id", "")
+    if not workflow_id:
+        raise ValueError("workflow_id is required in request body")
+    try:
+        save_workflow_yaml(workflow_id, request.body)
+    except KeyError:
+        registered = list(WORKFLOW_REGISTRY.keys())
+        raise ValueError(
+            f"Unknown workflow_id '{workflow_id}'. "
+            f"Registered workflows: {registered}"
+        )
+    step_count = len(request.body.get("steps", {}))
+    logger.info(
+        "Workflow editor save: %s (%d steps)",
+        workflow_id,
+        step_count,
+    )
+    return {"status": "saved", "workflow_id": workflow_id, "step_count": step_count}

@@ -113,7 +113,12 @@ Business event → boardroom-debate → AOS → All CXO Agents → text + MCP ap
 | `owner` field in all YAML files | ✅ Done | Each workflow declares its owning agent |
 | `boardroom.yaml` schema updated | ✅ Done | Schema documents dual-mode, owner field, response field |
 | Sample workflows (6 YAML files) | ✅ Done | pitch, onboarding, marketing, crisis, strategic, launch |
-| Tests (32 passing) | ✅ Done | Registry, backward compat, workflow registration |
+| Tests (40 passing) | ✅ Done | Registry, backward compat, workflow registration, editor |
+| `workflow-editor-list` endpoint | ✅ Done | Returns metadata for all registered workflows |
+| `workflow-editor-get` endpoint | ✅ Done | Returns structured YAML data for a workflow |
+| `workflow-editor-save` endpoint | ✅ Done | Validates and writes updated workflow YAML |
+| `load_workflow_yaml()` helper | ✅ Done | Reads and parses any registered workflow YAML |
+| `save_workflow_yaml()` helper | ✅ Done | Validates and writes workflow data back to YAML |
 | Pitch YAML loading in workflow | ⬜ Pending | Load and parse YAML within the workflow at runtime |
 | `GOTO_STEP` handler | ⬜ Pending | Handle step navigation commands from client |
 | MCP payload construction | ⬜ Pending | Build `boardroom_ui` payloads from YAML steps |
@@ -170,9 +175,11 @@ Foundry Agent Service orchestration before either mode works end-to-end.
 | Workflow selection | ⬜ Pending | Select workflow by ID, auto-detect owner agent |
 | Step progress indicator | ⬜ Pending | Show current step for structured workflows |
 | Boardroom SCSS theming | ⬜ Pending | Dark, formal aesthetic for boardroom interface |
+| Workflow editor page (`/workflow-editor/`) | ⬜ Pending | Step-wise form editor embedding `<workflow-editor>` |
+| Editor auth bridge | ⬜ Pending | Pass JWT to `<workflow-editor>` `access-token` attribute |
 
-**Key dependency**: Requires `theme.asisaga.com` chatroom component with
-MCP app payload support, and AOS SSE endpoint.
+**Key dependency**: Requires `theme.asisaga.com` chatroom and
+workflow-editor components, and AOS SSE endpoint.
 
 → **PR specification**: `docs/workflow/pr/business-infinity.asisaga.com/Readme.md`
 
@@ -189,6 +196,11 @@ MCP app payload support, and AOS SSE endpoint.
 | MCP app graphical rendering | ⬜ Pending | Render any UI elements from MCP app payloads |
 | Step progress attribute | ⬜ Pending | `step_id` and `total_steps` display |
 | `theme="boardroom"` variant | ⬜ Pending | Formal dark theme for boardroom pages |
+| `<workflow-editor>` component | ⬜ Pending | Step-wise form editor for workflow YAML files |
+| Step list panel | ⬜ Pending | Ordered, drag-reorderable step list with add/delete |
+| Step form panel | ⬜ Pending | Forms for narrative, response, actions, navigation |
+| Client-side validation | ⬜ Pending | Highlight invalid steps before save |
+| Editor save/success/error UX | ⬜ Pending | `sl-alert` feedback on save result |
 
 **Key dependency**: This is a library consumed by business-infinity.asisaga.com.
 Changes here must be published before the frontend can use them.
@@ -228,8 +240,8 @@ Phase 2 (Infrastructure)
 └── business-infinity      → GOTO_STEP handler, payload construction
 
 Phase 3 (Presentation)
-├── theme.asisaga.com      → Chatroom dual-mode rendering
-└── business-infinity.asisaga.com → Generic boardroom page, auth, theming
+├── theme.asisaga.com      → Chatroom dual-mode rendering + <workflow-editor>
+└── business-infinity.asisaga.com → Generic boardroom page + /workflow-editor/
 ```
 
 ### Critical Path
@@ -290,6 +302,12 @@ The implementation is complete when:
 6. Switching to `?workflow=marketing_business_infinity` starts the CMO-led marketing workflow
 7. A dynamic boardroom debate can run in the same interface without a workflow ID
 8. All conversations (text + MCP app payloads) are persisted and replayable
+9. An authorised user navigates to `business-infinity.asisaga.com/workflow-editor/`
+10. The `<workflow-editor>` component lists all six registered workflows
+11. Selecting a workflow renders all its steps as individual editable forms
+12. The user edits a step's narrative, adds an action, and reorders steps
+13. Clicking "Save Workflow" calls `workflow-editor-save` and the YAML file is updated
+14. Client-side validation prevents saving a step without a `narrative` or `response`
 
 ---
 

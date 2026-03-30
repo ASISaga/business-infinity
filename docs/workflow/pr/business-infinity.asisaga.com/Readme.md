@@ -18,6 +18,12 @@ It supports two modes:
 2. **Dynamic discussion** — No workflow parameter.  The full C-suite
    engages in purpose-driven debate.
 
+A third capability is available independently of the boardroom session:
+
+3. **Workflow Editor** — A step-wise, form-based editor at `/workflow-editor/`
+   that allows authorised users to configure the YAML workflow files
+   (`docs/workflow/samples/`) without writing raw YAML.
+
 ## Requirements
 
 ### 1. Generic Boardroom Page
@@ -87,11 +93,88 @@ Apply "Boardroom" aesthetic overrides to the Shadow DOM:
 - Minimal border radii
 - Dark mode support for the boardroom environment
 
+### 8. Workflow Editor Page
+
+Create a page at `/workflow-editor/` that embeds the `<workflow-editor>`
+Web Component from `theme.asisaga.com`.  This page allows authorised users
+to configure any registered workflow in a step-wise, form-based interface
+without writing raw YAML.
+
+#### 8.1 Page Initialisation
+
+```html
+<!-- /workflow-editor/ -->
+<workflow-editor
+  api-endpoint="https://business-infinity.azurewebsites.net/api/workflows"
+  access-token="">
+</workflow-editor>
+```
+
+The page captures the Google Identity Services JWT (same bridge as the
+boardroom page) and sets the `access-token` attribute so the editor can
+call authenticated backend endpoints.
+
+#### 8.2 Backend Endpoints
+
+The editor page communicates with three backend endpoints provided by the
+`business-infinity` Azure Functions app:
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `workflow-editor-list` | POST | Retrieve metadata for all registered workflows |
+| `workflow-editor-get` | POST `{"workflow_id": "…"}` | Retrieve full structured content of a workflow |
+| `workflow-editor-save` | POST `{workflow data}` | Save updated workflow structure back to YAML |
+
+#### 8.3 Workflow Selection Panel
+
+On load, the page calls `workflow-editor-list` and renders a sidebar with
+one card per workflow showing:
+- Workflow ID
+- Owner agent name (e.g. "Founder", "CMO")
+- Number of steps
+
+Clicking a card calls `workflow-editor-get` and loads the step editor.
+
+#### 8.4 Step Editor Panel
+
+Once a workflow is loaded the editor renders a two-panel layout:
+
+- **Step list** (left) — Ordered list of all step IDs.  Steps can be
+  reordered by drag-and-drop.  An "Add Step" button appends a blank step.
+  Each step row has a delete icon.
+- **Step form** (right) — When a step is selected, the form shows:
+  - **Step ID** — Read-only for existing steps; editable text input for
+    new steps.
+  - **Narrative** — Multi-line text area (the agent's opening statement).
+  - **Response** — Multi-line text area (the agent's elaboration).
+  - **Actions** — Repeatable group.  Each action has three text inputs:
+    `label`, `description`, and `url`.  An "Add Action" button appends a
+    new blank action row.  Each row has a remove icon.
+  - **Navigation** — Two dropdowns ("Next step", "Back step"), each
+    populated with the current step IDs of the workflow.  Selecting "—"
+    (none) omits the field.
+
+#### 8.5 Save and Validation
+
+A "Save Workflow" button at the top of the step editor calls
+`workflow-editor-save` with the complete updated workflow structure.
+Client-side validation runs before the call and highlights any step missing
+a `narrative`, `response`, or `actions` field.  The response shows a success
+or error banner.
+
+#### 8.6 Authentication
+
+The editor page requires the same Google Identity Services JWT used by the
+boardroom.  Access is restricted to users with the `editor` role in the
+ASI Saga identity system.  The `access-token` attribute is checked by the
+backend before any write operation.
+
 ## Dependencies
 
-- `theme.asisaga.com` — `<chatroom>` Web Component and Shoelace integration
-- `agent-operating-system` — MCP SSE endpoint for payload delivery
-- `business-infinity` — `workflow-orchestration` and `boardroom-debate` backends
+- `theme.asisaga.com` — `<chatroom>` and `<workflow-editor>` Web Components
+- `agent-operating-system` — MCP SSE endpoint for boardroom payload delivery
+- `business-infinity` — `workflow-orchestration`, `boardroom-debate`, and
+  `workflow-editor-*` backends
 
 ## References
 

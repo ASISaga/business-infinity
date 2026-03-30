@@ -25,7 +25,10 @@ See ``docs/philosophy.md`` for the full philosophy specification.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Dict, List
+
+import yaml
 
 # ── CXO Domain Leadership ───────────────────────────────────────────────────
 #
@@ -238,6 +241,91 @@ def get_workflow_step_ids(workflow_id: str) -> List[str]:
 def list_registered_workflows() -> Dict[str, Dict[str, str]]:
     """Return the full workflow registry."""
     return dict(WORKFLOW_REGISTRY)
+
+
+# ── Workflow YAML I/O ────────────────────────────────────────────────────────
+
+
+def _resolve_yaml_path(yaml_path: str) -> Path:
+    """Resolve a registry ``yaml_path`` to an absolute filesystem path.
+
+    The package lives at ``src/business_infinity/`` and the YAML files
+    are stored under ``docs/workflow/samples/`` at the project root.
+    This resolves the relative path from the registry against the project
+    root (three levels up from this file).
+    """
+    return Path(__file__).parent.parent.parent / yaml_path
+
+
+def _validate_workflow_data(data: Dict[str, Any]) -> None:
+    """Validate a workflow data dict before saving.
+
+    Raises :class:`ValueError` for any structural violation so the caller
+    can return a clear error to the frontend without writing a corrupt file.
+    """
+    if "workflow_id" not in data:
+        raise ValueError("workflow data must contain 'workflow_id'")
+    if "steps" not in data or not isinstance(data["steps"], dict):
+        raise ValueError("workflow data must contain a 'steps' dict")
+    steps: Dict[str, Any] = data["steps"]
+    for step_id, step in steps.items():
+        if not isinstance(step, dict):
+            raise ValueError(f"Step '{step_id}' must be a mapping")
+        if "narrative" not in step:
+            raise ValueError(f"Step '{step_id}' missing required field 'narrative'")
+        if "response" not in step:
+            raise ValueError(f"Step '{step_id}' missing required field 'response'")
+        if "actions" not in step or not isinstance(step["actions"], list):
+            raise ValueError(f"Step '{step_id}' missing required 'actions' list")
+        # Validate each action entry
+        for i, action in enumerate(step["actions"]):
+            if not isinstance(action, dict):
+                raise ValueError(f"Step '{step_id}' action[{i}] must be a mapping")
+            for field in ("label", "description", "url"):
+                if field not in action:
+                    raise ValueError(
+                        f"Step '{step_id}' action[{i}] missing required field '{field}'"
+                    )
+
+
+def load_workflow_yaml(workflow_id: str) -> Dict[str, Any]:
+    """Load and parse the YAML file for a registered workflow.
+
+    Returns the full structured workflow data including all steps, suitable
+    for serialising to JSON and sending to the workflow editor frontend.
+
+    Raises :class:`KeyError` if *workflow_id* is not registered.
+    Raises :class:`FileNotFoundError` if the YAML file does not exist.
+    Raises :class:`ValueError` if the YAML file is malformed.
+    """
+    metadata = get_workflow_metadata(workflow_id)
+    yaml_path = _resolve_yaml_path(metadata["yaml_path"])
+    with open(str(yaml_path), "r", encoding="utf-8") as fh:
+        try:
+            return yaml.safe_load(fh)
+        except yaml.YAMLError as exc:
+            raise ValueError(
+                f"Malformed YAML in workflow '{workflow_id}' "
+                f"({metadata['yaml_path']}): {exc}"
+            ) from exc
+
+
+def save_workflow_yaml(workflow_id: str, data: Dict[str, Any]) -> None:
+    """Validate and save an updated workflow structure to its YAML file.
+
+    The *data* dict must match the boardroom YAML schema documented in
+    ``docs/workflow/boardroom.yaml``.  Validation is applied before
+    writing so the file is never overwritten with an invalid structure.
+
+    Raises :class:`KeyError` if *workflow_id* is not registered.
+    Raises :class:`ValueError` if *data* fails validation.
+    Raises :class:`FileNotFoundError` if the YAML file path is unreachable.
+    """
+    metadata = get_workflow_metadata(workflow_id)
+    _validate_workflow_data(data)
+    yaml_path = _resolve_yaml_path(metadata["yaml_path"])
+    with open(str(yaml_path), "w", encoding="utf-8") as fh:
+        yaml.dump(data, fh, default_flow_style=False, sort_keys=False, allow_unicode=True)
 
 
 # ── Backward Compatibility ───────────────────────────────────────────────────
