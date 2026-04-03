@@ -123,6 +123,41 @@ async def c_suite_orchestration(
     return {"orchestration_id": status.orchestration_id, "status": status.status.value}
 
 
+def _load_owner_state_or_default(
+    owner_agent_id: str, workflow_label: str
+) -> Dict[str, Dict[str, Any]]:
+    """Load owner state for workflow payloads with safe defaults."""
+    try:
+        return {
+            "owner_context": BoardroomStateManager.load_agent_context(owner_agent_id),
+            "owner_content": BoardroomStateManager.load_agent_content(owner_agent_id),
+            "owner_company_state": BoardroomStateManager.load_agent_company_state(
+                owner_agent_id
+            ),
+            "owner_product_state": BoardroomStateManager.load_agent_product_state(
+                owner_agent_id
+            ),
+        }
+    except ValueError:
+        logger.warning(
+            "Owner state unavailable because agent '%s' is not registered in '%s'",
+            owner_agent_id,
+            workflow_label,
+        )
+    except FileNotFoundError:
+        logger.warning(
+            "Owner state file missing for agent '%s' in '%s'",
+            owner_agent_id,
+            workflow_label,
+        )
+    return {
+        "owner_context": {},
+        "owner_content": {},
+        "owner_company_state": {},
+        "owner_product_state": {},
+    }
+
+
 # ── Purpose-Driven Orchestrations ────────────────────────────────────────────
 
 
@@ -516,16 +551,7 @@ async def pitch_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
     company_manifest = BoardroomStateManager.load_company_manifest()
     product_manifest = BoardroomStateManager.load_product_manifest()
     owner_agent_id = agent_ids[0]
-    try:
-        owner_context = BoardroomStateManager.load_agent_context(owner_agent_id)
-        owner_content = BoardroomStateManager.load_agent_content(owner_agent_id)
-        owner_company_state = BoardroomStateManager.load_agent_company_state(owner_agent_id)
-        owner_product_state = BoardroomStateManager.load_agent_product_state(owner_agent_id)
-    except (FileNotFoundError, KeyError):
-        owner_context = {}
-        owner_content = {}
-        owner_company_state = {}
-        owner_product_state = {}
+    owner_state = _load_owner_state_or_default(owner_agent_id, "pitch-orchestration")
 
     status = await request.client.start_orchestration(
         agent_ids=agent_ids,
@@ -541,10 +567,7 @@ async def pitch_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
             "boardroom_state": boardroom_state,
             "company_manifest": company_manifest,
             "product_manifest": product_manifest,
-            "owner_context": owner_context,
-            "owner_content": owner_content,
-            "owner_company_state": owner_company_state,
-            "owner_product_state": owner_product_state,
+            **owner_state,
         },
     )
     logger.info(
@@ -648,35 +671,7 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
     boardroom_state = BoardroomStateManager.get_boardroom_state_or_default()
     company_manifest = BoardroomStateManager.load_company_manifest()
     product_manifest = BoardroomStateManager.load_product_manifest()
-    try:
-        owner_context = BoardroomStateManager.load_agent_context(owner_agent_id)
-        owner_content = BoardroomStateManager.load_agent_content(owner_agent_id)
-        owner_company_state = BoardroomStateManager.load_agent_company_state(
-            owner_agent_id
-        )
-        owner_product_state = BoardroomStateManager.load_agent_product_state(
-            owner_agent_id
-        )
-    except KeyError:
-        logger.warning(
-            "Owner state unavailable because agent '%s' is not registered in workflow '%s'",
-            owner_agent_id,
-            workflow_id,
-        )
-        owner_context = {}
-        owner_content = {}
-        owner_company_state = {}
-        owner_product_state = {}
-    except FileNotFoundError:
-        logger.warning(
-            "Owner state file missing for agent '%s' in workflow '%s'",
-            owner_agent_id,
-            workflow_id,
-        )
-        owner_context = {}
-        owner_content = {}
-        owner_company_state = {}
-        owner_product_state = {}
+    owner_state = _load_owner_state_or_default(owner_agent_id, workflow_id)
 
     status = await request.client.start_orchestration(
         agent_ids=agent_ids,
@@ -692,10 +687,7 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
             "boardroom_state": boardroom_state,
             "company_manifest": company_manifest,
             "product_manifest": product_manifest,
-            "owner_context": owner_context,
-            "owner_content": owner_content,
-            "owner_company_state": owner_company_state,
-            "owner_product_state": owner_product_state,
+            **owner_state,
         },
     )
     logger.info(

@@ -26,6 +26,43 @@ from business_infinity.boardroom import (
 )
 
 
+class AgentDouble:
+    """Minimal agent test double."""
+
+    def __init__(self, agent_id):
+        self.agent_id = agent_id
+
+
+class CaptureClient:
+    """Async client double that captures orchestration kwargs."""
+
+    def __init__(self):
+        self.kwargs = None
+        self.agents = []
+
+    async def list_agents(self):
+        return self.agents
+
+    async def start_orchestration(self, **kwargs):
+        self.kwargs = kwargs
+        return type(
+            "Status",
+            (),
+            {
+                "orchestration_id": "orch-test",
+                "status": type("Running", (), {"value": "running"})(),
+            },
+        )()
+
+
+class RequestDouble:
+    """Minimal workflow request test double."""
+
+    def __init__(self, body, client):
+        self.body = body
+        self.client = client
+
+
 class TestCSuiteSelection:
     """Test C-suite agent selection logic."""
 
@@ -425,8 +462,8 @@ class TestBoardroomStateManager:
         assert "domain_knowledge" in state
 
     def test_load_agent_state_unknown_raises(self):
-        """load_agent_state raises KeyError for an unregistered agent ID."""
-        with pytest.raises(KeyError):
+        """load_agent_state raises ValueError for an unregistered agent ID."""
+        with pytest.raises(ValueError, match="Unknown agent ID"):
             BoardroomStateManager.load_agent_state("unknown_agent")
 
     def test_get_all_agent_states_returns_dict(self):
@@ -483,9 +520,10 @@ class TestBoardroomStateManager:
                 f"{agent_id} missing from BoardroomStateManager.get_registered_agent_ids()"
             )
 
-    def test_update_content_roundtrip_via_executive_function_alias(self, tmp_path, monkeypatch):
+    def test_update_executive_function_persists_changes(self, tmp_path, monkeypatch):
         """Legacy update_executive_function alias persists changes to content."""
         import shutil
+
         import business_infinity.boardroom as boardroom_module
 
         # Copy real CEO state file into a temp directory
@@ -512,6 +550,7 @@ class TestBoardroomStateManager:
     def test_update_agent_content_roundtrip(self, tmp_path, monkeypatch):
         """update_agent_content persists changes to the dynamic layer."""
         import shutil
+
         import business_infinity.boardroom as boardroom_module
 
         real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "founder.jsonld"
@@ -532,6 +571,7 @@ class TestBoardroomStateManager:
     def test_update_boardroom_state_roundtrip(self, tmp_path, monkeypatch):
         """update_boardroom_state persists changes that get_boardroom_state reads back."""
         import shutil
+
         import business_infinity.boardroom as boardroom_module
 
         real_state = (
@@ -567,6 +607,7 @@ class TestBoardroomStateManager:
     def test_context_preserved_after_content_update(self, tmp_path, monkeypatch):
         """Static context is unchanged after a content update."""
         import shutil
+
         import business_infinity.boardroom as boardroom_module
 
         real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "cfo.jsonld"
@@ -624,32 +665,8 @@ class TestBoardroomWorkflowContext:
         """boardroom_debate passes company/product state for all agents."""
         import business_infinity.workflows as workflows_module
 
-        class FakeAgent:
-            def __init__(self, agent_id):
-                self.agent_id = agent_id
-
-        class FakeClient:
-            def __init__(self):
-                self.kwargs = None
-
-            async def start_orchestration(self, **kwargs):
-                self.kwargs = kwargs
-                return type(
-                    "Status",
-                    (),
-                    {
-                        "orchestration_id": "orch-123",
-                        "status": type("Running", (), {"value": "running"})(),
-                    },
-                )()
-
-        class FakeRequest:
-            def __init__(self, body, client):
-                self.body = body
-                self.client = client
-
         async def fake_select_c_suite_agents(client):
-            return [FakeAgent("ceo"), FakeAgent("cfo")]
+            return [AgentDouble("ceo"), AgentDouble("cfo"), AgentDouble("cmo")]
 
         monkeypatch.setattr(
             workflows_module,
@@ -657,8 +674,8 @@ class TestBoardroomWorkflowContext:
             fake_select_c_suite_agents,
         )
 
-        client = FakeClient()
-        request = FakeRequest(
+        client = CaptureClient()
+        request = RequestDouble(
             {
                 "event": "Market shift",
                 "event_source": "market",
@@ -685,35 +702,9 @@ class TestBoardroomWorkflowContext:
         """workflow_orchestration passes owner company/product state."""
         import business_infinity.workflows as workflows_module
 
-        class FakeAgent:
-            def __init__(self, agent_id):
-                self.agent_id = agent_id
-
-        class FakeClient:
-            def __init__(self):
-                self.kwargs = None
-
-            async def list_agents(self):
-                return [FakeAgent("founder"), FakeAgent("ceo")]
-
-            async def start_orchestration(self, **kwargs):
-                self.kwargs = kwargs
-                return type(
-                    "Status",
-                    (),
-                    {
-                        "orchestration_id": "orch-456",
-                        "status": type("Running", (), {"value": "running"})(),
-                    },
-                )()
-
-        class FakeRequest:
-            def __init__(self, body, client):
-                self.body = body
-                self.client = client
-
-        client = FakeClient()
-        request = FakeRequest(
+        client = CaptureClient()
+        client.agents = [AgentDouble("founder"), AgentDouble("ceo")]
+        request = RequestDouble(
             {
                 "workflow_id": "pitch_business_infinity",
                 "company_purpose": "Deliver reliable innovation that earns trust",

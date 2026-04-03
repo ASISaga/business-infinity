@@ -157,6 +157,7 @@ class BoardroomStateManager:
         "founder": "founder",
     }
 
+    #: Required keys for an agent's immutable static context.
     _AGENT_CONTEXT_KEYS = {
         "name",
         "fixed_mandate",
@@ -164,6 +165,7 @@ class BoardroomStateManager:
         "immutable_constraints",
     }
 
+    #: Required keys for an agent's mutable working content.
     _AGENT_CONTENT_KEYS = {
         "current_focus",
         "active_strategy",
@@ -173,12 +175,7 @@ class BoardroomStateManager:
         "product_state",
     }
 
-    _AGENT_LAYER_MANAGEMENT_KEYS = {
-        "access",
-        "mutability",
-        "manager",
-    }
-
+    #: Required keys for each company/product perspective projection.
     _AGENT_PERSPECTIVE_KEYS = {
         "entity_id",
         "entity_name",
@@ -189,6 +186,23 @@ class BoardroomStateManager:
         "language",
         "software_interfaces",
         "current_signals",
+    }
+
+    #: Management metadata required for each segregated state layer.
+    _AGENT_LAYER_MANAGEMENT_KEYS = {
+        "access",
+        "mutability",
+        "manager",
+    }
+
+    #: Core Business Infinity manifest records: product, architecture, UI,
+    #: persistence, and orchestration logic.
+    _PRODUCT_MANIFEST_RECORD_IDS = {
+        "bi:product:core",
+        "bi:arch:modular",
+        "bi:engine:bento",
+        "bi:layer:subconscious",
+        "bi:logic:resonance",
     }
 
     _DOCUMENT_SCHEMAS: Dict[str, Dict[str, Any]] = {
@@ -220,13 +234,7 @@ class BoardroomStateManager:
         "business-infinity.jsonld": {
             "mode": "jsonl",
             "required_keys": {"@context", "@id", "@type"},
-            "required_record_ids": {
-                "bi:product:core",
-                "bi:arch:modular",
-                "bi:engine:bento",
-                "bi:layer:subconscious",
-                "bi:logic:resonance",
-            },
+            "required_record_ids": _PRODUCT_MANIFEST_RECORD_IDS,
         },
         "environment.jsonl": {
             "mode": "object",
@@ -265,7 +273,7 @@ class BoardroomStateManager:
     @classmethod
     def _read_text(cls, path: Path) -> str:
         """Read a state document from disk."""
-        with open(str(path), "r", encoding="utf-8") as fh:
+        with open(path, "r", encoding="utf-8") as fh:
             return fh.read().strip()
 
     @classmethod
@@ -301,7 +309,7 @@ class BoardroomStateManager:
     @classmethod
     def _write_json_document(cls, path: Path, data: Dict[str, Any]) -> None:
         """Write a single JSON document while preserving compact jsonl files."""
-        with open(str(path), "w", encoding="utf-8") as fh:
+        with open(path, "w", encoding="utf-8") as fh:
             if path.suffix == ".jsonl":
                 fh.write(json.dumps(data, ensure_ascii=False))
                 fh.write("\n")
@@ -431,7 +439,13 @@ class BoardroomStateManager:
         Returns ``context`` and ``content`` plus compatibility aliases
         ``innate_essence`` and ``executive_function``.
         """
-        filename = cls._AGENT_FILES[agent_id]
+        try:
+            filename = cls._AGENT_FILES[agent_id]
+        except KeyError as exc:
+            raise ValueError(
+                f"Unknown agent ID '{agent_id}'. "
+                f"Registered agents: {cls.get_registered_agent_ids()}"
+            ) from exc
         path = cls._state_path(filename)
         return cls._normalize_agent_state(cls._load_json_document(path))
 
