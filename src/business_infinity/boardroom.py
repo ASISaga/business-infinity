@@ -115,12 +115,12 @@ CXO_PATHWAY_TYPES = list(dict.fromkeys(domain["pathway"] for domain in CXO_DOMAI
 
 # ── Boardroom State Manager ──────────────────────────────────────────────────
 #
-# The boardroom maintains two layers of JSON-LD state for each agent:
+# The boardroom maintains two explicit layers of JSON-LD state for each agent:
 #
-#   - **Innate Essence** (immutable): fixed identity, mandate, and constraints
-#     — the agent's "constitution", never modified at runtime.
-#   - **Executive Function** (mutable): active focus, strategy, short-term
-#     memory, and spontaneous intent — the agent's conscious workspace.
+#   - **Context** (immutable): fixed identity, mandate, and constraints — the
+#     agent's read-only constitution.
+#   - **Content** (mutable): active focus, strategy, short-term memory, and
+#     spontaneous intent — the agent's writable working space.
 #
 # Collective boardroom state (topic, resonance scores, active directives) is
 # stored separately in ``boardroom.jsonld``.
@@ -129,16 +129,15 @@ CXO_PATHWAY_TYPES = list(dict.fromkeys(domain["pathway"] for domain in CXO_DOMAI
 
 
 class BoardroomStateManager:
-    """Manages JSON-LD agent and boardroom state for the BusinessInfinity boardroom.
+    """Manages segregated boardroom state documents.
 
-    State is stored as JSON-LD files in ``boardroom/state/``.  Each agent has
-    its own file containing ``innate_essence`` (immutable) and
-    ``executive_function`` (mutable).  The collective boardroom state lives in
-    ``boardroom.jsonld``.
+    Agent state is stored with two explicit layers:
 
-    Only the ``executive_function`` section of an agent file may be updated at
-    runtime — ``innate_essence`` is the agent's permanent constitution and is
-    never overwritten.
+    - ``context``: static, read-only identity and mandate information.
+    - ``content``: dynamic, writable working memory and active intent.
+
+    Each layer also carries its own management metadata so read-only context is
+    never updated through the same path as mutable content.
     """
 
     #: Path to the ``boardroom/state/`` directory relative to the project root.
@@ -155,6 +154,56 @@ class BoardroomStateManager:
         "cto": "cto",
         "cso": "cso",
         "founder": "founder",
+    }
+
+    _AGENT_CONTEXT_KEYS = {
+        "name",
+        "fixed_mandate",
+        "core_logic",
+        "immutable_constraints",
+    }
+
+    _AGENT_CONTENT_KEYS = {
+        "current_focus",
+        "active_strategy",
+        "short_term_memory",
+        "spontaneous_intent",
+    }
+
+    _AGENT_LAYER_MANAGEMENT_KEYS = {
+        "access",
+        "mutability",
+        "manager",
+    }
+
+    _DOCUMENT_SCHEMAS: Dict[str, Dict[str, Any]] = {
+        "boardroom.jsonld": {
+            "mode": "object",
+            "required_keys": {
+                "@context",
+                "@id",
+                "@type",
+                "status",
+                "current_topic",
+                "resonance_ledger",
+                "active_directives",
+            },
+        },
+        "environment.jsonl": {
+            "mode": "object",
+            "required_keys": {
+                "@context",
+                "@id",
+                "@type",
+                "cloud_provider",
+                "gitops_registry",
+                "compliance_gate",
+            },
+        },
+        "mvp.jsonl": {
+            "mode": "jsonl",
+            "required_keys": {"@context", "@id", "@type"},
+        },
     }
 
     @classmethod
@@ -175,18 +224,15 @@ class BoardroomStateManager:
         )
 
     @classmethod
-    def load_agent_state(cls, agent_id: str) -> Dict[str, Any]:
-        """Load the full state (innate_essence + executive_function) for an agent.
-
-        Raises :class:`KeyError` if *agent_id* is not mapped to a state file.
-        Raises :class:`FileNotFoundError` if the state file does not exist.
-        """
-        filename = cls._AGENT_FILES[agent_id]  # raises KeyError for unknown IDs
-        path = cls._state_path(filename)
+    def _read_text(cls, path: Path) -> str:
+        """Read a state document from disk."""
         with open(str(path), "r", encoding="utf-8") as fh:
-            content = fh.read().strip()
-        # Support both single-object JSON (.jsonld) and line-delimited JSON (.jsonl).
-        # For multi-object .jsonl files the first object is the agent's primary state.
+            return fh.read().strip()
+
+    @classmethod
+    def _load_json_document(cls, path: Path) -> Dict[str, Any]:
+        """Load a single JSON document from *path*."""
+        content = cls._read_text(path)
         first_line = content.split("\n")[0].strip()
         try:
             return json.loads(first_line)
@@ -194,39 +240,208 @@ class BoardroomStateManager:
             return json.loads(content)
 
     @classmethod
-    def update_executive_function(
+    def _load_jsonl_records(cls, path: Path) -> List[Dict[str, Any]]:
+        """Load one-or-more JSON records from *path*."""
+        content = cls._read_text(path)
+        if not content:
+            return []
+        records: List[Dict[str, Any]] = []
+        for line in content.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            records.append(json.loads(line))
+        return records
+
+    @classmethod
+    def _write_json_document(cls, path: Path, data: Dict[str, Any]) -> None:
+        """Write a single JSON document while preserving compact jsonl files."""
+        with open(str(path), "w", encoding="utf-8") as fh:
+            if path.suffix == ".jsonl":
+                fh.write(json.dumps(data, ensure_ascii=False))
+                fh.write("\n")
+            else:
+                json.dump(data, fh, indent=2, ensure_ascii=False)
+                fh.write("\n")
+
+    @classmethod
+    def _default_context_management(cls) -> Dict[str, Any]:
+        """Return the default management metadata for agent context."""
+        return {
+            "access": "read-only",
+            "mutability": "immutable",
+            "manager": "BoardroomStateManager.load_agent_context",
+        }
+
+    @classmethod
+    def _default_content_management(cls) -> Dict[str, Any]:
+        """Return the default management metadata for agent content."""
+        return {
+            "access": "full-control",
+            "mutability": "mutable",
+            "manager": "BoardroomStateManager.update_agent_content",
+        }
+
+    @classmethod
+    def _validate_required_keys(
+        cls,
+        data: Dict[str, Any],
+        required_keys: set[str],
+        label: str,
+    ) -> None:
+        """Validate that *data* contains all *required_keys*."""
+        missing = required_keys - set(data.keys())
+        if missing:
+            raise ValueError(f"{label} missing required keys: {sorted(missing)}")
+
+    @classmethod
+    def _normalize_agent_state(cls, state: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize legacy agent state into segregated context/content shape."""
+        if "context" not in state and "innate_essence" in state:
+            state["context"] = state.pop("innate_essence")
+        if "content" not in state and "executive_function" in state:
+            state["content"] = state.pop("executive_function")
+
+        state.setdefault("schema_version", "2.0.0")
+        state.setdefault("context_management", cls._default_context_management())
+        state.setdefault("content_management", cls._default_content_management())
+
+        cls._validate_required_keys(
+            state,
+            {
+                "@context",
+                "@id",
+                "@type",
+                "schema_version",
+                "context",
+                "context_management",
+                "content",
+                "content_management",
+            },
+            "agent state",
+        )
+        cls._validate_required_keys(
+            state["context"],
+            cls._AGENT_CONTEXT_KEYS,
+            "agent context",
+        )
+        cls._validate_required_keys(
+            state["content"],
+            cls._AGENT_CONTENT_KEYS,
+            "agent content",
+        )
+        cls._validate_required_keys(
+            state["context_management"],
+            cls._AGENT_LAYER_MANAGEMENT_KEYS,
+            "context management",
+        )
+        cls._validate_required_keys(
+            state["content_management"],
+            cls._AGENT_LAYER_MANAGEMENT_KEYS,
+            "content management",
+        )
+
+        state["innate_essence"] = dict(state["context"])
+        state["executive_function"] = dict(state["content"])
+        return state
+
+    @classmethod
+    def _validate_document_schema(cls, filename: str, data: Any) -> None:
+        """Validate a non-agent state document against its lightweight schema."""
+        schema = cls._DOCUMENT_SCHEMAS[filename]
+        if schema["mode"] == "object":
+            cls._validate_required_keys(data, schema["required_keys"], filename)
+            return
+
+        if not isinstance(data, list):
+            raise ValueError(f"{filename} must contain a JSONL record list")
+        for index, record in enumerate(data):
+            cls._validate_required_keys(
+                record,
+                schema["required_keys"],
+                f"{filename}[{index}]",
+            )
+
+    @classmethod
+    def load_agent_state(cls, agent_id: str) -> Dict[str, Any]:
+        """Load the full segregated state for an agent.
+
+        Returns ``context`` and ``content`` plus compatibility aliases
+        ``innate_essence`` and ``executive_function``.
+        """
+        filename = cls._AGENT_FILES[agent_id]
+        path = cls._state_path(filename)
+        return cls._normalize_agent_state(cls._load_json_document(path))
+
+    @classmethod
+    def load_agent_context(cls, agent_id: str) -> Dict[str, Any]:
+        """Load static, read-only context for an agent."""
+        return dict(cls.load_agent_state(agent_id)["context"])
+
+    @classmethod
+    def load_agent_content(cls, agent_id: str) -> Dict[str, Any]:
+        """Load dynamic, mutable content for an agent."""
+        return dict(cls.load_agent_state(agent_id)["content"])
+
+    @classmethod
+    def update_agent_content(
         cls, agent_id: str, updates: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Update the mutable ``executive_function`` section of an agent's state.
-
-        Merges *updates* into the existing ``executive_function`` dict.  The
-        ``innate_essence`` section is never touched.
-
-        Returns the full updated agent state.
-
-        Raises :class:`KeyError` if *agent_id* is not registered.
-        Raises :class:`FileNotFoundError` if the state file does not exist.
-        """
+        """Update the mutable ``content`` section of an agent's state."""
         state = cls.load_agent_state(agent_id)
         filename = cls._AGENT_FILES[agent_id]
         path = cls._state_path(filename)
 
-        ef = state.get("executive_function", {})
-        ef.update(updates)
-        state["executive_function"] = ef
+        content = state.get("content", {})
+        content.update(updates)
+        state["content"] = content
+        state["executive_function"] = dict(content)
 
-        with open(str(path), "w", encoding="utf-8") as fh:
-            json.dump(state, fh, indent=2, ensure_ascii=False)
-            fh.write("\n")
-
+        persisted = {
+            key: value
+            for key, value in state.items()
+            if key not in {"innate_essence", "executive_function"}
+        }
+        cls._write_json_document(path, persisted)
         return state
+
+    @classmethod
+    def update_agent_context(
+        cls, agent_id: str, updates: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Reject direct updates to agent context."""
+        raise PermissionError(
+            f"Agent context is read-only for '{agent_id}'; "
+            "use content updates instead"
+        )
+
+    @classmethod
+    def update_executive_function(
+        cls, agent_id: str, updates: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Backward-compatible alias for :meth:`update_agent_content`."""
+        return cls.update_agent_content(agent_id, updates)
 
     @classmethod
     def get_boardroom_state(cls) -> Dict[str, Any]:
         """Return the current collective boardroom state from ``boardroom.jsonld``."""
         path = cls._STATE_DIR / "boardroom.jsonld"
-        with open(str(path), "r", encoding="utf-8") as fh:
-            return json.load(fh)
+        state = cls._load_json_document(path)
+        cls._validate_document_schema("boardroom.jsonld", state)
+        return state
+
+    @classmethod
+    def load_state_records(cls, filename: str) -> Any:
+        """Load and validate a non-agent state document by filename."""
+        path = cls._STATE_DIR / filename
+        schema = cls._DOCUMENT_SCHEMAS[filename]
+        if schema["mode"] == "jsonl":
+            records = cls._load_jsonl_records(path)
+            cls._validate_document_schema(filename, records)
+            return records
+        document = cls._load_json_document(path)
+        cls._validate_document_schema(filename, document)
+        return document
 
     @classmethod
     def update_boardroom_state(cls, updates: Dict[str, Any]) -> Dict[str, Any]:
@@ -252,9 +467,7 @@ class BoardroomStateManager:
         state.update(updates)
 
         path = cls._STATE_DIR / "boardroom.jsonld"
-        with open(str(path), "w", encoding="utf-8") as fh:
-            json.dump(state, fh, indent=2, ensure_ascii=False)
-            fh.write("\n")
+        cls._write_json_document(path, state)
 
         return state
 
@@ -271,6 +484,22 @@ class BoardroomStateManager:
             except FileNotFoundError:
                 pass
         return states
+
+    @classmethod
+    def get_all_agent_contexts(cls) -> Dict[str, Dict[str, Any]]:
+        """Return static context for all agents that have state files."""
+        return {
+            agent_id: state["context"]
+            for agent_id, state in cls.get_all_agent_states().items()
+        }
+
+    @classmethod
+    def get_all_agent_contents(cls) -> Dict[str, Dict[str, Any]]:
+        """Return dynamic content for all agents that have state files."""
+        return {
+            agent_id: state["content"]
+            for agent_id, state in cls.get_all_agent_states().items()
+        }
 
 
 # ── Structured Workflow Registry ─────────────────────────────────────────────

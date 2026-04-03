@@ -256,13 +256,14 @@ async def boardroom_debate(request: WorkflowRequest) -> Dict[str, Any]:
         if aid in CXO_DOMAINS
     }
 
-    # Include current boardroom state and per-agent executive function so agents
-    # enter the debate with full situational awareness.
+    # Include current boardroom state and segregated agent context/content so
+    # agents enter the debate with full situational awareness.
     try:
         boardroom_state = BoardroomStateManager.get_boardroom_state()
     except FileNotFoundError:
         boardroom_state = {}
-    agent_states = BoardroomStateManager.get_all_agent_states()
+    agent_contexts = BoardroomStateManager.get_all_agent_contexts()
+    agent_contents = BoardroomStateManager.get_all_agent_contents()
 
     status = await request.client.start_orchestration(
         agent_ids=agent_ids,
@@ -275,7 +276,8 @@ async def boardroom_debate(request: WorkflowRequest) -> Dict[str, Any]:
             "debate_context": request.body.get("context", {}),
             "cxo_domains": domain_context,
             "boardroom_state": boardroom_state,
-            "agent_states": agent_states,
+            "agent_contexts": agent_contexts,
+            "agent_contents": agent_contents,
         },
     )
     logger.info(
@@ -621,6 +623,12 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
         boardroom_state = BoardroomStateManager.get_boardroom_state()
     except FileNotFoundError:
         boardroom_state = {}
+    try:
+        owner_context = BoardroomStateManager.load_agent_context(owner_agent_id)
+        owner_content = BoardroomStateManager.load_agent_content(owner_agent_id)
+    except (FileNotFoundError, KeyError):
+        owner_context = {}
+        owner_content = {}
 
     status = await request.client.start_orchestration(
         agent_ids=agent_ids,
@@ -634,6 +642,8 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
             "company_purpose": request.body.get("company_purpose", ""),
             "app_id": "boardroom_ui",
             "boardroom_state": boardroom_state,
+            "owner_context": owner_context,
+            "owner_content": owner_content,
         },
     )
     logger.info(

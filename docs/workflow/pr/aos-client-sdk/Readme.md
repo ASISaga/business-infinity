@@ -140,8 +140,10 @@ req = OrchestrationRequest(
     purpose=OrchestrationPurpose(purpose=..., purpose_scope=...),
     context=request.body,
     boardroom_context=BoardroomContext(
-        # Per-agent state: innate_essence + executive_function from JSON-LD
-        agent_states={"ceo": {...}, "cfo": {...}, ...},
+        # Per-agent static context: read-only identity and mandate
+        agent_contexts={"ceo": {...}, "cfo": {...}, ...},
+        # Per-agent dynamic content: mutable working memory and intent
+        agent_contents={"ceo": {...}, "cfo": {...}, ...},
         # Collective boardroom state: topic, resonance, active directives
         boardroom_state={
             "status": "Operational",
@@ -155,8 +157,8 @@ status = await request.client.submit_orchestration(req)
 ```
 
 The `BoardroomContext` is injected into each agent turn so agents receive
-their ``executive_function`` state at the start of every response.  The
-`innate_essence` is carried as a read-only system prompt amendment.
+their mutable ``content`` at the start of every response.  Their static
+``context`` is carried as a read-only system prompt amendment.
 
 State files live in ``boardroom/state/`` (JSON-LD format) and are managed
 by `BoardroomStateManager` in ``src/business_infinity/boardroom.py``.
