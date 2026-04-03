@@ -1,5 +1,8 @@
 # business-infinity.asisaga.com — Generic Boardroom Interface
 
+**Version**: 1.1.0  
+**Last Updated**: 2026-04-03
+
 ## Objective
 
 Configure the `<chatroom>` Web Component on business-infinity.asisaga.com to
@@ -23,6 +26,9 @@ A third capability is available independently of the boardroom session:
 3. **Workflow Editor** — A step-wise, form-based editor at `/workflow-editor/`
    that allows authorised users to configure the YAML workflow files
    (`docs/workflow/samples/`) without writing raw YAML.
+
+Detailed interaction, state, and accessibility expectations for these surfaces
+are defined in `docs/workflow/pr/business-infinity.asisaga.com/UX.md`.
 
 ## Requirements
 
@@ -179,6 +185,7 @@ backend before any write operation.
 ## References
 
 → **Frontend prompt**: `docs/workflow/prompts/frontend.md`
+→ **Detailed UX specification**: `docs/workflow/pr/business-infinity.asisaga.com/UX.md`
 → **Workflow YAML samples**: `docs/workflow/samples/`
 → **Boardroom schema**: `docs/workflow/boardroom.yaml`
 → **Communication protocol**: `docs/workflow/Communication.md`
