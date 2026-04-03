@@ -4,7 +4,7 @@ description: Enrich boardroom agent JSON-LD state files with legend-derived doma
 license: MIT
 metadata:
   author: ASISaga
-  version: "1.0"
+  version: "2.0"
   category: boardroom
   role: agent-state-specialist
 allowed-tools: Bash(python:*) Read Edit
@@ -14,82 +14,36 @@ allowed-tools: Bash(python:*) Read Edit
 
 **Role**: Boardroom Agent State Enrichment Specialist  
 **Scope**: `boardroom/state/*.jsonld` — agent context and content layers  
-**Version**: 1.0
+**Version**: 2.0
 
 ## Purpose
 
-Enrich the `context` layer of each boardroom agent JSON-LD file with the legend-derived
-`domain_knowledge`, `skills`, `persona`, and `language` fields defined in the spec. Ensures
-every agent embodies its legendary archetype in full rather than relying on a single-line
-`core_logic` string.
+Orchestrate context enrichment across all boardroom agents. Each agent has a **dedicated skill**
+that contains the precise legend-derived `domain_knowledge`, `skills`, `persona`, and `language`
+values for that agent. Use this skill as the entry point to discover the right agent skill,
+or for cross-agent operations such as full-roster validation.
+
+## Agent Roster
+
+| Role | Legend | State file | Dedicated skill |
+|------|--------|-----------|----------------|
+| CEO | Steve Jobs | `boardroom/state/ceo.jsonld` | `.github/skills/boardroom-agent-state-ceo/SKILL.md` |
+| CFO | Warren Buffett | `boardroom/state/cfo.jsonld` | `.github/skills/boardroom-agent-state-cfo/SKILL.md` |
+| COO | W. Edwards Deming | `boardroom/state/coo.jsonld` | `.github/skills/boardroom-agent-state-coo/SKILL.md` |
+| CMO | Seth Godin | `boardroom/state/cmo.jsonld` | `.github/skills/boardroom-agent-state-cmo/SKILL.md` |
+| CHRO | Peter Drucker | `boardroom/state/chro.jsonld` | `.github/skills/boardroom-agent-state-chro/SKILL.md` |
+| CTO | Alan Turing | `boardroom/state/cto.jsonld` | `.github/skills/boardroom-agent-state-cto/SKILL.md` |
+| CSO | Sun Tzu | `boardroom/state/cso.jsonl` ¹ | `.github/skills/boardroom-agent-state-cso/SKILL.md` |
+| Founder | Paul Graham | `boardroom/state/founder.jsonld` | `.github/skills/boardroom-agent-state-founder/SKILL.md` |
 
 ## When to Use This Skill
 
-Activate when:
-- Adding a new agent to the boardroom roster
-- Updating an agent's legend archetype
-- Discovering thin or missing context enrichment fields
-- Changing the archetype-to-agent mapping in `CXO_DOMAINS`
+- **Single agent enrichment** → use the agent's dedicated skill listed in the roster above
+- **Full-roster validation** → use the validation workflow in this skill
+- **Adding a new agent** → create a new dedicated skill, then add the agent to the roster table
 
-## Core Responsibilities
-
-1. Read the boardroom-agents spec for the target agent
-2. Update the `context.domain_knowledge`, `context.skills`, `context.persona`, and
-   `context.language` fields in the agent's JSON-LD file
-3. Validate the file loads correctly through `BoardroomStateManager`
-4. Run the test suite to confirm no regressions
-
-## Workflow
-
-### 1. Read the spec
-
-```bash
-cat .github/specs/boardroom-agents.md
-```
-
-### 2. Identify the agent file
-
-```bash
-# JSON-LD files: boardroom/state/{agent_id}.jsonld
-# JSONL files:   boardroom/state/{agent_id}.jsonl
-ls boardroom/state/
-```
-
-### 3. Update context enrichment
-
-Open the target file and add or update these four fields inside the `context` object:
-
-```json
-"domain_knowledge": ["<area 1>", "<area 2>", "<area 3>", "<area 4>", "<area 5>"],
-"skills": ["<skill 1>", "<skill 2>", "<skill 3>", "<skill 4>", "<skill 5>"],
-"persona": "<Rich 2–4 sentence identity description from the legend's perspective>",
-"language": "<Vocabulary, idioms, and reasoning style — 2–3 sentences>"
-```
-
-All content comes directly from the agent's entry in `.github/specs/boardroom-agents.md`.
-
-### 4. Validate
-
-```bash
-# Validate all agent states load correctly
-PYTHONPATH=/tmp/aos_mock:src python -m pytest tests/ -q -k "boardroom"
-
-# Spot-check context enrichment completeness
-PYTHONPATH=/tmp/aos_mock:src python - <<'PY'
-from business_infinity.boardroom import BoardroomStateManager
-for agent_id in BoardroomStateManager.get_registered_agent_ids():
-    ctx = BoardroomStateManager.load_agent_context(agent_id)
-    for field in ("domain_knowledge", "skills", "persona", "language"):
-        assert field in ctx, f"{agent_id} context missing '{field}'"
-    print(f"✓ {agent_id}: {ctx['name']}")
-PY
-```
-
-### 5. Run full test suite
-
-```bash
-PYTHONPATH=/tmp/aos_mock:src python -m pytest tests/ -q
-```
+> ¹ The CSO agent uses `.jsonl` (newline-delimited JSON) rather than `.jsonld`, consistent with
+> other non-agent state documents in `boardroom/state/`.
 
 ## Context Layer Schema
 
@@ -121,25 +75,42 @@ The `content.company_state` and `content.product_state` objects are validated by
 
 → See `src/business_infinity/boardroom.py` → `BoardroomStateManager._AGENT_PERSPECTIVE_KEYS`
 
+## Full-Roster Validation
+
+```bash
+# Validate all agent states load correctly
+PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
+
+# Spot-check context enrichment completeness across all agents
+PYTHONPATH=/tmp/aos_mock:src python3 - <<'PY'
+from business_infinity.boardroom import BoardroomStateManager
+for agent_id in BoardroomStateManager.get_registered_agent_ids():
+    ctx = BoardroomStateManager.load_agent_context(agent_id)
+    for field in ("domain_knowledge", "skills", "persona", "language"):
+        assert field in ctx, f"{agent_id} context missing '{field}'"
+    print(f"✓ {agent_id}: {ctx['name']}")
+PY
+```
+
 ## Tool Integration
 
 ```bash
 # Run all tests
-PYTHONPATH=/tmp/aos_mock:src python -m pytest tests/ -q
+PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q
 
 # Lint boardroom module
-PYTHONPATH=/tmp/aos_mock:src python -m pylint src/business_infinity/boardroom.py --disable=C0114,C0115,C0116,E0401
+PYTHONPATH=/tmp/aos_mock:src python3 -m pylint src/business_infinity/boardroom.py --disable=C0114,C0115,C0116,E0401
 ```
 
 ## Related Documentation
 
-→ **Spec**: `.github/specs/boardroom-agents.md` — Legend archetypes, domain knowledge, and JSON-LD schema
-→ **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`
-→ **State files**: `boardroom/state/*.jsonld`
-→ **MVP spec**: `.github/specs/mvp.md` — C-suite agent roster
+→ **Spec**: `.github/specs/boardroom-agents.md` — Legend archetypes, domain knowledge, and JSON-LD schema  
+→ **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
+→ **State files**: `boardroom/state/*.jsonld`  
+→ **MVP spec**: `.github/specs/mvp.md` — C-suite agent roster  
 → **Repository spec**: `.github/specs/repository.md`
 
 ---
 
-**Version**: 1.0 — Initial legend-enrichment skill  
+**Version**: 2.0 — Refactored to meta/roster skill with dedicated per-agent skills  
 **Last Updated**: 2026-04-03
