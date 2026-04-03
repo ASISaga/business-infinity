@@ -662,11 +662,57 @@ class TestBoardroomStateManager:
         assert state["@id"] == "asi:saga"
         assert "portfolio" in state
 
+    def test_company_manifest_context_enrichment(self):
+        """company.jsonld context has legend-derived enrichment fields."""
+        state = BoardroomStateManager.load_company_manifest()
+        ctx = state.get("context", {})
+        for field in ("domain_knowledge", "skills", "persona", "language"):
+            assert field in ctx, f"company context missing '{field}'"
+        assert isinstance(ctx["domain_knowledge"], list)
+        assert 4 <= len(ctx["domain_knowledge"]) <= 5
+        assert isinstance(ctx["skills"], list)
+        assert 4 <= len(ctx["skills"]) <= 5
+
+    def test_company_manifest_content_block(self):
+        """company.jsonld content has current phase and active initiatives."""
+        state = BoardroomStateManager.load_company_manifest()
+        content = state.get("content", {})
+        assert "current_phase" in content
+        assert "active_initiatives" in content
+        assert isinstance(content["active_initiatives"], list)
+        assert "boardroom_activation" in content
+
     def test_load_product_manifest_schema_validated(self):
         """load_product_manifest validates business-infinity.jsonld."""
         records = BoardroomStateManager.load_product_manifest()
         assert len(records) == 5
         assert any(record["@id"] == "bi:product:core" for record in records)
+
+    def test_product_manifest_core_enrichment(self):
+        """bi:product:core has legend-derived enrichment fields."""
+        records = BoardroomStateManager.load_product_manifest()
+        core = next(r for r in records if r["@id"] == "bi:product:core")
+        for field in ("domain_knowledge", "skills", "persona", "language"):
+            assert field in core, f"bi:product:core missing '{field}'"
+        assert isinstance(core["domain_knowledge"], list)
+        assert 4 <= len(core["domain_knowledge"]) <= 5
+
+    def test_product_manifest_architecture_enrichment(self):
+        """bi:arch:modular has rationale and principles."""
+        records = BoardroomStateManager.load_product_manifest()
+        arch = next(r for r in records if r["@id"] == "bi:arch:modular")
+        assert "rationale" in arch
+        assert "principles" in arch
+        assert isinstance(arch["principles"], list)
+
+    def test_product_manifest_all_records_enriched(self):
+        """All 5 product records have been enriched with at least one extra field."""
+        records = BoardroomStateManager.load_product_manifest()
+        extra_fields = {"domain_knowledge", "rationale", "description", "capabilities", "algorithm"}
+        for record in records:
+            assert extra_fields & set(record.keys()), (
+                f"{record['@id']} has no enrichment fields"
+            )
 
     def test_load_mvp_schema_validated(self):
         """load_state_records validates mvp.jsonl record structure."""
