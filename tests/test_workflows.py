@@ -409,6 +409,20 @@ class TestBoardroomStateManager:
         content = BoardroomStateManager.load_agent_content("ceo")
         assert "current_focus" in content
         assert "fixed_mandate" not in content
+        assert "company_state" in content
+        assert "product_state" in content
+
+    def test_load_agent_company_state_returns_perspective(self):
+        """load_agent_company_state returns the ASI Saga perspective payload."""
+        state = BoardroomStateManager.load_agent_company_state("ceo")
+        assert state["entity_name"] == "ASI Saga"
+        assert "software_interfaces" in state
+
+    def test_load_agent_product_state_returns_perspective(self):
+        """load_agent_product_state returns the Business Infinity perspective payload."""
+        state = BoardroomStateManager.load_agent_product_state("ceo")
+        assert state["entity_name"] == "Business Infinity"
+        assert "domain_knowledge" in state
 
     def test_load_agent_state_unknown_raises(self):
         """load_agent_state raises KeyError for an unregistered agent ID."""
@@ -448,6 +462,18 @@ class TestBoardroomStateManager:
         assert "ceo" in contents
         assert "current_focus" in contents["ceo"]
         assert "fixed_mandate" not in contents["ceo"]
+
+    def test_get_all_agent_company_states_returns_all_perspectives(self):
+        """get_all_agent_company_states returns ASI Saga perspectives."""
+        states = BoardroomStateManager.get_all_agent_company_states()
+        assert "ceo" in states
+        assert states["ceo"]["entity_name"] == "ASI Saga"
+
+    def test_get_all_agent_product_states_returns_all_perspectives(self):
+        """get_all_agent_product_states returns Business Infinity perspectives."""
+        states = BoardroomStateManager.get_all_agent_product_states()
+        assert "ceo" in states
+        assert states["ceo"]["entity_name"] == "Business Infinity"
 
     def test_agent_files_mapping_covers_c_suite(self):
         """The public agent registry covers all C-suite agent IDs."""
@@ -569,8 +595,137 @@ class TestBoardroomStateManager:
         assert state["@type"] == "InfrastructureManifest"
         assert "cloud_provider" in state
 
+    def test_load_company_manifest_schema_validated(self):
+        """load_company_manifest validates company.jsonld."""
+        state = BoardroomStateManager.load_company_manifest()
+        assert state["@id"] == "asi:saga"
+        assert "portfolio" in state
+
+    def test_load_product_manifest_schema_validated(self):
+        """load_product_manifest validates business-infinity.jsonld."""
+        records = BoardroomStateManager.load_product_manifest()
+        assert len(records) == 5
+        assert any(record["@id"] == "bi:product:core" for record in records)
+
     def test_load_mvp_schema_validated(self):
         """load_state_records validates mvp.jsonl record structure."""
         records = BoardroomStateManager.load_state_records("mvp.jsonl")
         assert len(records) > 0
         assert all("@type" in record for record in records)
+
+
+class TestBoardroomWorkflowContext:
+    """Test that workflow payloads include per-agent company/product state."""
+
+    @pytest.mark.asyncio
+    async def test_boardroom_debate_includes_agent_perspective_states(
+        self, monkeypatch
+    ):
+        """boardroom_debate passes company/product state for all agents."""
+        import business_infinity.workflows as workflows_module
+
+        class FakeAgent:
+            def __init__(self, agent_id):
+                self.agent_id = agent_id
+
+        class FakeClient:
+            def __init__(self):
+                self.kwargs = None
+
+            async def start_orchestration(self, **kwargs):
+                self.kwargs = kwargs
+                return type(
+                    "Status",
+                    (),
+                    {
+                        "orchestration_id": "orch-123",
+                        "status": type("Running", (), {"value": "running"})(),
+                    },
+                )()
+
+        class FakeRequest:
+            def __init__(self, body, client):
+                self.body = body
+                self.client = client
+
+        async def fake_select_c_suite_agents(client):
+            return [FakeAgent("ceo"), FakeAgent("cfo")]
+
+        monkeypatch.setattr(
+            workflows_module,
+            "select_c_suite_agents",
+            fake_select_c_suite_agents,
+        )
+
+        client = FakeClient()
+        request = FakeRequest(
+            {
+                "event": "Market shift",
+                "event_source": "market",
+                "company_purpose": "Build purposeful autonomous operating systems",
+                "context": {"segment": "B2B"},
+            },
+            client,
+        )
+
+        result = await workflows_module.boardroom_debate(request)
+
+        assert result["status"] == "running"
+        context = client.kwargs["context"]
+        assert "agent_company_states" in context
+        assert "agent_product_states" in context
+        assert context["agent_company_states"]["ceo"]["entity_name"] == "ASI Saga"
+        assert (
+            context["agent_product_states"]["cfo"]["entity_name"]
+            == "Business Infinity"
+        )
+
+    @pytest.mark.asyncio
+    async def test_workflow_orchestration_includes_owner_perspective_states(self):
+        """workflow_orchestration passes owner company/product state."""
+        import business_infinity.workflows as workflows_module
+
+        class FakeAgent:
+            def __init__(self, agent_id):
+                self.agent_id = agent_id
+
+        class FakeClient:
+            def __init__(self):
+                self.kwargs = None
+
+            async def list_agents(self):
+                return [FakeAgent("founder"), FakeAgent("ceo")]
+
+            async def start_orchestration(self, **kwargs):
+                self.kwargs = kwargs
+                return type(
+                    "Status",
+                    (),
+                    {
+                        "orchestration_id": "orch-456",
+                        "status": type("Running", (), {"value": "running"})(),
+                    },
+                )()
+
+        class FakeRequest:
+            def __init__(self, body, client):
+                self.body = body
+                self.client = client
+
+        client = FakeClient()
+        request = FakeRequest(
+            {
+                "workflow_id": "pitch_business_infinity",
+                "company_purpose": "Deliver reliable innovation that earns trust",
+            },
+            client,
+        )
+
+        result = await workflows_module.workflow_orchestration(request)
+
+        assert result["owner"] == "founder"
+        context = client.kwargs["context"]
+        assert context["owner_company_state"]["entity_name"] == "ASI Saga"
+        assert context["owner_product_state"]["entity_name"] == "Business Infinity"
+        assert "company_manifest" in context
+        assert "product_manifest" in context

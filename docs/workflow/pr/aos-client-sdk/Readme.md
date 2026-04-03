@@ -144,6 +144,12 @@ req = OrchestrationRequest(
         agent_contexts={"ceo": {...}, "cfo": {...}, ...},
         # Per-agent dynamic content: mutable working memory and intent
         agent_contents={"ceo": {...}, "cfo": {...}, ...},
+        # Per-agent ASI Saga and Business Infinity perspective state
+        agent_company_states={"ceo": {...}, "cfo": {...}, ...},
+        agent_product_states={"ceo": {...}, "cfo": {...}, ...},
+        # Canonical shared manifests
+        company_manifest={"@id": "asi:saga", ...},
+        product_manifest=[{"@id": "bi:product:core", ...}, ...],
         # Collective boardroom state: topic, resonance, active directives
         boardroom_state={
             "status": "Operational",
@@ -158,7 +164,9 @@ status = await request.client.submit_orchestration(req)
 
 The `BoardroomContext` is injected into each agent turn so agents receive
 their mutable ``content`` at the start of every response.  Their static
-``context`` is carried as a read-only system prompt amendment.
+``context`` is carried as a read-only system prompt amendment, while
+company and product state are available both as canonical manifests and as
+per-agent perspective projections.
 
 State files live in ``boardroom/state/`` (JSON-LD format) and are managed
 by `BoardroomStateManager` in ``src/business_infinity/boardroom.py``.

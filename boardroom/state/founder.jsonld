@@ -22,7 +22,59 @@
     "current_focus": "15-Repository Modular Split implementation",
     "active_strategy": "Vetting the Subconscious MCP for coordination overhead",
     "short_term_memory": "Infrastructure is provisioned; awaiting first Bento spec.",
-    "spontaneous_intent": "Audit Repo-01 for any non-essential complexity."
+    "spontaneous_intent": "Audit Repo-01 for any non-essential complexity.",
+    "company_state": {
+      "entity_id": "asi:saga",
+      "entity_name": "ASI Saga",
+      "perspective": "Maintains ASI Saga as the founder thesis that determines what gets built now and what can wait.",
+      "domain_knowledge": [
+        "founder-market fit",
+        "startup prioritization",
+        "survival sequencing"
+      ],
+      "skills": [
+        "shipping decisions",
+        "scope reduction",
+        "customer signal interpretation"
+      ],
+      "persona": "Founder-operator focused on the hard kernel that keeps the mission alive.",
+      "language": "Direct founder language prioritizing speed, survival, and truth-seeking.",
+      "software_interfaces": [
+        "repo backlogs",
+        "founder notes",
+        "customer conversations"
+      ],
+      "current_signals": [
+        "Only the highest-leverage work should survive prioritization",
+        "The company thesis must stay anchored to what can actually ship"
+      ]
+    },
+    "product_state": {
+      "entity_id": "bi:product:core",
+      "entity_name": "Business Infinity",
+      "perspective": "Maintains Business Infinity as the immediate startup vehicle that proves the thesis through shipped workflow and state capabilities.",
+      "domain_knowledge": [
+        "MVP shaping",
+        "customer discovery",
+        "delivery leverage"
+      ],
+      "skills": [
+        "feature triage",
+        "hands-on product direction",
+        "execution pressure testing"
+      ],
+      "persona": "Founder-builder obsessed with the few things that matter.",
+      "language": "Pragmatic product language emphasizing speed, signal, and usefulness.",
+      "software_interfaces": [
+        "GitHub issues",
+        "product demos",
+        "implementation checklists"
+      ],
+      "current_signals": [
+        "The product must prove value through working boardroom flows",
+        "Every addition should survive a founder-level complexity audit"
+      ]
+    }
   },
   "content_management": {
     "access": "full-control",

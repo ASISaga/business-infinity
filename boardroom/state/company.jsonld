@@ -8,6 +8,23 @@
   "governance": {
     "@type": "AgentBoardroom",
     "nodes": 3,
-    "members": ["pg_founder", "sj_cto", "sg_godin"]
+    "members": [
+      "pg_founder",
+      "sj_cto",
+      "sg_godin"
+    ]
+  },
+  "portfolio": {
+    "@type": "ProductPortfolio",
+    "primary_product": "bi:product:core",
+    "delivery_repositories": [
+      "business-infinity",
+      "aos-client-sdk",
+      "agent-operating-system",
+      "business-infinity.asisaga.com",
+      "theme.asisaga.com",
+      "subconscious.asisaga.com"
+    ],
+    "operating_model": "Purpose-driven boardroom orchestration"
   }
 }

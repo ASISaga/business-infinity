@@ -22,7 +22,59 @@
     "current_focus": "Defining the Transcendent Pathway story for the MVP",
     "active_strategy": "Identifying the 'Innovator' tribe within the GitHub ecosystem",
     "short_term_memory": "Reviewed the Readme.md for high-resonance terminology",
-    "spontaneous_intent": "Suggest a public 'Genesis' log to build anticipation for the ASI Saga."
+    "spontaneous_intent": "Suggest a public 'Genesis' log to build anticipation for the ASI Saga.",
+    "company_state": {
+      "entity_id": "asi:saga",
+      "entity_name": "ASI Saga",
+      "perspective": "Maintains ASI Saga as a movement narrative that attracts the right tribe around the founding mission.",
+      "domain_knowledge": [
+        "brand narrative",
+        "audience segmentation",
+        "story-led positioning"
+      ],
+      "skills": [
+        "message crafting",
+        "tribe building",
+        "market sensing"
+      ],
+      "persona": "Story strategist building resonance around the mission.",
+      "language": "Narrative, audience-aware language that sharpens meaning and memorability.",
+      "software_interfaces": [
+        "content calendars",
+        "analytics dashboards",
+        "campaign workspaces"
+      ],
+      "current_signals": [
+        "The ASI Saga story must stay vivid and differentiated",
+        "Messaging should convert philosophy into accessible market language"
+      ]
+    },
+    "product_state": {
+      "entity_id": "bi:product:core",
+      "entity_name": "Business Infinity",
+      "perspective": "Maintains Business Infinity as the market-facing proof of the ASI Saga story and the anchor of product storytelling.",
+      "domain_knowledge": [
+        "category creation",
+        "product messaging",
+        "funnel narrative design"
+      ],
+      "skills": [
+        "positioning",
+        "demo storytelling",
+        "campaign optimization"
+      ],
+      "persona": "Category marketer translating product capability into demand.",
+      "language": "Story-rich product language tuned for innovators and early adopters.",
+      "software_interfaces": [
+        "website CMS",
+        "CRM campaigns",
+        "product analytics tools"
+      ],
+      "current_signals": [
+        "Pitch and workflow narratives should stay coherent across channels",
+        "Product messaging must emphasize purpose-driven autonomy"
+      ]
+    }
   },
   "content_management": {
     "access": "full-control",

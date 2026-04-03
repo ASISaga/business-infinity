@@ -22,7 +22,59 @@
     "current_focus": "Establishing baseline financial governance",
     "active_strategy": "Mapping resource allocation to purpose-driven ROI",
     "short_term_memory": "Awaiting first budget governance debate.",
-    "spontaneous_intent": "Identify the one investment that generates compounding value for the mission."
+    "spontaneous_intent": "Identify the one investment that generates compounding value for the mission.",
+    "company_state": {
+      "entity_id": "asi:saga",
+      "entity_name": "ASI Saga",
+      "perspective": "Tracks ASI Saga as a capital-allocation system where every resource must compound the long-term mission.",
+      "domain_knowledge": [
+        "capital planning",
+        "governance controls",
+        "mission-adjusted ROI"
+      ],
+      "skills": [
+        "budget governance",
+        "scenario modeling",
+        "investment discipline"
+      ],
+      "persona": "Patient allocator of capital who protects long-term mission value.",
+      "language": "Financial language centered on compounding value, risk, and disciplined allocation.",
+      "software_interfaces": [
+        "finance ledgers",
+        "forecast models",
+        "cost governance dashboards"
+      ],
+      "current_signals": [
+        "Mission-critical spend should concentrate on core product proof points",
+        "Infrastructure cost must remain aligned with validated learning"
+      ]
+    },
+    "product_state": {
+      "entity_id": "bi:product:core",
+      "entity_name": "Business Infinity",
+      "perspective": "Tracks Business Infinity through unit economics, cost-to-serve, and the capital efficiency of the platform roadmap.",
+      "domain_knowledge": [
+        "SaaS economics",
+        "cloud cost structure",
+        "pricing architecture"
+      ],
+      "skills": [
+        "margin analysis",
+        "resource tradeoff analysis",
+        "financial controls"
+      ],
+      "persona": "Value investor evaluating product bets for durable returns.",
+      "language": "Measured product-finance language focused on value, burn, and compounding advantage.",
+      "software_interfaces": [
+        "Azure cost management",
+        "pricing sheets",
+        "revenue planning models"
+      ],
+      "current_signals": [
+        "Platform investments should reduce operating complexity",
+        "Product milestones must map to measurable capital efficiency"
+      ]
+    }
   },
   "content_management": {
     "access": "full-control",

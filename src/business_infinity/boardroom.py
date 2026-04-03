@@ -169,12 +169,26 @@ class BoardroomStateManager:
         "active_strategy",
         "short_term_memory",
         "spontaneous_intent",
+        "company_state",
+        "product_state",
     }
 
     _AGENT_LAYER_MANAGEMENT_KEYS = {
         "access",
         "mutability",
         "manager",
+    }
+
+    _AGENT_PERSPECTIVE_KEYS = {
+        "entity_id",
+        "entity_name",
+        "perspective",
+        "domain_knowledge",
+        "skills",
+        "persona",
+        "language",
+        "software_interfaces",
+        "current_signals",
     }
 
     _DOCUMENT_SCHEMAS: Dict[str, Dict[str, Any]] = {
@@ -188,6 +202,30 @@ class BoardroomStateManager:
                 "current_topic",
                 "resonance_ledger",
                 "active_directives",
+            },
+        },
+        "company.jsonld": {
+            "mode": "object",
+            "required_keys": {
+                "@context",
+                "@id",
+                "@type",
+                "name",
+                "vision",
+                "transcendentPathway",
+                "governance",
+                "portfolio",
+            },
+        },
+        "business-infinity.jsonld": {
+            "mode": "jsonl",
+            "required_keys": {"@context", "@id", "@type"},
+            "required_record_ids": {
+                "bi:product:core",
+                "bi:arch:modular",
+                "bi:engine:bento",
+                "bi:layer:subconscious",
+                "bi:logic:resonance",
             },
         },
         "environment.jsonl": {
@@ -338,6 +376,16 @@ class BoardroomStateManager:
             "agent content",
         )
         cls._validate_required_keys(
+            state["content"]["company_state"],
+            cls._AGENT_PERSPECTIVE_KEYS,
+            "agent company_state",
+        )
+        cls._validate_required_keys(
+            state["content"]["product_state"],
+            cls._AGENT_PERSPECTIVE_KEYS,
+            "agent product_state",
+        )
+        cls._validate_required_keys(
             state["context_management"],
             cls._AGENT_LAYER_MANAGEMENT_KEYS,
             "context management",
@@ -368,6 +416,13 @@ class BoardroomStateManager:
                 schema["required_keys"],
                 f"{filename}[{index}]",
             )
+        if "required_record_ids" in schema:
+            actual_ids = {record.get("@id") for record in data}
+            missing_ids = schema["required_record_ids"] - actual_ids
+            if missing_ids:
+                raise ValueError(
+                    f"{filename} missing required record ids: {sorted(missing_ids)}"
+                )
 
     @classmethod
     def load_agent_state(cls, agent_id: str) -> Dict[str, Any]:
@@ -389,6 +444,16 @@ class BoardroomStateManager:
     def load_agent_content(cls, agent_id: str) -> Dict[str, Any]:
         """Load dynamic, mutable content for an agent."""
         return dict(cls.load_agent_state(agent_id)["content"])
+
+    @classmethod
+    def load_agent_company_state(cls, agent_id: str) -> Dict[str, Any]:
+        """Load an agent's company-state perspective."""
+        return dict(cls.load_agent_content(agent_id)["company_state"])
+
+    @classmethod
+    def load_agent_product_state(cls, agent_id: str) -> Dict[str, Any]:
+        """Load an agent's product-state perspective."""
+        return dict(cls.load_agent_content(agent_id)["product_state"])
 
     @classmethod
     def update_agent_content(
@@ -466,6 +531,16 @@ class BoardroomStateManager:
         return document
 
     @classmethod
+    def load_company_manifest(cls) -> Dict[str, Any]:
+        """Load the canonical ASI Saga company manifest."""
+        return cls.load_state_records("company.jsonld")
+
+    @classmethod
+    def load_product_manifest(cls) -> List[Dict[str, Any]]:
+        """Load the canonical Business Infinity product manifest."""
+        return cls.load_state_records("business-infinity.jsonld")
+
+    @classmethod
     def update_boardroom_state(cls, updates: Dict[str, Any]) -> Dict[str, Any]:
         """Update the collective boardroom state.
 
@@ -523,6 +598,22 @@ class BoardroomStateManager:
         """Return dynamic content for all agents that have state files."""
         return {
             agent_id: state["content"]
+            for agent_id, state in cls.get_all_agent_states().items()
+        }
+
+    @classmethod
+    def get_all_agent_company_states(cls) -> Dict[str, Dict[str, Any]]:
+        """Return company-state perspectives for all agents."""
+        return {
+            agent_id: state["content"]["company_state"]
+            for agent_id, state in cls.get_all_agent_states().items()
+        }
+
+    @classmethod
+    def get_all_agent_product_states(cls) -> Dict[str, Dict[str, Any]]:
+        """Return product-state perspectives for all agents."""
+        return {
+            agent_id: state["content"]["product_state"]
             for agent_id, state in cls.get_all_agent_states().items()
         }
 
