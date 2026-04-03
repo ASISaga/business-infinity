@@ -11,6 +11,7 @@ from business_infinity.workflows import (
 from business_infinity.boardroom import (
     BOARDROOM_DEBATE_PURPOSE,
     BOARDROOM_DEBATE_SCOPE,
+    BoardroomStateManager,
     CXO_DOMAINS,
     CXO_PATHWAY_TYPES,
     PITCH_ORCHESTRATION_PURPOSE,
@@ -23,6 +24,43 @@ from business_infinity.boardroom import (
     load_workflow_yaml,
     save_workflow_yaml,
 )
+
+
+class AgentDouble:
+    """Minimal agent test double."""
+
+    def __init__(self, agent_id):
+        self.agent_id = agent_id
+
+
+class CaptureClient:
+    """Async client double that captures orchestration kwargs."""
+
+    def __init__(self):
+        self.kwargs = None
+        self.agents = []
+
+    async def list_agents(self):
+        return self.agents
+
+    async def start_orchestration(self, **kwargs):
+        self.kwargs = kwargs
+        return type(
+            "Status",
+            (),
+            {
+                "orchestration_id": "orch-test",
+                "status": type("Running", (), {"value": "running"})(),
+            },
+        )()
+
+
+class RequestDouble:
+    """Minimal workflow request test double."""
+
+    def __init__(self, body, client):
+        self.body = body
+        self.client = client
 
 
 class TestCSuiteSelection:
@@ -327,3 +365,424 @@ class TestWorkflowEditor:
         }
         with pytest.raises(ValueError, match="response"):
             save_workflow_yaml("pitch_business_infinity", bad_data)
+
+
+class TestBoardroomStateManager:
+    """Test BoardroomStateManager for JSON-LD agent and boardroom state."""
+
+    def test_get_boardroom_state_returns_dict(self):
+        """get_boardroom_state returns a dict with required collective keys."""
+        state = BoardroomStateManager.get_boardroom_state()
+        assert isinstance(state, dict)
+        assert "status" in state
+        assert "current_topic" in state
+
+    def test_get_boardroom_state_jsonld_keys(self):
+        """Boardroom state has JSON-LD @context and @type."""
+        state = BoardroomStateManager.get_boardroom_state()
+        assert "@context" in state
+        assert "@type" in state
+
+    def test_load_agent_state_founder(self):
+        """load_agent_state returns segregated context/content plus aliases."""
+        state = BoardroomStateManager.load_agent_state("founder")
+        assert "context" in state
+        assert "content" in state
+        assert "context_management" in state
+        assert "content_management" in state
+        assert "innate_essence" in state
+        assert "executive_function" in state
+
+    def test_load_agent_state_cmo(self):
+        """load_agent_state works for CMO agent."""
+        state = BoardroomStateManager.load_agent_state("cmo")
+        assert "name" in state["context"]
+        assert "current_focus" in state["content"]
+
+    def test_load_agent_state_cto(self):
+        """load_agent_state works for CTO agent — legend: Alan Turing."""
+        state = BoardroomStateManager.load_agent_state("cto")
+        assert state["context"]["name"] == "Alan Turing"
+        assert "core_logic" in state["context"]
+        assert "active_strategy" in state["content"]
+
+    def test_load_agent_state_ceo(self):
+        """load_agent_state works for CEO agent."""
+        state = BoardroomStateManager.load_agent_state("ceo")
+        assert state["@type"] == "CEOAgent"
+        assert "fixed_mandate" in state["context"]
+
+    def test_load_agent_state_cfo(self):
+        """load_agent_state works for CFO agent."""
+        state = BoardroomStateManager.load_agent_state("cfo")
+        assert state["@type"] == "CFOAgent"
+        assert state["context"]["name"] == "Warren Buffett"
+
+    def test_load_agent_state_coo(self):
+        """load_agent_state works for COO agent."""
+        state = BoardroomStateManager.load_agent_state("coo")
+        assert state["@type"] == "COOAgent"
+        assert state["context"]["name"] == "W. Edwards Deming"
+
+    def test_load_agent_state_chro(self):
+        """load_agent_state works for CHRO agent."""
+        state = BoardroomStateManager.load_agent_state("chro")
+        assert state["@type"] == "CHROAgent"
+        assert state["context"]["name"] == "Peter Drucker"
+
+    def test_load_agent_state_cso(self):
+        """load_agent_state works for CSO agent — legend: Sun Tzu."""
+        state = BoardroomStateManager.load_agent_state("cso")
+        assert state["context"]["name"] == "Sun Tzu"
+        assert "context" in state
+        assert "content" in state
+
+    def test_load_agent_context_returns_read_only_layer(self):
+        """load_agent_context returns only the static context section."""
+        context = BoardroomStateManager.load_agent_context("ceo")
+        assert "fixed_mandate" in context
+        assert "current_focus" not in context
+
+    def test_all_agent_contexts_have_enrichment_fields(self):
+        """Every agent context has the legend-derived enrichment fields from boardroom-agents spec."""
+        enrichment_fields = ("domain_knowledge", "skills", "persona", "language")
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            ctx = BoardroomStateManager.load_agent_context(agent_id)
+            for field in enrichment_fields:
+                assert field in ctx, f"{agent_id} context missing '{field}'"
+
+    def test_context_enrichment_types(self):
+        """domain_knowledge and skills are lists of 4–5 items; persona and language are strings."""
+        ctx = BoardroomStateManager.load_agent_context("ceo")
+        assert isinstance(ctx["domain_knowledge"], list)
+        assert 4 <= len(ctx["domain_knowledge"]) <= 5
+        assert isinstance(ctx["skills"], list)
+        assert 4 <= len(ctx["skills"]) <= 5
+        assert isinstance(ctx["persona"], str)
+        assert isinstance(ctx["language"], str)
+
+    def test_load_agent_content_returns_dynamic_layer(self):
+        """load_agent_content returns only the dynamic content section."""
+        content = BoardroomStateManager.load_agent_content("ceo")
+        assert "current_focus" in content
+        assert "fixed_mandate" not in content
+        assert "company_state" in content
+        assert "product_state" in content
+
+    def test_load_agent_company_state_returns_perspective(self):
+        """load_agent_company_state returns the ASI Saga perspective payload."""
+        state = BoardroomStateManager.load_agent_company_state("ceo")
+        assert state["entity_name"] == "ASI Saga"
+        assert "software_interfaces" in state
+
+    def test_load_agent_product_state_returns_perspective(self):
+        """load_agent_product_state returns the Business Infinity perspective payload."""
+        state = BoardroomStateManager.load_agent_product_state("ceo")
+        assert state["entity_name"] == "Business Infinity"
+        assert "domain_knowledge" in state
+
+    def test_load_agent_state_unknown_raises(self):
+        """load_agent_state raises ValueError for an unregistered agent ID."""
+        with pytest.raises(ValueError, match="Unknown agent ID"):
+            BoardroomStateManager.load_agent_state("unknown_agent")
+
+    def test_get_all_agent_states_returns_dict(self):
+        """get_all_agent_states returns a dict keyed by agent ID."""
+        states = BoardroomStateManager.get_all_agent_states()
+        assert isinstance(states, dict)
+        # At minimum, founders and core roles should be loaded
+        assert len(states) > 0
+
+    def test_get_all_agent_states_covers_c_suite(self):
+        """get_all_agent_states includes all C-suite roles with state files."""
+        states = BoardroomStateManager.get_all_agent_states()
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            assert agent_id in states, f"{agent_id} missing from get_all_agent_states()"
+
+    def test_get_all_agent_states_have_innate_essence(self):
+        """Every returned agent state has segregated context/content."""
+        states = BoardroomStateManager.get_all_agent_states()
+        for agent_id, state in states.items():
+            assert "context" in state, f"{agent_id} missing context"
+            assert "content" in state, f"{agent_id} missing content"
+
+    def test_get_all_agent_contexts_returns_all_contexts(self):
+        """get_all_agent_contexts returns only static agent layers."""
+        contexts = BoardroomStateManager.get_all_agent_contexts()
+        assert "ceo" in contexts
+        assert "fixed_mandate" in contexts["ceo"]
+        assert "current_focus" not in contexts["ceo"]
+
+    def test_get_all_agent_contents_returns_all_contents(self):
+        """get_all_agent_contents returns only dynamic agent layers."""
+        contents = BoardroomStateManager.get_all_agent_contents()
+        assert "ceo" in contents
+        assert "current_focus" in contents["ceo"]
+        assert "fixed_mandate" not in contents["ceo"]
+
+    def test_get_all_agent_company_states_returns_all_perspectives(self):
+        """get_all_agent_company_states returns ASI Saga perspectives."""
+        states = BoardroomStateManager.get_all_agent_company_states()
+        assert "ceo" in states
+        assert states["ceo"]["entity_name"] == "ASI Saga"
+
+    def test_get_all_agent_product_states_returns_all_perspectives(self):
+        """get_all_agent_product_states returns Business Infinity perspectives."""
+        states = BoardroomStateManager.get_all_agent_product_states()
+        assert "ceo" in states
+        assert states["ceo"]["entity_name"] == "Business Infinity"
+
+    def test_agent_files_mapping_covers_c_suite(self):
+        """The public agent registry covers all C-suite agent IDs."""
+        registered_agent_ids = BoardroomStateManager.get_registered_agent_ids()
+        for agent_id in C_SUITE_AGENT_IDS:
+            assert agent_id in registered_agent_ids, (
+                f"{agent_id} missing from BoardroomStateManager.get_registered_agent_ids()"
+            )
+
+    def test_update_executive_function_persists_changes(self, tmp_path, monkeypatch):
+        """Legacy update_executive_function alias persists changes to content."""
+        import shutil
+
+        import business_infinity.boardroom as boardroom_module
+
+        # Copy real CEO state file into a temp directory
+        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "ceo.jsonld"
+        fake_state_dir = tmp_path / "boardroom" / "state"
+        fake_state_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_state_dir / "ceo.jsonld")
+
+        # Patch _STATE_DIR to point at the temp directory
+        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+
+        updated = BoardroomStateManager.update_executive_function(
+            "ceo",
+            {"current_focus": "Validated executive update"},
+        )
+        assert updated["executive_function"]["current_focus"] == "Validated executive update"
+        assert updated["content"]["current_focus"] == "Validated executive update"
+
+        reloaded = BoardroomStateManager.load_agent_state("ceo")
+        assert reloaded["executive_function"]["current_focus"] == "Validated executive update"
+        assert reloaded["content"]["current_focus"] == "Validated executive update"
+        assert "name" in reloaded["context"]
+
+    def test_update_agent_content_roundtrip(self, tmp_path, monkeypatch):
+        """update_agent_content persists changes to the dynamic layer."""
+        import shutil
+
+        import business_infinity.boardroom as boardroom_module
+
+        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "founder.jsonld"
+        fake_state_dir = tmp_path / "boardroom" / "state"
+        fake_state_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_state_dir / "founder.jsonld")
+
+        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+
+        updated = BoardroomStateManager.update_agent_content(
+            "founder", {"spontaneous_intent": "Updated founder intent"}
+        )
+        assert updated["content"]["spontaneous_intent"] == "Updated founder intent"
+
+        reloaded = BoardroomStateManager.load_agent_state("founder")
+        assert reloaded["content"]["spontaneous_intent"] == "Updated founder intent"
+
+    def test_update_boardroom_state_roundtrip(self, tmp_path, monkeypatch):
+        """update_boardroom_state persists changes that get_boardroom_state reads back."""
+        import shutil
+
+        import business_infinity.boardroom as boardroom_module
+
+        real_state = (
+            boardroom_module.BoardroomStateManager.get_state_dir() / "boardroom.jsonld"
+        )
+        fake_state_dir = tmp_path / "boardroom" / "state"
+        fake_state_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_state_dir / "boardroom.jsonld")
+
+        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+
+        updated = BoardroomStateManager.update_boardroom_state(
+            {"current_topic": "Validated boardroom update", "status": "Active"}
+        )
+        assert updated["current_topic"] == "Validated boardroom update"
+        assert updated["status"] == "Active"
+
+        reloaded = BoardroomStateManager.get_boardroom_state()
+        assert reloaded["current_topic"] == "Validated boardroom update"
+
+    def test_update_boardroom_state_rejects_unknown_keys(self):
+        """update_boardroom_state raises ValueError for unrecognised keys."""
+        with pytest.raises(ValueError, match="unrecognised keys"):
+            BoardroomStateManager.update_boardroom_state({"bad_key": "value"})
+
+    def test_update_agent_context_rejected(self):
+        """Agent context is explicitly read-only."""
+        with pytest.raises(PermissionError, match="read-only"):
+            BoardroomStateManager.update_agent_context(
+                "ceo", {"fixed_mandate": "Should not change"}
+            )
+
+    def test_context_preserved_after_content_update(self, tmp_path, monkeypatch):
+        """Static context is unchanged after a content update."""
+        import shutil
+
+        import business_infinity.boardroom as boardroom_module
+
+        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "cfo.jsonld"
+        fake_state_dir = tmp_path / "boardroom" / "state"
+        fake_state_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_state_dir / "cfo.jsonld")
+
+        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+
+        original = BoardroomStateManager.load_agent_state("cfo")
+        original_name = original["context"]["name"]
+        original_mandate = original["context"]["fixed_mandate"]
+
+        BoardroomStateManager.update_agent_content(
+            "cfo", {"current_focus": "New CFO focus"}
+        )
+
+        reloaded = BoardroomStateManager.load_agent_state("cfo")
+        assert reloaded["context"]["name"] == original_name
+        assert reloaded["context"]["fixed_mandate"] == original_mandate
+        assert reloaded["content"]["current_focus"] == "New CFO focus"
+
+    def test_load_environment_schema_validated(self):
+        """load_state_records validates environment.jsonl."""
+        state = BoardroomStateManager.load_state_records("environment.jsonl")
+        assert state["@type"] == "InfrastructureManifest"
+        assert "cloud_provider" in state
+
+    def test_load_company_manifest_schema_validated(self):
+        """load_company_manifest validates company.jsonld."""
+        state = BoardroomStateManager.load_company_manifest()
+        assert state["@id"] == "asi:saga"
+        assert "portfolio" in state
+
+    def test_company_manifest_context_enrichment(self):
+        """company.jsonld context has legend-derived enrichment fields."""
+        state = BoardroomStateManager.load_company_manifest()
+        ctx = state.get("context", {})
+        for field in ("domain_knowledge", "skills", "persona", "language"):
+            assert field in ctx, f"company context missing '{field}'"
+        assert isinstance(ctx["domain_knowledge"], list)
+        assert 4 <= len(ctx["domain_knowledge"]) <= 5
+        assert isinstance(ctx["skills"], list)
+        assert 4 <= len(ctx["skills"]) <= 5
+
+    def test_company_manifest_content_block(self):
+        """company.jsonld content has current phase and active initiatives."""
+        state = BoardroomStateManager.load_company_manifest()
+        content = state.get("content", {})
+        assert "current_phase" in content
+        assert "active_initiatives" in content
+        assert isinstance(content["active_initiatives"], list)
+        assert "boardroom_activation" in content
+
+    def test_load_product_manifest_schema_validated(self):
+        """load_product_manifest validates business-infinity.jsonld."""
+        records = BoardroomStateManager.load_product_manifest()
+        assert len(records) == 5
+        assert any(record["@id"] == "bi:product:core" for record in records)
+
+    def test_product_manifest_core_enrichment(self):
+        """bi:product:core has legend-derived enrichment fields."""
+        records = BoardroomStateManager.load_product_manifest()
+        core = next(r for r in records if r["@id"] == "bi:product:core")
+        for field in ("domain_knowledge", "skills", "persona", "language"):
+            assert field in core, f"bi:product:core missing '{field}'"
+        assert isinstance(core["domain_knowledge"], list)
+        assert 4 <= len(core["domain_knowledge"]) <= 5
+
+    def test_product_manifest_architecture_enrichment(self):
+        """bi:arch:modular has rationale and principles."""
+        records = BoardroomStateManager.load_product_manifest()
+        arch = next(r for r in records if r["@id"] == "bi:arch:modular")
+        assert "rationale" in arch
+        assert "principles" in arch
+        assert isinstance(arch["principles"], list)
+
+    def test_product_manifest_all_records_enriched(self):
+        """All 5 product records have been enriched with at least one extra field."""
+        records = BoardroomStateManager.load_product_manifest()
+        extra_fields = {"domain_knowledge", "rationale", "description", "capabilities", "algorithm"}
+        for record in records:
+            assert extra_fields & set(record.keys()), (
+                f"{record['@id']} has no enrichment fields"
+            )
+
+    def test_load_mvp_schema_validated(self):
+        """load_state_records validates mvp.jsonl record structure."""
+        records = BoardroomStateManager.load_state_records("mvp.jsonl")
+        assert len(records) > 0
+        assert all("@type" in record for record in records)
+
+
+class TestBoardroomWorkflowContext:
+    """Test that workflow payloads include per-agent company/product state."""
+
+    @pytest.mark.asyncio
+    async def test_boardroom_debate_includes_agent_perspective_states(
+        self, monkeypatch
+    ):
+        """boardroom_debate passes company/product state for all agents."""
+        import business_infinity.workflows as workflows_module
+
+        async def fake_select_c_suite_agents(client):
+            return [AgentDouble("ceo"), AgentDouble("cfo"), AgentDouble("cmo")]
+
+        monkeypatch.setattr(
+            workflows_module,
+            "select_c_suite_agents",
+            fake_select_c_suite_agents,
+        )
+
+        client = CaptureClient()
+        request = RequestDouble(
+            {
+                "event": "Market shift",
+                "event_source": "market",
+                "company_purpose": "Build purposeful autonomous operating systems",
+                "context": {"segment": "B2B"},
+            },
+            client,
+        )
+
+        result = await workflows_module.boardroom_debate(request)
+
+        assert result["status"] == "running"
+        context = client.kwargs["context"]
+        assert "agent_company_states" in context
+        assert "agent_product_states" in context
+        assert context["agent_company_states"]["ceo"]["entity_name"] == "ASI Saga"
+        assert (
+            context["agent_product_states"]["cfo"]["entity_name"]
+            == "Business Infinity"
+        )
+
+    @pytest.mark.asyncio
+    async def test_workflow_orchestration_includes_owner_perspective_states(self):
+        """workflow_orchestration passes owner company/product state."""
+        import business_infinity.workflows as workflows_module
+
+        client = CaptureClient()
+        client.agents = [AgentDouble("founder"), AgentDouble("ceo")]
+        request = RequestDouble(
+            {
+                "workflow_id": "pitch_business_infinity",
+                "company_purpose": "Deliver reliable innovation that earns trust",
+            },
+            client,
+        )
+
+        result = await workflows_module.workflow_orchestration(request)
+
+        assert result["owner"] == "founder"
+        context = client.kwargs["context"]
+        assert context["owner_company_state"]["entity_name"] == "ASI Saga"
+        assert context["owner_product_state"]["entity_name"] == "Business Infinity"
+        assert "company_manifest" in context
+        assert "product_manifest" in context

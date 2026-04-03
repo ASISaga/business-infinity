@@ -37,6 +37,7 @@ from aos_client.observability import ObservabilityConfig
 from business_infinity.boardroom import (
     BOARDROOM_DEBATE_PURPOSE,
     BOARDROOM_DEBATE_SCOPE,
+    BoardroomStateManager,
     CXO_DOMAINS,
     PITCH_ORCHESTRATION_PURPOSE,
     PITCH_ORCHESTRATION_SCOPE,
@@ -44,6 +45,7 @@ from business_infinity.boardroom import (
     WORKFLOW_REGISTRY,
     get_workflow_metadata,
     get_workflow_step_ids,
+    list_registered_workflows,
     load_workflow_yaml,
     save_workflow_yaml,
 )
@@ -119,6 +121,41 @@ async def c_suite_orchestration(
         context=request.body,
     )
     return {"orchestration_id": status.orchestration_id, "status": status.status.value}
+
+
+def _load_owner_state_or_default(
+    owner_agent_id: str, workflow_label: str
+) -> Dict[str, Dict[str, Any]]:
+    """Load owner state for workflow payloads with safe defaults."""
+    try:
+        return {
+            "owner_context": BoardroomStateManager.load_agent_context(owner_agent_id),
+            "owner_content": BoardroomStateManager.load_agent_content(owner_agent_id),
+            "owner_company_state": BoardroomStateManager.load_agent_company_state(
+                owner_agent_id
+            ),
+            "owner_product_state": BoardroomStateManager.load_agent_product_state(
+                owner_agent_id
+            ),
+        }
+    except ValueError:
+        logger.warning(
+            "Owner state unavailable because agent '%s' is not registered in '%s'",
+            owner_agent_id,
+            workflow_label,
+        )
+    except FileNotFoundError:
+        logger.warning(
+            "Owner state file missing for agent '%s' in '%s'",
+            owner_agent_id,
+            workflow_label,
+        )
+    return {
+        "owner_context": {},
+        "owner_content": {},
+        "owner_company_state": {},
+        "owner_product_state": {},
+    }
 
 
 # ── Purpose-Driven Orchestrations ────────────────────────────────────────────
@@ -254,6 +291,16 @@ async def boardroom_debate(request: WorkflowRequest) -> Dict[str, Any]:
         if aid in CXO_DOMAINS
     }
 
+    # Include current boardroom state and segregated agent context/content so
+    # agents enter the debate with full situational awareness.
+    boardroom_state = BoardroomStateManager.get_boardroom_state_or_default()
+    company_manifest = BoardroomStateManager.load_company_manifest()
+    product_manifest = BoardroomStateManager.load_product_manifest()
+    agent_contexts = BoardroomStateManager.get_all_agent_contexts()
+    agent_contents = BoardroomStateManager.get_all_agent_contents()
+    agent_company_states = BoardroomStateManager.get_all_agent_company_states()
+    agent_product_states = BoardroomStateManager.get_all_agent_product_states()
+
     status = await request.client.start_orchestration(
         agent_ids=agent_ids,
         purpose=BOARDROOM_DEBATE_PURPOSE,
@@ -264,6 +311,13 @@ async def boardroom_debate(request: WorkflowRequest) -> Dict[str, Any]:
             "company_purpose": request.body.get("company_purpose", ""),
             "debate_context": request.body.get("context", {}),
             "cxo_domains": domain_context,
+            "boardroom_state": boardroom_state,
+            "company_manifest": company_manifest,
+            "product_manifest": product_manifest,
+            "agent_contexts": agent_contexts,
+            "agent_contents": agent_contents,
+            "agent_company_states": agent_company_states,
+            "agent_product_states": agent_product_states,
         },
     )
     logger.info(
@@ -493,6 +547,11 @@ async def pitch_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
         raise ValueError("Founder or CEO agent not available for pitch delivery")
 
     step_id = request.body.get("step_id", PITCH_STEP_IDS[0])
+    boardroom_state = BoardroomStateManager.get_boardroom_state_or_default()
+    company_manifest = BoardroomStateManager.load_company_manifest()
+    product_manifest = BoardroomStateManager.load_product_manifest()
+    owner_agent_id = agent_ids[0]
+    owner_state = _load_owner_state_or_default(owner_agent_id, "pitch-orchestration")
 
     status = await request.client.start_orchestration(
         agent_ids=agent_ids,
@@ -505,6 +564,10 @@ async def pitch_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
             "session_id": request.body.get("session_id", ""),
             "company_purpose": request.body.get("company_purpose", ""),
             "app_id": "boardroom_ui",
+            "boardroom_state": boardroom_state,
+            "company_manifest": company_manifest,
+            "product_manifest": product_manifest,
+            **owner_state,
         },
     )
     logger.info(
@@ -603,6 +666,13 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
         step_ids = []
     step_id = request.body.get("step_id", step_ids[0] if step_ids else "")
 
+    # Include current boardroom state so the owner agent enters the workflow
+    # with full situational context.
+    boardroom_state = BoardroomStateManager.get_boardroom_state_or_default()
+    company_manifest = BoardroomStateManager.load_company_manifest()
+    product_manifest = BoardroomStateManager.load_product_manifest()
+    owner_state = _load_owner_state_or_default(owner_agent_id, workflow_id)
+
     status = await request.client.start_orchestration(
         agent_ids=agent_ids,
         purpose=metadata["purpose"],
@@ -614,6 +684,10 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
             "session_id": request.body.get("session_id", ""),
             "company_purpose": request.body.get("company_purpose", ""),
             "app_id": "boardroom_ui",
+            "boardroom_state": boardroom_state,
+            "company_manifest": company_manifest,
+            "product_manifest": product_manifest,
+            **owner_state,
         },
     )
     logger.info(
