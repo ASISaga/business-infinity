@@ -37,6 +37,7 @@ from aos_client.observability import ObservabilityConfig
 from business_infinity.boardroom import (
     BOARDROOM_DEBATE_PURPOSE,
     BOARDROOM_DEBATE_SCOPE,
+    BoardroomStateManager,
     CXO_DOMAINS,
     PITCH_ORCHESTRATION_PURPOSE,
     PITCH_ORCHESTRATION_SCOPE,
@@ -44,6 +45,7 @@ from business_infinity.boardroom import (
     WORKFLOW_REGISTRY,
     get_workflow_metadata,
     get_workflow_step_ids,
+    list_registered_workflows,
     load_workflow_yaml,
     save_workflow_yaml,
 )
@@ -254,6 +256,14 @@ async def boardroom_debate(request: WorkflowRequest) -> Dict[str, Any]:
         if aid in CXO_DOMAINS
     }
 
+    # Include current boardroom state and per-agent executive function so agents
+    # enter the debate with full situational awareness.
+    try:
+        boardroom_state = BoardroomStateManager.get_boardroom_state()
+    except FileNotFoundError:
+        boardroom_state = {}
+    agent_states = BoardroomStateManager.get_all_agent_states()
+
     status = await request.client.start_orchestration(
         agent_ids=agent_ids,
         purpose=BOARDROOM_DEBATE_PURPOSE,
@@ -264,6 +274,8 @@ async def boardroom_debate(request: WorkflowRequest) -> Dict[str, Any]:
             "company_purpose": request.body.get("company_purpose", ""),
             "debate_context": request.body.get("context", {}),
             "cxo_domains": domain_context,
+            "boardroom_state": boardroom_state,
+            "agent_states": agent_states,
         },
     )
     logger.info(
@@ -603,6 +615,13 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
         step_ids = []
     step_id = request.body.get("step_id", step_ids[0] if step_ids else "")
 
+    # Include current boardroom state so the owner agent enters the workflow
+    # with full situational context.
+    try:
+        boardroom_state = BoardroomStateManager.get_boardroom_state()
+    except FileNotFoundError:
+        boardroom_state = {}
+
     status = await request.client.start_orchestration(
         agent_ids=agent_ids,
         purpose=metadata["purpose"],
@@ -614,6 +633,7 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
             "session_id": request.body.get("session_id", ""),
             "company_purpose": request.body.get("company_purpose", ""),
             "app_id": "boardroom_ui",
+            "boardroom_state": boardroom_state,
         },
     )
     logger.info(

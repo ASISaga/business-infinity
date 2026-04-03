@@ -25,6 +25,7 @@ See ``docs/philosophy.md`` for the full philosophy specification.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -110,6 +111,166 @@ BOARDROOM_DEBATE_SCOPE = (
 
 #: All CXO pathway types derived from the philosophy.
 CXO_PATHWAY_TYPES = list(dict.fromkeys(domain["pathway"] for domain in CXO_DOMAINS.values()))
+
+
+# ── Boardroom State Manager ──────────────────────────────────────────────────
+#
+# The boardroom maintains two layers of JSON-LD state for each agent:
+#
+#   - **Innate Essence** (immutable): fixed identity, mandate, and constraints
+#     — the agent's "constitution", never modified at runtime.
+#   - **Executive Function** (mutable): active focus, strategy, short-term
+#     memory, and spontaneous intent — the agent's conscious workspace.
+#
+# Collective boardroom state (topic, resonance scores, active directives) is
+# stored separately in ``boardroom.jsonld``.
+#
+# All state files live in ``boardroom/state/`` at the project root.
+
+
+class BoardroomStateManager:
+    """Manages JSON-LD agent and boardroom state for the BusinessInfinity boardroom.
+
+    State is stored as JSON-LD files in ``boardroom/state/``.  Each agent has
+    its own file containing ``innate_essence`` (immutable) and
+    ``executive_function`` (mutable).  The collective boardroom state lives in
+    ``boardroom.jsonld``.
+
+    Only the ``executive_function`` section of an agent file may be updated at
+    runtime — ``innate_essence`` is the agent's permanent constitution and is
+    never overwritten.
+    """
+
+    #: Path to the ``boardroom/state/`` directory relative to the project root.
+    _STATE_DIR: Path = Path(__file__).parent.parent.parent / "boardroom" / "state"
+
+    #: Mapping from agent ID to state filename stem (without extension).
+    #: Extensions ``.jsonld`` and ``.jsonl`` are both supported.
+    _AGENT_FILES: Dict[str, str] = {
+        "ceo": "ceo",
+        "cfo": "cfo",
+        "coo": "coo",
+        "cmo": "cmo",
+        "chro": "chro",
+        "cto": "cto",
+        "cso": "cso",
+        "founder": "founder",
+    }
+
+    @classmethod
+    def _state_path(cls, filename: str) -> Path:
+        """Resolve a state filename stem to its absolute path.
+
+        Tries ``.jsonld`` first, then ``.jsonl``.
+
+        Raises :class:`FileNotFoundError` if neither variant exists.
+        """
+        for ext in (".jsonld", ".jsonl"):
+            path = cls._STATE_DIR / (filename + ext)
+            if path.exists():
+                return path
+        raise FileNotFoundError(
+            f"State file '{filename}' not found in {cls._STATE_DIR} "
+            f"(tried .jsonld and .jsonl)"
+        )
+
+    @classmethod
+    def load_agent_state(cls, agent_id: str) -> Dict[str, Any]:
+        """Load the full state (innate_essence + executive_function) for an agent.
+
+        Raises :class:`KeyError` if *agent_id* is not mapped to a state file.
+        Raises :class:`FileNotFoundError` if the state file does not exist.
+        """
+        filename = cls._AGENT_FILES[agent_id]  # raises KeyError for unknown IDs
+        path = cls._state_path(filename)
+        with open(str(path), "r", encoding="utf-8") as fh:
+            content = fh.read().strip()
+        # Support both single-object JSON (.jsonld) and line-delimited JSON (.jsonl).
+        # For multi-object .jsonl files the first object is the agent's primary state.
+        first_line = content.split("\n")[0].strip()
+        try:
+            return json.loads(first_line)
+        except json.JSONDecodeError:
+            return json.loads(content)
+
+    @classmethod
+    def update_executive_function(
+        cls, agent_id: str, updates: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Update the mutable ``executive_function`` section of an agent's state.
+
+        Merges *updates* into the existing ``executive_function`` dict.  The
+        ``innate_essence`` section is never touched.
+
+        Returns the full updated agent state.
+
+        Raises :class:`KeyError` if *agent_id* is not registered.
+        Raises :class:`FileNotFoundError` if the state file does not exist.
+        """
+        state = cls.load_agent_state(agent_id)
+        filename = cls._AGENT_FILES[agent_id]
+        path = cls._state_path(filename)
+
+        ef = state.get("executive_function", {})
+        ef.update(updates)
+        state["executive_function"] = ef
+
+        with open(str(path), "w", encoding="utf-8") as fh:
+            json.dump(state, fh, indent=2, ensure_ascii=False)
+            fh.write("\n")
+
+        return state
+
+    @classmethod
+    def get_boardroom_state(cls) -> Dict[str, Any]:
+        """Return the current collective boardroom state from ``boardroom.jsonld``."""
+        path = cls._STATE_DIR / "boardroom.jsonld"
+        with open(str(path), "r", encoding="utf-8") as fh:
+            return json.load(fh)
+
+    @classmethod
+    def update_boardroom_state(cls, updates: Dict[str, Any]) -> Dict[str, Any]:
+        """Update the collective boardroom state.
+
+        Permitted top-level update keys: ``status``, ``current_topic``,
+        ``resonance_ledger``, ``active_directives``.  JSON-LD metadata keys
+        (``@context``, ``@id``, ``@type``) are passed through unchanged.
+
+        Returns the full updated boardroom state.
+
+        Raises :class:`ValueError` for unrecognised keys.
+        """
+        _allowed_keys = {"status", "current_topic", "resonance_ledger", "active_directives"}
+        unknown = set(updates.keys()) - _allowed_keys - {"@context", "@id", "@type"}
+        if unknown:
+            raise ValueError(
+                f"update_boardroom_state: unrecognised keys {unknown}. "
+                f"Allowed: {_allowed_keys}"
+            )
+
+        state = cls.get_boardroom_state()
+        state.update(updates)
+
+        path = cls._STATE_DIR / "boardroom.jsonld"
+        with open(str(path), "w", encoding="utf-8") as fh:
+            json.dump(state, fh, indent=2, ensure_ascii=False)
+            fh.write("\n")
+
+        return state
+
+    @classmethod
+    def get_all_agent_states(cls) -> Dict[str, Dict[str, Any]]:
+        """Return state for all agents that have state files.
+
+        Agents without a state file are silently omitted from the result.
+        """
+        states: Dict[str, Dict[str, Any]] = {}
+        for agent_id in cls._AGENT_FILES:
+            try:
+                states[agent_id] = cls.load_agent_state(agent_id)
+            except FileNotFoundError:
+                pass
+        return states
 
 
 # ── Structured Workflow Registry ─────────────────────────────────────────────

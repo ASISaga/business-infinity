@@ -11,6 +11,7 @@ from business_infinity.workflows import (
 from business_infinity.boardroom import (
     BOARDROOM_DEBATE_PURPOSE,
     BOARDROOM_DEBATE_SCOPE,
+    BoardroomStateManager,
     CXO_DOMAINS,
     CXO_PATHWAY_TYPES,
     PITCH_ORCHESTRATION_PURPOSE,
@@ -327,3 +328,182 @@ class TestWorkflowEditor:
         }
         with pytest.raises(ValueError, match="response"):
             save_workflow_yaml("pitch_business_infinity", bad_data)
+
+
+class TestBoardroomStateManager:
+    """Test BoardroomStateManager for JSON-LD agent and boardroom state."""
+
+    def test_get_boardroom_state_returns_dict(self):
+        """get_boardroom_state returns a dict with required collective keys."""
+        state = BoardroomStateManager.get_boardroom_state()
+        assert isinstance(state, dict)
+        assert "status" in state
+        assert "current_topic" in state
+
+    def test_get_boardroom_state_jsonld_keys(self):
+        """Boardroom state has JSON-LD @context and @type."""
+        state = BoardroomStateManager.get_boardroom_state()
+        assert "@context" in state
+        assert "@type" in state
+
+    def test_load_agent_state_founder(self):
+        """load_agent_state returns state with innate_essence and executive_function."""
+        state = BoardroomStateManager.load_agent_state("founder")
+        assert "innate_essence" in state
+        assert "executive_function" in state
+
+    def test_load_agent_state_cmo(self):
+        """load_agent_state works for CMO agent."""
+        state = BoardroomStateManager.load_agent_state("cmo")
+        assert "innate_essence" in state
+        assert "executive_function" in state
+
+    def test_load_agent_state_cto(self):
+        """load_agent_state works for CTO agent."""
+        state = BoardroomStateManager.load_agent_state("cto")
+        assert "innate_essence" in state
+        assert "executive_function" in state
+
+    def test_load_agent_state_ceo(self):
+        """load_agent_state works for CEO agent."""
+        state = BoardroomStateManager.load_agent_state("ceo")
+        assert state["@type"] == "CEOAgent"
+        assert "innate_essence" in state
+        assert "fixed_mandate" in state["innate_essence"]
+
+    def test_load_agent_state_cfo(self):
+        """load_agent_state works for CFO agent."""
+        state = BoardroomStateManager.load_agent_state("cfo")
+        assert state["@type"] == "CFOAgent"
+        assert state["innate_essence"]["name"] == "Warren Buffett"
+
+    def test_load_agent_state_coo(self):
+        """load_agent_state works for COO agent."""
+        state = BoardroomStateManager.load_agent_state("coo")
+        assert state["@type"] == "COOAgent"
+        assert state["innate_essence"]["name"] == "W. Edwards Deming"
+
+    def test_load_agent_state_chro(self):
+        """load_agent_state works for CHRO agent."""
+        state = BoardroomStateManager.load_agent_state("chro")
+        assert state["@type"] == "CHROAgent"
+        assert state["innate_essence"]["name"] == "Peter Drucker"
+
+    def test_load_agent_state_cso(self):
+        """load_agent_state works for CSO agent."""
+        state = BoardroomStateManager.load_agent_state("cso")
+        assert "innate_essence" in state
+
+    def test_load_agent_state_unknown_raises(self):
+        """load_agent_state raises KeyError for an unregistered agent ID."""
+        with pytest.raises(KeyError):
+            BoardroomStateManager.load_agent_state("unknown_agent")
+
+    def test_get_all_agent_states_returns_dict(self):
+        """get_all_agent_states returns a dict keyed by agent ID."""
+        states = BoardroomStateManager.get_all_agent_states()
+        assert isinstance(states, dict)
+        # At minimum, founders and core roles should be loaded
+        assert len(states) > 0
+
+    def test_get_all_agent_states_covers_c_suite(self):
+        """get_all_agent_states includes all C-suite roles with state files."""
+        states = BoardroomStateManager.get_all_agent_states()
+        for agent_id in ("ceo", "cfo", "coo", "cmo", "chro", "cto", "cso", "founder"):
+            assert agent_id in states, f"{agent_id} missing from get_all_agent_states()"
+
+    def test_get_all_agent_states_have_innate_essence(self):
+        """Every returned agent state has innate_essence."""
+        states = BoardroomStateManager.get_all_agent_states()
+        for agent_id, state in states.items():
+            assert "innate_essence" in state, f"{agent_id} missing innate_essence"
+
+    def test_agent_files_mapping_covers_c_suite(self):
+        """_AGENT_FILES covers all C-suite agent IDs."""
+        for agent_id in C_SUITE_AGENT_IDS:
+            assert agent_id in BoardroomStateManager._AGENT_FILES, (
+                f"{agent_id} missing from BoardroomStateManager._AGENT_FILES"
+            )
+
+    def test_update_executive_function_roundtrip(self, tmp_path, monkeypatch):
+        """update_executive_function persists changes that load_agent_state reads back."""
+        import shutil
+        import business_infinity.boardroom as boardroom_module
+
+        # Copy real CEO state file into a temp directory
+        real_state = (
+            boardroom_module.BoardroomStateManager._STATE_DIR / "ceo.jsonld"
+        )
+        fake_state_dir = tmp_path / "boardroom" / "state"
+        fake_state_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_state_dir / "ceo.jsonld")
+
+        # Patch _STATE_DIR to point at the temp directory
+        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+
+        updated = BoardroomStateManager.update_executive_function(
+            "ceo",
+            {"current_focus": "Validated executive update"},
+        )
+        assert updated["executive_function"]["current_focus"] == "Validated executive update"
+
+        reloaded = BoardroomStateManager.load_agent_state("ceo")
+        assert reloaded["executive_function"]["current_focus"] == "Validated executive update"
+        # innate_essence must not be modified
+        assert "name" in reloaded["innate_essence"]
+
+    def test_update_boardroom_state_roundtrip(self, tmp_path, monkeypatch):
+        """update_boardroom_state persists changes that get_boardroom_state reads back."""
+        import shutil
+        import business_infinity.boardroom as boardroom_module
+
+        real_state = (
+            boardroom_module.BoardroomStateManager._STATE_DIR / "boardroom.jsonld"
+        )
+        fake_state_dir = tmp_path / "boardroom" / "state"
+        fake_state_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_state_dir / "boardroom.jsonld")
+
+        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+
+        updated = BoardroomStateManager.update_boardroom_state(
+            {"current_topic": "Validated boardroom update", "status": "Active"}
+        )
+        assert updated["current_topic"] == "Validated boardroom update"
+        assert updated["status"] == "Active"
+
+        reloaded = BoardroomStateManager.get_boardroom_state()
+        assert reloaded["current_topic"] == "Validated boardroom update"
+
+    def test_update_boardroom_state_rejects_unknown_keys(self):
+        """update_boardroom_state raises ValueError for unrecognised keys."""
+        with pytest.raises(ValueError, match="unrecognised keys"):
+            BoardroomStateManager.update_boardroom_state({"bad_key": "value"})
+
+    def test_innate_essence_preserved_after_executive_update(self, tmp_path, monkeypatch):
+        """Innate essence is unchanged after an executive_function update."""
+        import shutil
+        import business_infinity.boardroom as boardroom_module
+
+        real_state = (
+            boardroom_module.BoardroomStateManager._STATE_DIR / "cfo.jsonld"
+        )
+        fake_state_dir = tmp_path / "boardroom" / "state"
+        fake_state_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_state_dir / "cfo.jsonld")
+
+        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+
+        original = BoardroomStateManager.load_agent_state("cfo")
+        original_name = original["innate_essence"]["name"]
+        original_mandate = original["innate_essence"]["fixed_mandate"]
+
+        BoardroomStateManager.update_executive_function(
+            "cfo", {"current_focus": "New CFO focus"}
+        )
+
+        reloaded = BoardroomStateManager.load_agent_state("cfo")
+        assert reloaded["innate_essence"]["name"] == original_name
+        assert reloaded["innate_essence"]["fixed_mandate"] == original_mandate
+        assert reloaded["executive_function"]["current_focus"] == "New CFO focus"
+
