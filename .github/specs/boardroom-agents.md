@@ -17,7 +17,15 @@ JSON-LD state is split into two layers:
 This specification defines the authoritative legend-based enrichment for each agent. Use it when
 updating `boardroom/state/*.jsonld` files.
 
-→ **Skill**: `.github/skills/boardroom-agent-state/SKILL.md` — enrichment workflow
+→ **Skill (roster)**: `.github/skills/boardroom-agent-state/SKILL.md` — roster overview and full-roster validation  
+→ **Skill (CEO)**: `.github/skills/boardroom-agent-state-ceo/SKILL.md` — Steve Jobs  
+→ **Skill (CFO)**: `.github/skills/boardroom-agent-state-cfo/SKILL.md` — Warren Buffett  
+→ **Skill (COO)**: `.github/skills/boardroom-agent-state-coo/SKILL.md` — W. Edwards Deming  
+→ **Skill (CMO)**: `.github/skills/boardroom-agent-state-cmo/SKILL.md` — Seth Godin  
+→ **Skill (CHRO)**: `.github/skills/boardroom-agent-state-chro/SKILL.md` — Peter Drucker  
+→ **Skill (CTO)**: `.github/skills/boardroom-agent-state-cto/SKILL.md` — Alan Turing  
+→ **Skill (CSO)**: `.github/skills/boardroom-agent-state-cso/SKILL.md` — Sun Tzu  
+→ **Skill (Founder)**: `.github/skills/boardroom-agent-state-founder/SKILL.md` — Paul Graham
 
 ---
 
@@ -422,9 +430,17 @@ PY
 
 ## References
 
-→ **Skill**: `.github/skills/boardroom-agent-state/SKILL.md` — enrichment workflow
-→ **State files**: `boardroom/state/*.jsonld` — live agent state
-→ **Boardroom constants**: `src/business_infinity/boardroom.py` → `CXO_DOMAINS`
-→ **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`
-→ **MVP spec**: `.github/specs/mvp.md` — C-suite agent roster and debate philosophy
+→ **Skill (roster)**: `.github/skills/boardroom-agent-state/SKILL.md` — roster overview and full-roster validation  
+→ **Skill (CEO)**: `.github/skills/boardroom-agent-state-ceo/SKILL.md` — Steve Jobs  
+→ **Skill (CFO)**: `.github/skills/boardroom-agent-state-cfo/SKILL.md` — Warren Buffett  
+→ **Skill (COO)**: `.github/skills/boardroom-agent-state-coo/SKILL.md` — W. Edwards Deming  
+→ **Skill (CMO)**: `.github/skills/boardroom-agent-state-cmo/SKILL.md` — Seth Godin  
+→ **Skill (CHRO)**: `.github/skills/boardroom-agent-state-chro/SKILL.md` — Peter Drucker  
+→ **Skill (CTO)**: `.github/skills/boardroom-agent-state-cto/SKILL.md` — Alan Turing  
+→ **Skill (CSO)**: `.github/skills/boardroom-agent-state-cso/SKILL.md` — Sun Tzu  
+→ **Skill (Founder)**: `.github/skills/boardroom-agent-state-founder/SKILL.md` — Paul Graham  
+→ **State files**: `boardroom/state/*.jsonld` — live agent state  
+→ **Boardroom constants**: `src/business_infinity/boardroom.py` → `CXO_DOMAINS`  
+→ **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
+→ **MVP spec**: `.github/specs/mvp.md` — C-suite agent roster and debate philosophy  
 → **Repository spec**: `.github/specs/repository.md`
