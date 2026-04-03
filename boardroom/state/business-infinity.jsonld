@@ -1,0 +1,13 @@
+{
+  "@context": "https://asisaga.com/contexts/product.jsonld",
+  "@id": "bi:mvp",
+  "@type": "BusinessOperatingSystem",
+  "name": "Business Infinity",
+  "architecture": "No-Framework / Spec-Driven",
+  "registry": {
+    "repos": "15-repo-modular-split",
+    "infrastructure": "Azure-Bicep-Direct-Drive",
+    "compliance": ["ISO27001", "MCSB-v2"]
+  },
+  "modules": ["BentoEngine", "SubconsciousMCP", "ResonanceOrchestrator"]
+}
