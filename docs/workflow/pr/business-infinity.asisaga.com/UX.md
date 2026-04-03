@@ -97,7 +97,7 @@ dynamic boardroom conversations.
 
 ### Workflow editor
 
-An authorised user with the `editor` role who maintains workflow definitions.
+An authorized user with the `editor` role who maintains workflow definitions.
 
 **Needs**
 - quick scan of available workflows
@@ -115,7 +115,7 @@ Purpose: help users enter the correct boardroom mode.
 - page title and one-sentence boardroom explanation
 - cards for each registered structured workflow
 - one card for dynamic boardroom discussion
-- optional entry point to workflow editor for authorised users
+- optional entry point to workflow editor for authorized users
 
 **Card content**
 - workflow display name
