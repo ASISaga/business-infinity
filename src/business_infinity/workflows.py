@@ -258,10 +258,7 @@ async def boardroom_debate(request: WorkflowRequest) -> Dict[str, Any]:
 
     # Include current boardroom state and segregated agent context/content so
     # agents enter the debate with full situational awareness.
-    try:
-        boardroom_state = BoardroomStateManager.get_boardroom_state()
-    except FileNotFoundError:
-        boardroom_state = {}
+    boardroom_state = BoardroomStateManager.get_boardroom_state_or_default()
     agent_contexts = BoardroomStateManager.get_all_agent_contexts()
     agent_contents = BoardroomStateManager.get_all_agent_contents()
 
@@ -619,14 +616,24 @@ async def workflow_orchestration(request: WorkflowRequest) -> Dict[str, Any]:
 
     # Include current boardroom state so the owner agent enters the workflow
     # with full situational context.
-    try:
-        boardroom_state = BoardroomStateManager.get_boardroom_state()
-    except FileNotFoundError:
-        boardroom_state = {}
+    boardroom_state = BoardroomStateManager.get_boardroom_state_or_default()
     try:
         owner_context = BoardroomStateManager.load_agent_context(owner_agent_id)
         owner_content = BoardroomStateManager.load_agent_content(owner_agent_id)
-    except (FileNotFoundError, KeyError):
+    except KeyError:
+        logger.warning(
+            "Owner state unavailable because agent '%s' is not registered in workflow '%s'",
+            owner_agent_id,
+            workflow_id,
+        )
+        owner_context = {}
+        owner_content = {}
+    except FileNotFoundError:
+        logger.warning(
+            "Owner state file missing for agent '%s' in workflow '%s'",
+            owner_agent_id,
+            workflow_id,
+        )
         owner_context = {}
         owner_content = {}
 

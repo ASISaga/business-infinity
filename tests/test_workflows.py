@@ -425,7 +425,7 @@ class TestBoardroomStateManager:
     def test_get_all_agent_states_covers_c_suite(self):
         """get_all_agent_states includes all C-suite roles with state files."""
         states = BoardroomStateManager.get_all_agent_states()
-        for agent_id in ("ceo", "cfo", "coo", "cmo", "chro", "cto", "cso", "founder"):
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
             assert agent_id in states, f"{agent_id} missing from get_all_agent_states()"
 
     def test_get_all_agent_states_have_innate_essence(self):
@@ -450,21 +450,20 @@ class TestBoardroomStateManager:
         assert "fixed_mandate" not in contents["ceo"]
 
     def test_agent_files_mapping_covers_c_suite(self):
-        """_AGENT_FILES covers all C-suite agent IDs."""
+        """The public agent registry covers all C-suite agent IDs."""
+        registered_agent_ids = BoardroomStateManager.get_registered_agent_ids()
         for agent_id in C_SUITE_AGENT_IDS:
-            assert agent_id in BoardroomStateManager._AGENT_FILES, (
-                f"{agent_id} missing from BoardroomStateManager._AGENT_FILES"
+            assert agent_id in registered_agent_ids, (
+                f"{agent_id} missing from BoardroomStateManager.get_registered_agent_ids()"
             )
 
-    def test_update_executive_function_roundtrip(self, tmp_path, monkeypatch):
-        """update_executive_function persists changes that load_agent_state reads back."""
+    def test_update_content_roundtrip_via_executive_function_alias(self, tmp_path, monkeypatch):
+        """Legacy update_executive_function alias persists changes to content."""
         import shutil
         import business_infinity.boardroom as boardroom_module
 
         # Copy real CEO state file into a temp directory
-        real_state = (
-            boardroom_module.BoardroomStateManager._STATE_DIR / "ceo.jsonld"
-        )
+        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "ceo.jsonld"
         fake_state_dir = tmp_path / "boardroom" / "state"
         fake_state_dir.mkdir(parents=True)
         shutil.copy(real_state, fake_state_dir / "ceo.jsonld")
@@ -489,7 +488,7 @@ class TestBoardroomStateManager:
         import shutil
         import business_infinity.boardroom as boardroom_module
 
-        real_state = boardroom_module.BoardroomStateManager._STATE_DIR / "founder.jsonld"
+        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "founder.jsonld"
         fake_state_dir = tmp_path / "boardroom" / "state"
         fake_state_dir.mkdir(parents=True)
         shutil.copy(real_state, fake_state_dir / "founder.jsonld")
@@ -510,7 +509,7 @@ class TestBoardroomStateManager:
         import business_infinity.boardroom as boardroom_module
 
         real_state = (
-            boardroom_module.BoardroomStateManager._STATE_DIR / "boardroom.jsonld"
+            boardroom_module.BoardroomStateManager.get_state_dir() / "boardroom.jsonld"
         )
         fake_state_dir = tmp_path / "boardroom" / "state"
         fake_state_dir.mkdir(parents=True)
@@ -544,9 +543,7 @@ class TestBoardroomStateManager:
         import shutil
         import business_infinity.boardroom as boardroom_module
 
-        real_state = (
-            boardroom_module.BoardroomStateManager._STATE_DIR / "cfo.jsonld"
-        )
+        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "cfo.jsonld"
         fake_state_dir = tmp_path / "boardroom" / "state"
         fake_state_dir.mkdir(parents=True)
         shutil.copy(real_state, fake_state_dir / "cfo.jsonld")

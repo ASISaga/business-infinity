@@ -26,8 +26,9 @@ See ``docs/philosophy.md`` for the full philosophy specification.
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Set
 
 import yaml
 
@@ -233,11 +234,17 @@ class BoardroomStateManager:
     def _load_json_document(cls, path: Path) -> Dict[str, Any]:
         """Load a single JSON document from *path*."""
         content = cls._read_text(path)
-        first_line = content.split("\n")[0].strip()
+        first_line = content.partition("\n")[0].strip()
         try:
             return json.loads(first_line)
         except json.JSONDecodeError:
-            return json.loads(content)
+            try:
+                return json.loads(content)
+            except json.JSONDecodeError as full_error:
+                raise ValueError(
+                    f"Unable to parse JSON document at {path}: "
+                    "single-line and full-content parsing both failed"
+                ) from full_error
 
     @classmethod
     def _load_jsonl_records(cls, path: Path) -> List[Dict[str, Any]]:
@@ -286,7 +293,7 @@ class BoardroomStateManager:
     def _validate_required_keys(
         cls,
         data: Dict[str, Any],
-        required_keys: set[str],
+        required_keys: Set[str],
         label: str,
     ) -> None:
         """Validate that *data* contains all *required_keys*."""
@@ -341,8 +348,8 @@ class BoardroomStateManager:
             "content management",
         )
 
-        state["innate_essence"] = dict(state["context"])
-        state["executive_function"] = dict(state["content"])
+        state["innate_essence"] = deepcopy(state["context"])
+        state["executive_function"] = deepcopy(state["content"])
         return state
 
     @classmethod
@@ -431,6 +438,21 @@ class BoardroomStateManager:
         return state
 
     @classmethod
+    def get_boardroom_state_or_default(
+        cls, default: Dict[str, Any] | None = None
+    ) -> Dict[str, Any]:
+        """Return boardroom state or *default* when the state file is absent."""
+        try:
+            return cls.get_boardroom_state()
+        except FileNotFoundError:
+            return {} if default is None else dict(default)
+
+    @classmethod
+    def get_state_dir(cls) -> Path:
+        """Return the directory containing boardroom state files."""
+        return cls._STATE_DIR
+
+    @classmethod
     def load_state_records(cls, filename: str) -> Any:
         """Load and validate a non-agent state document by filename."""
         path = cls._STATE_DIR / filename
@@ -455,7 +477,10 @@ class BoardroomStateManager:
 
         Raises :class:`ValueError` for unrecognised keys.
         """
-        _allowed_keys = {"status", "current_topic", "resonance_ledger", "active_directives"}
+        _allowed_keys = (
+            cls._DOCUMENT_SCHEMAS["boardroom.jsonld"]["required_keys"]
+            - {"@context", "@id", "@type"}
+        )
         unknown = set(updates.keys()) - _allowed_keys - {"@context", "@id", "@type"}
         if unknown:
             raise ValueError(
@@ -500,6 +525,11 @@ class BoardroomStateManager:
             agent_id: state["content"]
             for agent_id, state in cls.get_all_agent_states().items()
         }
+
+    @classmethod
+    def get_registered_agent_ids(cls) -> List[str]:
+        """Return the agent IDs managed by the boardroom state registry."""
+        return list(cls._AGENT_FILES.keys())
 
 
 # ── Structured Workflow Registry ─────────────────────────────────────────────
