@@ -34,6 +34,11 @@ updating `boardroom/state/*.jsonld` files.
 | CSO | `agent:cso_strategy` | Sun Tzu | Strategy & Competitive Intelligence |
 | Founder | `agent:pg_founder` | Paul Graham | Prioritization / Survival / Shipping |
 
+> **Note on CTO `@id`**: The CTO agent retains the legacy identifier `agent:sj_cto` (Steve Jobs initials)
+> to preserve backward compatibility with `company.jsonld` governance references and the Boardroom Readme.
+> The identifier is a stable key — it does not need to match the legend name.
+> The `context.name` field is the authoritative legend name and now reads `Alan Turing`.
+
 > **Note on CMO**: The `CXO_DOMAINS` archetype key is `"Ogilvy"` for historical reasons.
 > The active agent persona is Seth Godin, whose tribe-building and permission-marketing philosophy
 > complements the research-driven Ogilvy tradition. Both inform the CMO's content posture.

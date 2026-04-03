@@ -452,12 +452,12 @@ class TestBoardroomStateManager:
                 assert field in ctx, f"{agent_id} context missing '{field}'"
 
     def test_context_enrichment_types(self):
-        """domain_knowledge and skills are lists; persona and language are strings."""
+        """domain_knowledge and skills are lists of 4–5 items; persona and language are strings."""
         ctx = BoardroomStateManager.load_agent_context("ceo")
         assert isinstance(ctx["domain_knowledge"], list)
-        assert len(ctx["domain_knowledge"]) >= 4
+        assert 4 <= len(ctx["domain_knowledge"]) <= 5
         assert isinstance(ctx["skills"], list)
-        assert len(ctx["skills"]) >= 4
+        assert 4 <= len(ctx["skills"]) <= 5
         assert isinstance(ctx["persona"], str)
         assert isinstance(ctx["language"], str)
 
