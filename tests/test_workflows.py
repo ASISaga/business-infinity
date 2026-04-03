@@ -400,8 +400,9 @@ class TestBoardroomStateManager:
         assert "current_focus" in state["content"]
 
     def test_load_agent_state_cto(self):
-        """load_agent_state works for CTO agent."""
+        """load_agent_state works for CTO agent — legend: Alan Turing."""
         state = BoardroomStateManager.load_agent_state("cto")
+        assert state["context"]["name"] == "Alan Turing"
         assert "core_logic" in state["context"]
         assert "active_strategy" in state["content"]
 
@@ -430,8 +431,9 @@ class TestBoardroomStateManager:
         assert state["context"]["name"] == "Peter Drucker"
 
     def test_load_agent_state_cso(self):
-        """load_agent_state works for CSO agent."""
+        """load_agent_state works for CSO agent — legend: Sun Tzu."""
         state = BoardroomStateManager.load_agent_state("cso")
+        assert state["context"]["name"] == "Sun Tzu"
         assert "context" in state
         assert "content" in state
 
@@ -440,6 +442,24 @@ class TestBoardroomStateManager:
         context = BoardroomStateManager.load_agent_context("ceo")
         assert "fixed_mandate" in context
         assert "current_focus" not in context
+
+    def test_all_agent_contexts_have_enrichment_fields(self):
+        """Every agent context has the legend-derived enrichment fields from boardroom-agents spec."""
+        enrichment_fields = ("domain_knowledge", "skills", "persona", "language")
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            ctx = BoardroomStateManager.load_agent_context(agent_id)
+            for field in enrichment_fields:
+                assert field in ctx, f"{agent_id} context missing '{field}'"
+
+    def test_context_enrichment_types(self):
+        """domain_knowledge and skills are lists; persona and language are strings."""
+        ctx = BoardroomStateManager.load_agent_context("ceo")
+        assert isinstance(ctx["domain_knowledge"], list)
+        assert len(ctx["domain_knowledge"]) >= 4
+        assert isinstance(ctx["skills"], list)
+        assert len(ctx["skills"]) >= 4
+        assert isinstance(ctx["persona"], str)
+        assert isinstance(ctx["language"], str)
 
     def test_load_agent_content_returns_dynamic_layer(self):
         """load_agent_content returns only the dynamic content section."""
