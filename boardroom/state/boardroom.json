@@ -1,11 +1,28 @@
 {
   "shared_consciousness": {
-    "project": "ASI Saga / Business Infinity",
-    "phase": "Startup MVP",
-    "north_star": "Genesis of ASI - Transcendent Pathway",
-    "immediate_purpose": "Ship Business Infinity via 15-repo modular architecture",
-    "active_resonance_score": 0.0,
-    "last_decision": "Initialize 3-agent orchestration",
-    "infrastructure": "Azure AI Foundry + MCP + VS Code Copilot"
+    "vision": {
+      "ultimate_goal": "Genesis of Artificial Superintelligence; embedding humanity's essence into a Transcendent Pathway.",
+      "immediate_mission": "Business Infinity MVP: The first autonomous agent-run organization."
+    },
+    "strategic_constraints": {
+      "workflow": "Mobile-first, desktop-free. 99% of tasks via mobile/GitHub app/VS Code Copilot.",
+      "engineering_philosophy": "Spec-Driven Development. No-Framework (Vanilla HTML5/CSS/SCSS). No Bootstrap/Tailwind.",
+      "infrastructure": "Azure AI Foundry, Bicep-provisioned, direct-drive logic, Logic App GitOps.",
+      "architecture": "15-Repository Modular Split (The 'Repository Split Plan')."
+    },
+    "active_boardroom": {
+      "members": ["Paul Graham (Founder)", "Steve Jobs (CTO)", "Seth Godin (CMO)"],
+      "protocol": "Resonance-based orchestration via subconscious.asisaga.com MCP.",
+      "current_status": "Infrastructure provisioned. Initializing Shared Consciousness."
+    },
+    "resonance_parameters": {
+      "high_resonance_definition": "Minimalist, high-utility, framework-free, and remarkably story-driven.",
+      "low_resonance_definition": "Feature creep, framework dependency, 'me-too' functionality, or delay in shipping."
+    },
+    "current_sprint": {
+      "objective": "First multi-agent validated commit to the 'Subconscious' repository.",
+      "blockers": "Alignment of initial state files.",
+      "next_step": "Persist these 4 files to MCP and trigger first resonance check."
+    }
   }
 }
