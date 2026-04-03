@@ -1,0 +1,14 @@
+{
+  "product": {
+    "name": "Business Infinity",
+    "version": "0.1.0-MVP",
+    "architecture": "No-Framework / Spec-Driven / Modular 15-Repo",
+    "core_stack": "Azure AI Foundry, Genesis Declarative Language, Bento Engine",
+    "capability_map": {
+      "orchestration": "Multi-agent CXO coordination",
+      "persistence": "Subconscious MCP persistence layers",
+      "frontend": "VS Code / Mobile-First Interface"
+    },
+    "roadmap": ["Initial 3-Agent Node", "Full 15-Agent Boardroom", "External API Access"]
+  }
+}
