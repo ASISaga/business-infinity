@@ -1,13 +1,5 @@
-{
-  "@context": "https://asisaga.com/contexts/product.jsonld",
-  "@id": "bi:mvp",
-  "@type": "BusinessOperatingSystem",
-  "name": "Business Infinity",
-  "architecture": "No-Framework / Spec-Driven",
-  "registry": {
-    "repos": "15-repo-modular-split",
-    "infrastructure": "Azure-Bicep-Direct-Drive",
-    "compliance": ["ISO27001", "MCSB-v2"]
-  },
-  "modules": ["BentoEngine", "SubconsciousMCP", "ResonanceOrchestrator"]
-}
+{"@context": "https://asisaga.com/contexts/product.jsonld", "@id": "bi:product:core", "@type": "SoftwareSourceCode", "name": "Business Infinity", "description": "Autonomous Agent-Driven Operating System", "programmingLanguage": "Genesis DSL", "runtimePlatform": "Azure AI Foundry"}
+{"@context": "https://asisaga.com/contexts/product.jsonld", "@id": "bi:arch:modular", "@type": "ArchitectureManifest", "pattern": "15-Repository Modular Split", "constraint": "No-Framework (Vanilla HTML5/SCSS/JS)", "mobileFirst": true}
+{"@context": "https://asisaga.com/contexts/product.jsonld", "@id": "bi:engine:bento", "@type": "UIEngine", "name": "Bento Engine", "philosophy": "Direct-Drive Declarative Layouts", "framework": "None"}
+{"@context": "https://asisaga.com/contexts/product.jsonld", "@id": "bi:layer:subconscious", "@type": "PersistenceLayer", "interface": "MCP (Model Context Protocol)", "format": "JSON-LD", "endpoint": "subconscious.asisaga.com"}
+{"@context": "https://asisaga.com/contexts/product.jsonld", "@id": "bi:logic:resonance", "@type": "OrchestrationProtocol", "mechanism": "Multi-Agent Resonance Check", "threshold": 0.85, "gatekeeper": "Founder Agent"}
