@@ -723,6 +723,65 @@ class TestBoardroomStateManager:
         assert len(records) > 0
         assert all("@type" in record for record in records)
 
+    def test_load_agent_buddhi_returns_intellect_document(self):
+        """load_agent_buddhi returns the Buddhi intellect document for each agent."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            buddhi = BoardroomStateManager.load_agent_buddhi(agent_id)
+            assert buddhi["@type"] == "Buddhi", f"{agent_id} Buddhi missing @type"
+            assert buddhi["agent_id"] == agent_id
+            for field in ("domain_knowledge", "skills", "persona", "language"):
+                assert field in buddhi, f"{agent_id} Buddhi missing '{field}'"
+
+    def test_load_agent_buddhi_intellect_fields_are_non_empty(self):
+        """Buddhi intellect fields are non-empty lists/strings for all agents."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            buddhi = BoardroomStateManager.load_agent_buddhi(agent_id)
+            assert isinstance(buddhi["domain_knowledge"], list)
+            assert len(buddhi["domain_knowledge"]) >= 4
+            assert isinstance(buddhi["skills"], list)
+            assert len(buddhi["skills"]) >= 4
+            assert isinstance(buddhi["persona"], str) and buddhi["persona"]
+            assert isinstance(buddhi["language"], str) and buddhi["language"]
+
+    def test_load_agent_buddhi_unknown_agent_raises(self):
+        """load_agent_buddhi raises ValueError for unknown agent IDs."""
+        with pytest.raises(ValueError, match="Unknown agent ID"):
+            BoardroomStateManager.load_agent_buddhi("unknown_agent")
+
+    def test_mind_dir_points_to_boardroom_mind(self):
+        """get_mind_dir returns the boardroom/mind directory path."""
+        mind_dir = BoardroomStateManager.get_mind_dir()
+        assert mind_dir.name == "mind"
+        assert mind_dir.parent.name == "boardroom"
+
+    def test_agent_manas_files_in_mind_directory(self):
+        """All agent Manas files exist under boardroom/mind/{agent}/Manas/."""
+        mind_dir = BoardroomStateManager.get_mind_dir()
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            manas_dir = mind_dir / agent_id / "Manas"
+            assert manas_dir.is_dir(), f"{agent_id} Manas directory missing"
+            manas_files = list(manas_dir.iterdir())
+            assert len(manas_files) >= 1, f"{agent_id} Manas directory is empty"
+
+    def test_agent_buddhi_files_in_mind_directory(self):
+        """All agent Buddhi files exist under boardroom/mind/{agent}/Buddhi/."""
+        mind_dir = BoardroomStateManager.get_mind_dir()
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            buddhi_path = mind_dir / agent_id / "Buddhi" / "buddhi.jsonld"
+            assert buddhi_path.exists(), f"{agent_id} Buddhi file missing at {buddhi_path}"
+
+    def test_buddhi_context_aligns_with_manas_context(self):
+        """Buddhi domain_knowledge and skills align with the agent's Manas context layer."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            ctx = BoardroomStateManager.load_agent_context(agent_id)
+            buddhi = BoardroomStateManager.load_agent_buddhi(agent_id)
+            assert buddhi["domain_knowledge"] == ctx["domain_knowledge"], (
+                f"{agent_id} Buddhi domain_knowledge diverges from Manas context"
+            )
+            assert buddhi["skills"] == ctx["skills"], (
+                f"{agent_id} Buddhi skills diverge from Manas context"
+            )
+
 
 class TestBoardroomWorkflowContext:
     """Test that workflow payloads include per-agent company/product state."""
