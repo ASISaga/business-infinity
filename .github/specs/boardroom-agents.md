@@ -98,6 +98,8 @@ Load with `BoardroomStateManager.load_agent_buddhi(agent_id)`.
 
 ---
 
+## CEO — Steve Jobs
+
 **Legend**: Steve Jobs (1955–2011), co-founder of Apple Inc., Pixar, and NeXT.  
 **Archetype key**: `Jobs`
 
