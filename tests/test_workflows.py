@@ -546,14 +546,15 @@ class TestBoardroomStateManager:
 
         import business_infinity.boardroom as boardroom_module
 
-        # Copy real CEO state file into a temp directory
-        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "ceo.jsonld"
-        fake_state_dir = tmp_path / "boardroom" / "state"
-        fake_state_dir.mkdir(parents=True)
-        shutil.copy(real_state, fake_state_dir / "ceo.jsonld")
+        # Copy real CEO state file into a temp Manas directory
+        real_state = boardroom_module.BoardroomStateManager.get_mind_dir() / "ceo" / "Manas" / "ceo.jsonld"
+        fake_mind_dir = tmp_path / "boardroom" / "mind"
+        fake_manas_dir = fake_mind_dir / "ceo" / "Manas"
+        fake_manas_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_manas_dir / "ceo.jsonld")
 
-        # Patch _STATE_DIR to point at the temp directory
-        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+        # Patch _MIND_DIR to point at the temp directory
+        monkeypatch.setattr(BoardroomStateManager, "_MIND_DIR", fake_mind_dir)
 
         updated = BoardroomStateManager.update_executive_function(
             "ceo",
@@ -573,12 +574,13 @@ class TestBoardroomStateManager:
 
         import business_infinity.boardroom as boardroom_module
 
-        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "founder.jsonld"
-        fake_state_dir = tmp_path / "boardroom" / "state"
-        fake_state_dir.mkdir(parents=True)
-        shutil.copy(real_state, fake_state_dir / "founder.jsonld")
+        real_state = boardroom_module.BoardroomStateManager.get_mind_dir() / "founder" / "Manas" / "founder.jsonld"
+        fake_mind_dir = tmp_path / "boardroom" / "mind"
+        fake_manas_dir = fake_mind_dir / "founder" / "Manas"
+        fake_manas_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_manas_dir / "founder.jsonld")
 
-        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+        monkeypatch.setattr(BoardroomStateManager, "_MIND_DIR", fake_mind_dir)
 
         updated = BoardroomStateManager.update_agent_content(
             "founder", {"spontaneous_intent": "Updated founder intent"}
@@ -630,12 +632,13 @@ class TestBoardroomStateManager:
 
         import business_infinity.boardroom as boardroom_module
 
-        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "cfo.jsonld"
-        fake_state_dir = tmp_path / "boardroom" / "state"
-        fake_state_dir.mkdir(parents=True)
-        shutil.copy(real_state, fake_state_dir / "cfo.jsonld")
+        real_state = boardroom_module.BoardroomStateManager.get_mind_dir() / "cfo" / "Manas" / "cfo.jsonld"
+        fake_mind_dir = tmp_path / "boardroom" / "mind"
+        fake_manas_dir = fake_mind_dir / "cfo" / "Manas"
+        fake_manas_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_manas_dir / "cfo.jsonld")
 
-        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+        monkeypatch.setattr(BoardroomStateManager, "_MIND_DIR", fake_mind_dir)
 
         original = BoardroomStateManager.load_agent_state("cfo")
         original_name = original["context"]["name"]

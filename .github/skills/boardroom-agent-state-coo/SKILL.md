@@ -13,13 +13,13 @@ allowed-tools: Bash(python:*) Read Edit
 # COO Agent State Skill — W. Edwards Deming
 
 **Role**: COO Agent State Enrichment Specialist  
-**Agent**: `coo` → `boardroom/state/coo.jsonld`  
+**Agent**: `coo` → `boardroom/mind/coo/Manas/coo.jsonld`  
 **Legend**: W. Edwards Deming (1900–1993), statistician and management philosopher who transformed Japanese and American manufacturing  
 **Version**: 1.0
 
 ## Purpose
 
-Enrich the `context` layer of `boardroom/state/coo.jsonld` with the legend-derived
+Enrich the `context` layer of `boardroom/mind/coo/Manas/coo.jsonld` with the legend-derived
 `domain_knowledge`, `skills`, `persona`, and `language` fields for **W. Edwards Deming**, the
 authoritative archetype for the COO role in the boardroom.
 
@@ -63,14 +63,20 @@ Activate when:
 ### 1. Open the agent state file
 
 ```bash
-# File: boardroom/state/coo.jsonld
+# Manas (memory): boardroom/mind/coo/Manas/coo.jsonld
+# Buddhi (intellect): boardroom/mind/coo/Buddhi/buddhi.jsonld
 ```
 
 ### 2. Update context enrichment
 
 Inside the `context` object, add or update the four enrichment fields using the values above.
 
-### 3. Validate
+### 3. Update Buddhi intellect file
+
+Update `boardroom/mind/coo/Buddhi/buddhi.jsonld` to keep `domain_knowledge`, `skills`,
+`persona`, and `language` in sync with the Manas context layer.
+
+### 4. Validate
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 - <<'PY'
@@ -79,11 +85,13 @@ ctx = BoardroomStateManager.load_agent_context("coo")
 for field in ("domain_knowledge", "skills", "persona", "language"):
     assert field in ctx, f"coo context missing '{field}'"
 assert ctx["name"] == "W. Edwards Deming"
-print(f"✓ coo: W. Edwards Deming — context enrichment complete")
+buddhi = BoardroomStateManager.load_agent_buddhi("coo")
+assert buddhi["agent_id"] == "coo"
+print(f"✓ coo: W. Edwards Deming — Manas and Buddhi enrichment complete")
 PY
 ```
 
-### 4. Run tests
+### 5. Run tests
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
@@ -93,11 +101,12 @@ PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
 
 → **Boardroom agents spec**: `.github/specs/boardroom-agents.md` — Full W. Edwards Deming legend specification  
 → **Parent skill**: `.github/skills/boardroom-agent-state/SKILL.md` — Roster overview and general workflow  
-→ **State file**: `boardroom/state/coo.jsonld`  
+→ **Manas file**: `boardroom/mind/coo/Manas/coo.jsonld`  
+→ **Buddhi file**: `boardroom/mind/coo/Buddhi/buddhi.jsonld`  
 → **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
 → **Repository spec**: `.github/specs/repository.md`
 
 ---
 
-**Version**: 1.0 — Dedicated COO agent state skill  
+**Version**: 2.0 — Updated to mind/Manas/Buddhi architecture  
 **Last Updated**: 2026-04-03

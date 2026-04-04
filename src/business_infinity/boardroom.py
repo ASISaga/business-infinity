@@ -126,7 +126,9 @@ CXO_PATHWAY_TYPES = list(dict.fromkeys(domain["pathway"] for domain in CXO_DOMAI
 # Collective boardroom state (topic, resonance scores, active directives) is
 # stored separately in ``boardroom.jsonld``.
 #
-# All state files live in ``boardroom/state/`` at the project root.
+# Agent Manas (memory) files live in ``boardroom/mind/{agent_id}/Manas/``.
+# Agent Buddhi (intellect) files live in ``boardroom/mind/{agent_id}/Buddhi/``.
+# Shared collective state files remain in ``boardroom/state/``.
 
 
 class BoardroomStateManager:
@@ -143,6 +145,9 @@ class BoardroomStateManager:
 
     #: Path to the ``boardroom/state/`` directory relative to the project root.
     _STATE_DIR: Path = Path(__file__).parent.parent.parent / "boardroom" / "state"
+
+    #: Path to the ``boardroom/mind/`` directory relative to the project root.
+    _MIND_DIR: Path = Path(__file__).parent.parent.parent / "boardroom" / "mind"
 
     #: Mapping from agent ID to state filename stem (without extension).
     #: Extensions ``.jsonld`` and ``.jsonl`` are both supported.
@@ -255,18 +260,28 @@ class BoardroomStateManager:
 
     @classmethod
     def _state_path(cls, filename: str) -> Path:
-        """Resolve a state filename stem to its absolute path.
+        """Resolve an agent state filename stem to its absolute path.
+
+        Looks in ``boardroom/mind/{filename}/Manas/`` first (new mind structure),
+        then falls back to ``boardroom/state/`` for backward compatibility.
 
         Tries ``.jsonld`` first, then ``.jsonl``.
 
         Raises :class:`FileNotFoundError` if neither variant exists.
         """
+        # New mind structure: boardroom/mind/{agent_id}/Manas/{agent_id}.ext
+        for ext in (".jsonld", ".jsonl"):
+            path = cls._MIND_DIR / filename / "Manas" / (filename + ext)
+            if path.exists():
+                return path
+        # Fallback to legacy state directory for backward compatibility
         for ext in (".jsonld", ".jsonl"):
             path = cls._STATE_DIR / (filename + ext)
             if path.exists():
                 return path
         raise FileNotFoundError(
-            f"State file '{filename}' not found in {cls._STATE_DIR} "
+            f"State file '{filename}' not found in "
+            f"{cls._MIND_DIR / filename / 'Manas'} or {cls._STATE_DIR} "
             f"(tried .jsonld and .jsonl)"
         )
 
@@ -470,6 +485,24 @@ class BoardroomStateManager:
         return dict(cls.load_agent_content(agent_id)["product_state"])
 
     @classmethod
+    def load_agent_buddhi(cls, agent_id: str) -> Dict[str, Any]:
+        """Load the intellect (Buddhi) for an agent from its Buddhi directory.
+
+        Returns the JSON-LD Buddhi document from
+        ``boardroom/mind/{agent_id}/Buddhi/buddhi.jsonld``.
+
+        Raises :class:`ValueError` for unknown agents.
+        Raises :class:`FileNotFoundError` if the Buddhi file is absent.
+        """
+        if agent_id not in cls._AGENT_FILES:
+            raise ValueError(
+                f"Unknown agent ID '{agent_id}'. "
+                f"Registered agents: {cls.get_registered_agent_ids()}"
+            )
+        path = cls._MIND_DIR / agent_id / "Buddhi" / "buddhi.jsonld"
+        return cls._load_json_document(path)
+
+    @classmethod
     def update_agent_content(
         cls, agent_id: str, updates: Dict[str, Any]
     ) -> Dict[str, Any]:
@@ -530,6 +563,11 @@ class BoardroomStateManager:
     def get_state_dir(cls) -> Path:
         """Return the directory containing boardroom state files."""
         return cls._STATE_DIR
+
+    @classmethod
+    def get_mind_dir(cls) -> Path:
+        """Return the directory containing agent mind structures."""
+        return cls._MIND_DIR
 
     @classmethod
     def load_state_records(cls, filename: str) -> Any:

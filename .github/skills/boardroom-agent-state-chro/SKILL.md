@@ -13,13 +13,13 @@ allowed-tools: Bash(python:*) Read Edit
 # CHRO Agent State Skill — Peter Drucker
 
 **Role**: CHRO Agent State Enrichment Specialist  
-**Agent**: `chro` → `boardroom/state/chro.jsonld`  
+**Agent**: `chro` → `boardroom/mind/chro/Manas/chro.jsonld`  
 **Legend**: Peter Drucker (1909–2005), management consultant and author. Coined 'management by objectives', 'knowledge worker', and 'the effective executive'  
 **Version**: 1.0
 
 ## Purpose
 
-Enrich the `context` layer of `boardroom/state/chro.jsonld` with the legend-derived
+Enrich the `context` layer of `boardroom/mind/chro/Manas/chro.jsonld` with the legend-derived
 `domain_knowledge`, `skills`, `persona`, and `language` fields for **Peter Drucker**, the
 authoritative archetype for the CHRO role in the boardroom.
 
@@ -63,14 +63,20 @@ Activate when:
 ### 1. Open the agent state file
 
 ```bash
-# File: boardroom/state/chro.jsonld
+# Manas (memory): boardroom/mind/chro/Manas/chro.jsonld
+# Buddhi (intellect): boardroom/mind/chro/Buddhi/buddhi.jsonld
 ```
 
 ### 2. Update context enrichment
 
 Inside the `context` object, add or update the four enrichment fields using the values above.
 
-### 3. Validate
+### 3. Update Buddhi intellect file
+
+Update `boardroom/mind/chro/Buddhi/buddhi.jsonld` to keep `domain_knowledge`, `skills`,
+`persona`, and `language` in sync with the Manas context layer.
+
+### 4. Validate
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 - <<'PY'
@@ -79,11 +85,13 @@ ctx = BoardroomStateManager.load_agent_context("chro")
 for field in ("domain_knowledge", "skills", "persona", "language"):
     assert field in ctx, f"chro context missing '{field}'"
 assert ctx["name"] == "Peter Drucker"
-print(f"✓ chro: Peter Drucker — context enrichment complete")
+buddhi = BoardroomStateManager.load_agent_buddhi("chro")
+assert buddhi["agent_id"] == "chro"
+print(f"✓ chro: Peter Drucker — Manas and Buddhi enrichment complete")
 PY
 ```
 
-### 4. Run tests
+### 5. Run tests
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
@@ -93,11 +101,12 @@ PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
 
 → **Boardroom agents spec**: `.github/specs/boardroom-agents.md` — Full Peter Drucker legend specification  
 → **Parent skill**: `.github/skills/boardroom-agent-state/SKILL.md` — Roster overview and general workflow  
-→ **State file**: `boardroom/state/chro.jsonld`  
+→ **Manas file**: `boardroom/mind/chro/Manas/chro.jsonld`  
+→ **Buddhi file**: `boardroom/mind/chro/Buddhi/buddhi.jsonld`  
 → **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
 → **Repository spec**: `.github/specs/repository.md`
 
 ---
 
-**Version**: 1.0 — Dedicated CHRO agent state skill  
+**Version**: 2.0 — Updated to mind/Manas/Buddhi architecture  
 **Last Updated**: 2026-04-03

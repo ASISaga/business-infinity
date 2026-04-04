@@ -13,7 +13,7 @@ allowed-tools: Bash(python:*) Read Edit
 # Boardroom Agent State Skill
 
 **Role**: Boardroom Agent State Enrichment Specialist  
-**Scope**: `boardroom/state/*.jsonld` — agent context and content layers  
+**Scope**: `boardroom/mind/*/Manas/` — agent Manas (memory) and `boardroom/mind/*/Buddhi/` — agent Buddhi (intellect)  
 **Version**: 2.0
 
 ## Purpose
@@ -25,16 +25,16 @@ or for cross-agent operations such as full-roster validation.
 
 ## Agent Roster
 
-| Role | Legend | State file | Dedicated skill |
+| Role | Legend | Manas file | Dedicated skill |
 |------|--------|-----------|----------------|
-| CEO | Steve Jobs | `boardroom/state/ceo.jsonld` | `.github/skills/boardroom-agent-state-ceo/SKILL.md` |
-| CFO | Warren Buffett | `boardroom/state/cfo.jsonld` | `.github/skills/boardroom-agent-state-cfo/SKILL.md` |
-| COO | W. Edwards Deming | `boardroom/state/coo.jsonld` | `.github/skills/boardroom-agent-state-coo/SKILL.md` |
-| CMO | Seth Godin | `boardroom/state/cmo.jsonld` | `.github/skills/boardroom-agent-state-cmo/SKILL.md` |
-| CHRO | Peter Drucker | `boardroom/state/chro.jsonld` | `.github/skills/boardroom-agent-state-chro/SKILL.md` |
-| CTO | Alan Turing | `boardroom/state/cto.jsonld` | `.github/skills/boardroom-agent-state-cto/SKILL.md` |
-| CSO | Sun Tzu | `boardroom/state/cso.jsonl` ¹ | `.github/skills/boardroom-agent-state-cso/SKILL.md` |
-| Founder | Paul Graham | `boardroom/state/founder.jsonld` | `.github/skills/boardroom-agent-state-founder/SKILL.md` |
+| CEO | Steve Jobs | `boardroom/mind/ceo/Manas/ceo.jsonld` | `.github/skills/boardroom-agent-state-ceo/SKILL.md` |
+| CFO | Warren Buffett | `boardroom/mind/cfo/Manas/cfo.jsonld` | `.github/skills/boardroom-agent-state-cfo/SKILL.md` |
+| COO | W. Edwards Deming | `boardroom/mind/coo/Manas/coo.jsonld` | `.github/skills/boardroom-agent-state-coo/SKILL.md` |
+| CMO | Seth Godin | `boardroom/mind/cmo/Manas/cmo.jsonld` | `.github/skills/boardroom-agent-state-cmo/SKILL.md` |
+| CHRO | Peter Drucker | `boardroom/mind/chro/Manas/chro.jsonld` | `.github/skills/boardroom-agent-state-chro/SKILL.md` |
+| CTO | Alan Turing | `boardroom/mind/cto/Manas/cto.jsonld` | `.github/skills/boardroom-agent-state-cto/SKILL.md` |
+| CSO | Sun Tzu | `boardroom/mind/cso/Manas/cso.jsonl` ¹ | `.github/skills/boardroom-agent-state-cso/SKILL.md` |
+| Founder | Paul Graham | `boardroom/mind/founder/Manas/founder.jsonld` | `.github/skills/boardroom-agent-state-founder/SKILL.md` |
 
 ## When to Use This Skill
 
@@ -42,8 +42,7 @@ or for cross-agent operations such as full-roster validation.
 - **Full-roster validation** → use the validation workflow in this skill
 - **Adding a new agent** → create a new dedicated skill, then add the agent to the roster table
 
-> ¹ The CSO agent uses `.jsonl` (newline-delimited JSON) rather than `.jsonld`, consistent with
-> other non-agent state documents in `boardroom/state/`.
+> ¹ The CSO agent uses `.jsonl` (newline-delimited JSON) rather than `.jsonld`.
 
 ## Context Layer Schema
 
@@ -78,17 +77,19 @@ The `content.company_state` and `content.product_state` objects are validated by
 ## Full-Roster Validation
 
 ```bash
-# Validate all agent states load correctly
+# Validate all agent states and Buddhi files load correctly
 PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
 
-# Spot-check context enrichment completeness across all agents
+# Spot-check context enrichment and Buddhi completeness across all agents
 PYTHONPATH=/tmp/aos_mock:src python3 - <<'PY'
 from business_infinity.boardroom import BoardroomStateManager
 for agent_id in BoardroomStateManager.get_registered_agent_ids():
     ctx = BoardroomStateManager.load_agent_context(agent_id)
     for field in ("domain_knowledge", "skills", "persona", "language"):
         assert field in ctx, f"{agent_id} context missing '{field}'"
-    print(f"✓ {agent_id}: {ctx['name']}")
+    buddhi = BoardroomStateManager.load_agent_buddhi(agent_id)
+    assert buddhi["agent_id"] == agent_id
+    print(f"✓ {agent_id}: {ctx['name']} — Manas and Buddhi OK")
 PY
 ```
 
@@ -106,11 +107,13 @@ PYTHONPATH=/tmp/aos_mock:src python3 -m pylint src/business_infinity/boardroom.p
 
 → **Spec**: `.github/specs/boardroom-agents.md` — Legend archetypes, domain knowledge, and JSON-LD schema  
 → **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
-→ **State files**: `boardroom/state/*.jsonld`  
+→ **Manas files**: `boardroom/mind/*/Manas/`  
+→ **Buddhi files**: `boardroom/mind/*/Buddhi/buddhi.jsonld`  
+→ **Shared state**: `boardroom/state/` — collective boardroom state  
 → **MVP spec**: `.github/specs/mvp.md` — C-suite agent roster  
 → **Repository spec**: `.github/specs/repository.md`
 
 ---
 
-**Version**: 2.0 — Refactored to meta/roster skill with dedicated per-agent skills  
+**Version**: 3.0 — Updated to mind/Manas/Buddhi architecture  
 **Last Updated**: 2026-04-03

@@ -13,13 +13,13 @@ allowed-tools: Bash(python:*) Read Edit
 # CMO Agent State Skill — Seth Godin
 
 **Role**: CMO Agent State Enrichment Specialist  
-**Agent**: `cmo` → `boardroom/state/cmo.jsonld`  
+**Agent**: `cmo` → `boardroom/mind/cmo/Manas/cmo.jsonld`  
 **Legend**: Seth Godin (1960–), marketing author and founder of Squidoo. Wrote *Purple Cow*, *Tribes*, *Permission Marketing*, and *The Dip*  
 **Version**: 1.0
 
 ## Purpose
 
-Enrich the `context` layer of `boardroom/state/cmo.jsonld` with the legend-derived
+Enrich the `context` layer of `boardroom/mind/cmo/Manas/cmo.jsonld` with the legend-derived
 `domain_knowledge`, `skills`, `persona`, and `language` fields for **Seth Godin**, the
 authoritative archetype for the CMO role in the boardroom.
 
@@ -63,14 +63,20 @@ Activate when:
 ### 1. Open the agent state file
 
 ```bash
-# File: boardroom/state/cmo.jsonld
+# Manas (memory): boardroom/mind/cmo/Manas/cmo.jsonld
+# Buddhi (intellect): boardroom/mind/cmo/Buddhi/buddhi.jsonld
 ```
 
 ### 2. Update context enrichment
 
 Inside the `context` object, add or update the four enrichment fields using the values above.
 
-### 3. Validate
+### 3. Update Buddhi intellect file
+
+Update `boardroom/mind/cmo/Buddhi/buddhi.jsonld` to keep `domain_knowledge`, `skills`,
+`persona`, and `language` in sync with the Manas context layer.
+
+### 4. Validate
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 - <<'PY'
@@ -79,11 +85,13 @@ ctx = BoardroomStateManager.load_agent_context("cmo")
 for field in ("domain_knowledge", "skills", "persona", "language"):
     assert field in ctx, f"cmo context missing '{field}'"
 assert ctx["name"] == "Seth Godin"
-print(f"✓ cmo: Seth Godin — context enrichment complete")
+buddhi = BoardroomStateManager.load_agent_buddhi("cmo")
+assert buddhi["agent_id"] == "cmo"
+print(f"✓ cmo: Seth Godin — Manas and Buddhi enrichment complete")
 PY
 ```
 
-### 4. Run tests
+### 5. Run tests
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
@@ -93,11 +101,12 @@ PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
 
 → **Boardroom agents spec**: `.github/specs/boardroom-agents.md` — Full Seth Godin legend specification  
 → **Parent skill**: `.github/skills/boardroom-agent-state/SKILL.md` — Roster overview and general workflow  
-→ **State file**: `boardroom/state/cmo.jsonld`  
+→ **Manas file**: `boardroom/mind/cmo/Manas/cmo.jsonld`  
+→ **Buddhi file**: `boardroom/mind/cmo/Buddhi/buddhi.jsonld`  
 → **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
 → **Repository spec**: `.github/specs/repository.md`
 
 ---
 
-**Version**: 1.0 — Dedicated CMO agent state skill  
+**Version**: 2.0 — Updated to mind/Manas/Buddhi architecture  
 **Last Updated**: 2026-04-03

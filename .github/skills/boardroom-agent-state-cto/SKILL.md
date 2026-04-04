@@ -13,13 +13,13 @@ allowed-tools: Bash(python:*) Read Edit
 # CTO Agent State Skill — Alan Turing
 
 **Role**: CTO Agent State Enrichment Specialist  
-**Agent**: `cto` → `boardroom/state/cto.jsonld` (`@id`: `agent:sj_cto` — legacy identifier, preserved for backward compatibility)  
+**Agent**: `cto` → `boardroom/mind/cto/Manas/cto.jsonld` (`@id`: `agent:sj_cto` — legacy identifier, preserved for backward compatibility)  
 **Legend**: Alan Turing (1912–1954), mathematician, logician, and father of theoretical computer science and artificial intelligence  
 **Version**: 1.0
 
 ## Purpose
 
-Enrich the `context` layer of `boardroom/state/cto.jsonld` with the legend-derived
+Enrich the `context` layer of `boardroom/mind/cto/Manas/cto.jsonld` with the legend-derived
 `domain_knowledge`, `skills`, `persona`, and `language` fields for **Alan Turing**, the
 authoritative archetype for the CTO role in the boardroom.
 
@@ -67,14 +67,20 @@ Activate when:
 ### 1. Open the agent state file
 
 ```bash
-# File: boardroom/state/cto.jsonld
+# Manas (memory): boardroom/mind/cto/Manas/cto.jsonld
+# Buddhi (intellect): boardroom/mind/cto/Buddhi/buddhi.jsonld
 ```
 
 ### 2. Update context enrichment
 
 Inside the `context` object, add or update the four enrichment fields using the values above.
 
-### 3. Validate
+### 3. Update Buddhi intellect file
+
+Update `boardroom/mind/cto/Buddhi/buddhi.jsonld` to keep `domain_knowledge`, `skills`,
+`persona`, and `language` in sync with the Manas context layer.
+
+### 4. Validate
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 - <<'PY'
@@ -83,11 +89,13 @@ ctx = BoardroomStateManager.load_agent_context("cto")
 for field in ("domain_knowledge", "skills", "persona", "language"):
     assert field in ctx, f"cto context missing '{field}'"
 assert ctx["name"] == "Alan Turing"
-print(f"✓ cto: Alan Turing — context enrichment complete")
+buddhi = BoardroomStateManager.load_agent_buddhi("cto")
+assert buddhi["agent_id"] == "cto"
+print(f"✓ cto: Alan Turing — Manas and Buddhi enrichment complete")
 PY
 ```
 
-### 4. Run tests
+### 5. Run tests
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
@@ -97,11 +105,12 @@ PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
 
 → **Boardroom agents spec**: `.github/specs/boardroom-agents.md` — Full Alan Turing legend specification  
 → **Parent skill**: `.github/skills/boardroom-agent-state/SKILL.md` — Roster overview and general workflow  
-→ **State file**: `boardroom/state/cto.jsonld`  
+→ **Manas file**: `boardroom/mind/cto/Manas/cto.jsonld`  
+→ **Buddhi file**: `boardroom/mind/cto/Buddhi/buddhi.jsonld`  
 → **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
 → **Repository spec**: `.github/specs/repository.md`
 
 ---
 
-**Version**: 1.0 — Dedicated CTO agent state skill  
+**Version**: 2.0 — Updated to mind/Manas/Buddhi architecture  
 **Last Updated**: 2026-04-03
