@@ -1,4 +1,39 @@
 This is the complete, high-resonance README.md for the root repository. It integrates the 26-year architectural vision, the Dual-State agent model, the 15-repo split, and the specific JSON-LD ontological mapping required for the ASI Saga.
+
+## Boardroom State Directory Structure
+
+As of 2026-04-03, individual agent state files have been migrated to the
+**mind/Manas/Buddhi** architecture under `boardroom/mind/`. This directory
+(`boardroom/state/`) now holds only **shared collective state** files:
+
+| File | Description |
+|------|-------------|
+| `boardroom.jsonld` | Collective boardroom status, resonance ledger, and active directives |
+| `business-infinity.jsonld` | Product manifest records |
+| `company.jsonld` | Company identity, vision, and governance |
+| `environment.jsonl` | Infrastructure manifest (Azure/GitHub resources) |
+| `mvp.jsonl` | MVP feature records |
+| `orchestration.jsonld` | Orchestration configuration |
+
+### Agent Files (migrated to `boardroom/mind/`)
+
+Each agent now has its own subdirectory under `boardroom/mind/{agent_id}/`:
+
+```
+boardroom/mind/{agent_id}/
+├── Manas/               # Memory — JSON-LD state (context + content layers)
+│   └── {agent_id}.jsonld
+└── Buddhi/              # Intellect — legend-derived domain knowledge layer
+    └── buddhi.jsonld
+```
+
+See `boardroom/mind/` for all eight agents: `ceo`, `cfo`, `coo`, `cmo`, `chro`, `cto`, `cso`, `founder`.
+
+→ **Spec**: `.github/specs/boardroom-agents.md`  
+→ **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`
+
+---
+
 🌌 ASI Saga: Business Infinity
 The Transcendent Pathway to Artificial Superintelligence
 > System Status: Phase 1 - Startup MVP (Boardroom Operational)

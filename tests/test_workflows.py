@@ -546,14 +546,15 @@ class TestBoardroomStateManager:
 
         import business_infinity.boardroom as boardroom_module
 
-        # Copy real CEO state file into a temp directory
-        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "ceo.jsonld"
-        fake_state_dir = tmp_path / "boardroom" / "state"
-        fake_state_dir.mkdir(parents=True)
-        shutil.copy(real_state, fake_state_dir / "ceo.jsonld")
+        # Copy real CEO state file into a temp Manas directory
+        real_state = boardroom_module.BoardroomStateManager.get_mind_dir() / "ceo" / "Manas" / "ceo.jsonld"
+        fake_mind_dir = tmp_path / "boardroom" / "mind"
+        fake_manas_dir = fake_mind_dir / "ceo" / "Manas"
+        fake_manas_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_manas_dir / "ceo.jsonld")
 
-        # Patch _STATE_DIR to point at the temp directory
-        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+        # Patch _MIND_DIR to point at the temp directory
+        monkeypatch.setattr(BoardroomStateManager, "_MIND_DIR", fake_mind_dir)
 
         updated = BoardroomStateManager.update_executive_function(
             "ceo",
@@ -573,12 +574,13 @@ class TestBoardroomStateManager:
 
         import business_infinity.boardroom as boardroom_module
 
-        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "founder.jsonld"
-        fake_state_dir = tmp_path / "boardroom" / "state"
-        fake_state_dir.mkdir(parents=True)
-        shutil.copy(real_state, fake_state_dir / "founder.jsonld")
+        real_state = boardroom_module.BoardroomStateManager.get_mind_dir() / "founder" / "Manas" / "founder.jsonld"
+        fake_mind_dir = tmp_path / "boardroom" / "mind"
+        fake_manas_dir = fake_mind_dir / "founder" / "Manas"
+        fake_manas_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_manas_dir / "founder.jsonld")
 
-        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+        monkeypatch.setattr(BoardroomStateManager, "_MIND_DIR", fake_mind_dir)
 
         updated = BoardroomStateManager.update_agent_content(
             "founder", {"spontaneous_intent": "Updated founder intent"}
@@ -630,12 +632,13 @@ class TestBoardroomStateManager:
 
         import business_infinity.boardroom as boardroom_module
 
-        real_state = boardroom_module.BoardroomStateManager.get_state_dir() / "cfo.jsonld"
-        fake_state_dir = tmp_path / "boardroom" / "state"
-        fake_state_dir.mkdir(parents=True)
-        shutil.copy(real_state, fake_state_dir / "cfo.jsonld")
+        real_state = boardroom_module.BoardroomStateManager.get_mind_dir() / "cfo" / "Manas" / "cfo.jsonld"
+        fake_mind_dir = tmp_path / "boardroom" / "mind"
+        fake_manas_dir = fake_mind_dir / "cfo" / "Manas"
+        fake_manas_dir.mkdir(parents=True)
+        shutil.copy(real_state, fake_manas_dir / "cfo.jsonld")
 
-        monkeypatch.setattr(BoardroomStateManager, "_STATE_DIR", fake_state_dir)
+        monkeypatch.setattr(BoardroomStateManager, "_MIND_DIR", fake_mind_dir)
 
         original = BoardroomStateManager.load_agent_state("cfo")
         original_name = original["context"]["name"]
@@ -719,6 +722,65 @@ class TestBoardroomStateManager:
         records = BoardroomStateManager.load_state_records("mvp.jsonl")
         assert len(records) > 0
         assert all("@type" in record for record in records)
+
+    def test_load_agent_buddhi_returns_intellect_document(self):
+        """load_agent_buddhi returns the Buddhi intellect document for each agent."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            buddhi = BoardroomStateManager.load_agent_buddhi(agent_id)
+            assert buddhi["@type"] == "Buddhi", f"{agent_id} Buddhi missing @type"
+            assert buddhi["agent_id"] == agent_id
+            for field in ("domain_knowledge", "skills", "persona", "language"):
+                assert field in buddhi, f"{agent_id} Buddhi missing '{field}'"
+
+    def test_load_agent_buddhi_intellect_fields_are_non_empty(self):
+        """Buddhi intellect fields are non-empty lists/strings for all agents."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            buddhi = BoardroomStateManager.load_agent_buddhi(agent_id)
+            assert isinstance(buddhi["domain_knowledge"], list)
+            assert len(buddhi["domain_knowledge"]) >= 4
+            assert isinstance(buddhi["skills"], list)
+            assert len(buddhi["skills"]) >= 4
+            assert isinstance(buddhi["persona"], str) and buddhi["persona"]
+            assert isinstance(buddhi["language"], str) and buddhi["language"]
+
+    def test_load_agent_buddhi_unknown_agent_raises(self):
+        """load_agent_buddhi raises ValueError for unknown agent IDs."""
+        with pytest.raises(ValueError, match="Unknown agent ID"):
+            BoardroomStateManager.load_agent_buddhi("unknown_agent")
+
+    def test_mind_dir_points_to_boardroom_mind(self):
+        """get_mind_dir returns the boardroom/mind directory path."""
+        mind_dir = BoardroomStateManager.get_mind_dir()
+        assert mind_dir.name == "mind"
+        assert mind_dir.parent.name == "boardroom"
+
+    def test_agent_manas_files_in_mind_directory(self):
+        """All agent Manas files exist under boardroom/mind/{agent}/Manas/."""
+        mind_dir = BoardroomStateManager.get_mind_dir()
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            manas_dir = mind_dir / agent_id / "Manas"
+            assert manas_dir.is_dir(), f"{agent_id} Manas directory missing"
+            manas_files = list(manas_dir.iterdir())
+            assert len(manas_files) >= 1, f"{agent_id} Manas directory is empty"
+
+    def test_agent_buddhi_files_in_mind_directory(self):
+        """All agent Buddhi files exist under boardroom/mind/{agent}/Buddhi/."""
+        mind_dir = BoardroomStateManager.get_mind_dir()
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            buddhi_path = mind_dir / agent_id / "Buddhi" / "buddhi.jsonld"
+            assert buddhi_path.exists(), f"{agent_id} Buddhi file missing at {buddhi_path}"
+
+    def test_buddhi_context_aligns_with_manas_context(self):
+        """Buddhi domain_knowledge and skills align with the agent's Manas context layer."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            ctx = BoardroomStateManager.load_agent_context(agent_id)
+            buddhi = BoardroomStateManager.load_agent_buddhi(agent_id)
+            assert buddhi["domain_knowledge"] == ctx["domain_knowledge"], (
+                f"{agent_id} Buddhi domain_knowledge diverges from Manas context"
+            )
+            assert buddhi["skills"] == ctx["skills"], (
+                f"{agent_id} Buddhi skills diverge from Manas context"
+            )
 
 
 class TestBoardroomWorkflowContext:

@@ -13,13 +13,13 @@ allowed-tools: Bash(python:*) Read Edit
 # CSO Agent State Skill — Sun Tzu
 
 **Role**: CSO Agent State Enrichment Specialist  
-**Agent**: `cso` → `boardroom/state/cso.jsonl` (`@id`: `agent:cso_strategy`)  
+**Agent**: `cso` → `boardroom/mind/cso/Manas/cso.jsonl` (`@id`: `agent:cso_strategy`)  
 **Legend**: Sun Tzu (~544–496 BC), Chinese military strategist and philosopher. Author of *The Art of War*  
 **Version**: 1.0
 
 ## Purpose
 
-Enrich the `context` layer of `boardroom/state/cso.jsonl` with the legend-derived
+Enrich the `context` layer of `boardroom/mind/cso/Manas/cso.jsonl` with the legend-derived
 `domain_knowledge`, `skills`, `persona`, and `language` fields for **Sun Tzu**, the
 authoritative archetype for the CSO role in the boardroom.
 
@@ -63,14 +63,20 @@ Activate when:
 ### 1. Open the agent state file
 
 ```bash
-# File: boardroom/state/cso.jsonl
+# Manas (memory): boardroom/mind/cso/Manas/cso.jsonl
+# Buddhi (intellect): boardroom/mind/cso/Buddhi/buddhi.jsonld
 ```
 
 ### 2. Update context enrichment
 
 Inside the agent record's `context` object, add or update the four enrichment fields using the values above.
 
-### 3. Validate
+### 3. Update Buddhi intellect file
+
+Update `boardroom/mind/cso/Buddhi/buddhi.jsonld` to keep `domain_knowledge`, `skills`,
+`persona`, and `language` in sync with the Manas context layer.
+
+### 4. Validate
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 - <<'PY'
@@ -79,11 +85,13 @@ ctx = BoardroomStateManager.load_agent_context("cso")
 for field in ("domain_knowledge", "skills", "persona", "language"):
     assert field in ctx, f"cso context missing '{field}'"
 assert ctx["name"] == "Sun Tzu"
-print(f"✓ cso: Sun Tzu — context enrichment complete")
+buddhi = BoardroomStateManager.load_agent_buddhi("cso")
+assert buddhi["agent_id"] == "cso"
+print(f"✓ cso: Sun Tzu — Manas and Buddhi enrichment complete")
 PY
 ```
 
-### 4. Run tests
+### 5. Run tests
 
 ```bash
 PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
@@ -93,11 +101,12 @@ PYTHONPATH=/tmp/aos_mock:src python3 -m pytest tests/ -q -k "boardroom"
 
 → **Boardroom agents spec**: `.github/specs/boardroom-agents.md` — Full Sun Tzu legend specification  
 → **Parent skill**: `.github/skills/boardroom-agent-state/SKILL.md` — Roster overview and general workflow  
-→ **State file**: `boardroom/state/cso.jsonl`  
+→ **Manas file**: `boardroom/mind/cso/Manas/cso.jsonl`  
+→ **Buddhi file**: `boardroom/mind/cso/Buddhi/buddhi.jsonld`  
 → **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
 → **Repository spec**: `.github/specs/repository.md`
 
 ---
 
-**Version**: 1.0 — Dedicated CSO agent state skill  
+**Version**: 2.0 — Updated to mind/Manas/Buddhi architecture  
 **Last Updated**: 2026-04-03

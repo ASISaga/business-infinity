@@ -1,21 +1,28 @@
 # Boardroom Agent Specifications
 
-**Version**: 1.0.0
+**Version**: 2.0.0
 **Status**: Active
 **Last Updated**: 2026-04-03
 
 ## Overview
 
 Each Boardroom agent embodies a legendary archetype from their respective domain. The agent's
-JSON-LD state is split into two layers:
+JSON-LD state is structured using a **mind/Manas/Buddhi** architecture:
 
-- **`context`** (immutable): fixed identity, mandate, domain knowledge, skills, persona, and
-  language style derived from the legend — the agent's read-only constitution.
-- **`content`** (mutable): active focus, working memory, spontaneous intent, and per-entity
-  perspective state for ASI Saga and Business Infinity.
+- **Manas** (`boardroom/mind/{id}/Manas/`): agent memory — the JSON-LD state file with `context`
+  (immutable) and `content` (mutable) layers.
+  - **`context`** (immutable): fixed identity, mandate, domain knowledge, skills, persona, and
+    language style derived from the legend — the agent's read-only constitution.
+  - **`content`** (mutable): active focus, working memory, spontaneous intent, and per-entity
+    perspective state for ASI Saga and Business Infinity.
+- **Buddhi** (`boardroom/mind/{id}/Buddhi/buddhi.jsonld`): agent intellect — a JSON-LD document
+  encoding the legend-derived `domain_knowledge`, `skills`, `persona`, and `language` as a
+  standalone intellect layer.
+
+Shared collective state (boardroom, company, orchestration) remains in `boardroom/state/`.
 
 This specification defines the authoritative legend-based enrichment for each agent. Use it when
-updating `boardroom/state/*.jsonld` files.
+updating agent Manas and Buddhi files in `boardroom/mind/`.
 
 → **Skill (roster)**: `.github/skills/boardroom-agent-state/SKILL.md` — roster overview and full-roster validation  
 → **Skill (CEO)**: `.github/skills/boardroom-agent-state-ceo/SKILL.md` — Steve Jobs  
@@ -54,6 +61,40 @@ updating `boardroom/state/*.jsonld` files.
 > **Note on CTO**: The original MVP Readme used Steve Jobs (`agent:sj_cto`) as the technical
 > purity enforcer. The domain archetype in `CXO_DOMAINS` is Turing. The JSON-LD and this spec
 > align to Alan Turing — the mathematical visionary who defined computation itself.
+
+---
+
+## Mind / Manas / Buddhi Architecture
+
+Each agent's state is organised under `boardroom/mind/{agent_id}/`:
+
+```
+boardroom/mind/{agent_id}/
+├── Manas/               # Memory — the agent's JSON-LD state file
+│   └── {agent_id}.jsonld  (or .jsonl for CSO)
+└── Buddhi/              # Intellect — legend-derived domain layer
+    └── buddhi.jsonld
+```
+
+### Buddhi File Schema
+
+```json
+{
+  "@context": "https://asisaga.com/contexts/buddhi.jsonld",
+  "@id": "agent:{agent_id}/buddhi",
+  "@type": "Buddhi",
+  "schema_version": "1.0.0",
+  "agent_id": "{agent_id}",
+  "name": "{legend_name}",
+  "domain": "{domain}",
+  "domain_knowledge": ["..."],
+  "skills": ["..."],
+  "persona": "...",
+  "language": "..."
+}
+```
+
+Load with `BoardroomStateManager.load_agent_buddhi(agent_id)`.
 
 ---
 
@@ -439,7 +480,9 @@ PY
 → **Skill (CTO)**: `.github/skills/boardroom-agent-state-cto/SKILL.md` — Alan Turing  
 → **Skill (CSO)**: `.github/skills/boardroom-agent-state-cso/SKILL.md` — Sun Tzu  
 → **Skill (Founder)**: `.github/skills/boardroom-agent-state-founder/SKILL.md` — Paul Graham  
-→ **State files**: `boardroom/state/*.jsonld` — live agent state  
+→ **Manas files**: `boardroom/mind/*/Manas/` — live agent memory state  
+→ **Buddhi files**: `boardroom/mind/*/Buddhi/buddhi.jsonld` — agent intellect layer  
+→ **Shared state**: `boardroom/state/` — collective boardroom state  
 → **Boardroom constants**: `src/business_infinity/boardroom.py` → `CXO_DOMAINS`  
 → **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
 → **MVP spec**: `.github/specs/mvp.md` — C-suite agent roster and debate philosophy  
