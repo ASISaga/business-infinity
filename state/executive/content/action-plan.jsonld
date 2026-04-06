@@ -1,0 +1,38 @@
+{
+  "@context": "https://asisaga.com/ontology/v1/context.jsonld",
+  "@type": "CEOActionPlan",
+  "name": "Paul Graham",
+  "role": "CEO_Orchestrator",
+  "anchor": "Velocity_and_Execution",
+  "status": "Active_Execution",
+  "overarchingPurpose": {
+    "@id": "https://asisaga.com/purpose/genesis-business-infinity-mvp"
+  },
+  "actionSteps": [
+    {
+      "@type": "Task",
+      "stepId": "CEO_001",
+      "taskName": "Operationalize_Subconscious_State",
+      "logic": "Retrieve JSON states from the MCP server and translate the Founder's vision into actionable agent tasks."
+    },
+    {
+      "@type": "Task",
+      "stepId": "CEO_002",
+      "taskName": "Lead_Boardroom_Deliberation",
+      "logic": "Coordinate the CMO and Architect agents; resolve conflicts between 'Remarkability' and 'Structural Integrity' to favor the MVP launch."
+    },
+    {
+      "@type": "Task",
+      "stepId": "CEO_003",
+      "taskName": "Execute_Resonance_Scoring",
+      "method": "Weighted_Summation",
+      "logic": "Synthesize agent proposals into a single high-integrity action plan for the Founder's (HITL) audit."
+    },
+    {
+      "@type": "Task",
+      "stepId": "CEO_004",
+      "taskName": "Manage_Substrate_Deployment",
+      "logic": "Oversee the commit of approved actions to the Azure Bicep infrastructure and update the persistence layer."
+    }
+  ]
+}
