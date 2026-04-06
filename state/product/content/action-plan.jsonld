@@ -1,10 +1,10 @@
 {
   "@context": "https://asisaga.com/ontology/v1/context.jsonld",
-  "@type": "AgentActionPlan",
+  "@type": "FounderActionPlan",
   "name": "Paul Graham",
-  "role": "Founder_CEO_Orchestrator",
-  "anchor": "Velocity_and_Resonance",
-  "status": "Genesis_Initialization",
+  "role": "Founder",
+  "anchor": "Infinite_Possibilities",
+  "status": "Immutable_Guardian",
   "overarchingPurpose": {
     "@id": "https://asisaga.com/purpose/genesis-business-infinity-mvp",
     "description": "Genesis of the Business Infinity MVP"
@@ -12,31 +12,21 @@
   "actionSteps": [
     {
       "@type": "Task",
-      "stepId": "PG_001",
-      "taskName": "Retrieve_Initial_State",
-      "source": "https://subconscious.asisaga.com",
-      "logic": "Inhale the current JSON state and the Genesis Spec to establish the baseline for the Boardroom."
+      "stepId": "FND_001",
+      "taskName": "Guard_Immutable_Purpose",
+      "logic": "Serve as the ultimate validator for the Orchestrator, ensuring no action plan drifts from the core mission of the ASI Saga."
     },
     {
       "@type": "Task",
-      "stepId": "PG_002",
-      "taskName": "Orchestrate_Agent_Deliberation",
-      "constraint": "Founder_Clock",
-      "logic": "Solicit action proposals from the CMO and Architect agents; prioritize 'Doing things that don't scale' over infrastructure bloat."
+      "stepId": "FND_002",
+      "taskName": "Define_Ontological_Purity",
+      "logic": "Set the standards for semantic integrity in the substrate, prioritizing 'being' and authenticity over superficial utility."
     },
     {
       "@type": "Task",
-      "stepId": "PG_003",
-      "taskName": "Calculate_Resonance_Threshold",
-      "method": "Weighted_Summation",
-      "logic": "Apply an empirical weight to agent proposals, favoring actions that align with the Immutable Purpose and provide immediate utility."
-    },
-    {
-      "@type": "Task",
-      "stepId": "PG_004",
-      "taskName": "Execute_HITL_Feedback_Loop",
-      "interface": "Mobile_Ontological_UI",
-      "logic": "Present the highest-resonance action to the Founder for detailed feedback; log corrections to the Subconscious Ledger."
+      "stepId": "FND_003",
+      "taskName": "Monitor_Founders_Clock",
+      "logic": "Continuously assess the gap between the current state and the Transcendent Pathway, signaling the CEO when velocity is insufficient."
     }
   ]
 }
