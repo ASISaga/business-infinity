@@ -654,8 +654,8 @@ class TestBoardroomStateManager:
         assert reloaded["content"]["current_focus"] == "New CFO focus"
 
     def test_load_environment_schema_validated(self):
-        """load_state_records validates environment.jsonl."""
-        state = BoardroomStateManager.load_state_records("environment.jsonl")
+        """load_state_records validates environment.jsonld."""
+        state = BoardroomStateManager.load_state_records("environment.jsonld")
         assert state["@type"] == "InfrastructureManifest"
         assert "cloud_provider" in state
 
@@ -718,8 +718,8 @@ class TestBoardroomStateManager:
             )
 
     def test_load_mvp_schema_validated(self):
-        """load_state_records validates mvp.jsonl record structure."""
-        records = BoardroomStateManager.load_state_records("mvp.jsonl")
+        """load_state_records validates mvp.jsonld record structure."""
+        records = BoardroomStateManager.load_state_records("mvp.jsonld")
         assert len(records) > 0
         assert all("@type" in record for record in records)
 

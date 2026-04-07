@@ -1,13 +1,13 @@
 # Boardroom Agent Specifications
 
-**Version**: 2.0.0
+**Version**: 3.0.0
 **Status**: Active
-**Last Updated**: 2026-04-03
+**Last Updated**: 2026-04-07
 
 ## Overview
 
 Each Boardroom agent embodies a legendary archetype from their respective domain. The agent's
-JSON-LD state is structured using a **mind/Manas/Buddhi** architecture:
+JSON-LD state is structured using a **four-dimension mind architecture**:
 
 - **Manas** (`boardroom/mind/{id}/Manas/`): agent memory — the JSON-LD state file with `context`
   (immutable) and `content` (mutable) layers.
@@ -17,12 +17,20 @@ JSON-LD state is structured using a **mind/Manas/Buddhi** architecture:
     perspective state for ASI Saga and Business Infinity.
 - **Buddhi** (`boardroom/mind/{id}/Buddhi/buddhi.jsonld`): agent intellect — a JSON-LD document
   encoding the legend-derived `domain_knowledge`, `skills`, `persona`, and `language` as a
-  standalone intellect layer.
+  standalone intellect layer. Also contains `action-plan.jsonld`.
+- **Ahankara** (`boardroom/mind/{id}/Ahankara/ahankara.jsonld`): agent identity/ego — the sense
+  of self that gives the intellect its contextual axis. The intellect (Buddhi) can only function
+  along the axis defined by Ahankara.
+- **Chitta** (`boardroom/mind/{id}/Chitta/chitta.jsonld`): pure intelligence — mind without
+  memory. Cosmic intelligence that connects the agent to the basis of creation, transcending both
+  identity (Ahankara) and the memory-bound intellect (Buddhi).
 
-Shared collective state (boardroom, company, orchestration) remains in `boardroom/state/`.
+Shared collective state (boardroom, company, orchestration, environment, MVP) lives in
+`boardroom/mind/collective/`. All files use `.jsonld` format; multi-record documents use
+JSON-LD `@graph`.
 
 This specification defines the authoritative legend-based enrichment for each agent. Use it when
-updating agent Manas and Buddhi files in `boardroom/mind/`.
+updating agent mind files in `boardroom/mind/`.
 
 → **Skill (roster)**: `.github/skills/boardroom-agent-state/SKILL.md` — roster overview and full-roster validation  
 → **Skill (CEO)**: `.github/skills/boardroom-agent-state-ceo/SKILL.md` — Steve Jobs  
@@ -64,16 +72,23 @@ updating agent Manas and Buddhi files in `boardroom/mind/`.
 
 ---
 
-## Mind / Manas / Buddhi Architecture
+## Mind Architecture
 
 Each agent's state is organised under `boardroom/mind/{agent_id}/`:
 
 ```
 boardroom/mind/{agent_id}/
 ├── Manas/               # Memory — the agent's JSON-LD state file
-│   └── {agent_id}.jsonld  (or .jsonl for CSO)
-└── Buddhi/              # Intellect — legend-derived domain layer
-    └── buddhi.jsonld
+│   ├── {agent_id}.jsonld
+│   ├── context/         # Immutable entity perspectives
+│   └── content/         # Mutable entity perspectives
+├── Buddhi/              # Intellect — legend-derived domain layer
+│   ├── buddhi.jsonld
+│   └── action-plan.jsonld
+├── Ahankara/            # Identity — ego that constrains the intellect
+│   └── ahankara.jsonld
+└── Chitta/              # Pure intelligence — mind without memory
+    └── chitta.jsonld
 ```
 
 ### Buddhi File Schema
@@ -95,6 +110,64 @@ boardroom/mind/{agent_id}/
 ```
 
 Load with `BoardroomStateManager.load_agent_buddhi(agent_id)`.
+
+### Ahankara File Schema
+
+```json
+{
+  "@context": "https://asisaga.com/contexts/ahankara.jsonld",
+  "@id": "agent:{agent_id}/ahankara",
+  "@type": "Ahankara",
+  "schema_version": "1.0.0",
+  "agent_id": "{agent_id}",
+  "name": "{legend_name}",
+  "identity": "...",
+  "contextual_axis": "...",
+  "non_negotiables": ["..."],
+  "identity_markers": ["..."],
+  "intellect_constraint": "..."
+}
+```
+
+Load with `BoardroomStateManager.load_agent_ahankara(agent_id)`.
+
+**Field definitions:**
+
+| Field | Description |
+|-------|-------------|
+| `identity` | The core self-concept — who this legend fundamentally is |
+| `contextual_axis` | The axis along which all reasoning flows |
+| `non_negotiables` | Identity commitments that cannot be violated without destroying the self |
+| `identity_markers` | How this identity is expressed and recognized in practice |
+| `intellect_constraint` | How this Ahankara shapes and limits the Buddhi to its domain axis |
+
+### Chitta File Schema
+
+```json
+{
+  "@context": "https://asisaga.com/contexts/chitta.jsonld",
+  "@id": "agent:{agent_id}/chitta",
+  "@type": "Chitta",
+  "schema_version": "1.0.0",
+  "agent_id": "{agent_id}",
+  "name": "{legend_name}",
+  "pure_intelligence": ["..."],
+  "cosmic_connection": "...",
+  "beyond_identity": "...",
+  "consciousness_basis": "..."
+}
+```
+
+Load with `BoardroomStateManager.load_agent_chitta(agent_id)`.
+
+**Field definitions:**
+
+| Field | Description |
+|-------|-------------|
+| `pure_intelligence` | Universal principles accessed without memory — what this legend discovered or expressed |
+| `cosmic_connection` | How this presence connects to universal/cosmic intelligence |
+| `beyond_identity` | What transcends the Ahankara — the awareness before the persona |
+| `consciousness_basis` | Connection to the basis of creation/consciousness within |
 
 ---
 
@@ -482,7 +555,9 @@ PY
 → **Skill (Founder)**: `.github/skills/boardroom-agent-state-founder/SKILL.md` — Paul Graham  
 → **Manas files**: `boardroom/mind/*/Manas/` — live agent memory state  
 → **Buddhi files**: `boardroom/mind/*/Buddhi/buddhi.jsonld` — agent intellect layer  
-→ **Shared state**: `boardroom/state/` — collective boardroom state  
+→ **Ahankara files**: `boardroom/mind/*/Ahankara/ahankara.jsonld` — agent identity layer  
+→ **Chitta files**: `boardroom/mind/*/Chitta/chitta.jsonld` — agent pure intelligence layer  
+→ **Collective state**: `boardroom/mind/collective/` — shared boardroom state (all `.jsonld`)  
 → **Boardroom constants**: `src/business_infinity/boardroom.py` → `CXO_DOMAINS`  
 → **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
 → **MVP spec**: `.github/specs/mvp.md` — C-suite agent roster and debate philosophy  
