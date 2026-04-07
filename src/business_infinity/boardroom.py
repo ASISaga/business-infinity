@@ -128,7 +128,9 @@ CXO_PATHWAY_TYPES = list(dict.fromkeys(domain["pathway"] for domain in CXO_DOMAI
 #
 # Agent Manas (memory) files live in ``boardroom/mind/{agent_id}/Manas/``.
 # Agent Buddhi (intellect) files live in ``boardroom/mind/{agent_id}/Buddhi/``.
-# Shared collective state files remain in ``boardroom/state/``.
+# Agent Ahankara (identity) files live in ``boardroom/mind/{agent_id}/Ahankara/``.
+# Agent Chitta (pure intelligence) files live in ``boardroom/mind/{agent_id}/Chitta/``.
+# Shared collective state files live in ``boardroom/mind/collective/``.
 
 
 class BoardroomStateManager:
@@ -143,14 +145,14 @@ class BoardroomStateManager:
     never updated through the same path as mutable content.
     """
 
-    #: Path to the ``boardroom/state/`` directory relative to the project root.
-    _STATE_DIR: Path = Path(__file__).parent.parent.parent / "boardroom" / "state"
+    #: Path to the ``boardroom/mind/collective/`` directory (shared state).
+    _STATE_DIR: Path = Path(__file__).parent.parent.parent / "boardroom" / "mind" / "collective"
 
     #: Path to the ``boardroom/mind/`` directory relative to the project root.
     _MIND_DIR: Path = Path(__file__).parent.parent.parent / "boardroom" / "mind"
 
     #: Mapping from agent ID to state filename stem (without extension).
-    #: Extensions ``.jsonld`` and ``.jsonl`` are both supported.
+    #: All agent state files use the ``.jsonld`` extension.
     _AGENT_FILES: Dict[str, str] = {
         "ceo": "ceo",
         "cfo": "cfo",
@@ -237,11 +239,11 @@ class BoardroomStateManager:
             },
         },
         "business-infinity.jsonld": {
-            "mode": "jsonl",
+            "mode": "jsonld_graph",
             "required_keys": {"@context", "@id", "@type"},
             "required_record_ids": _PRODUCT_MANIFEST_RECORD_IDS,
         },
-        "environment.jsonl": {
+        "environment.jsonld": {
             "mode": "object",
             "required_keys": {
                 "@context",
@@ -252,8 +254,8 @@ class BoardroomStateManager:
                 "compliance_gate",
             },
         },
-        "mvp.jsonl": {
-            "mode": "jsonl",
+        "mvp.jsonld": {
+            "mode": "jsonld_graph",
             "required_keys": {"@context", "@id", "@type"},
         },
     }
@@ -262,27 +264,16 @@ class BoardroomStateManager:
     def _state_path(cls, filename: str) -> Path:
         """Resolve an agent state filename stem to its absolute path.
 
-        Looks in ``boardroom/mind/{filename}/Manas/`` first (new mind structure),
-        then falls back to ``boardroom/state/`` for backward compatibility.
+        Looks in ``boardroom/mind/{filename}/Manas/{filename}.jsonld``.
 
-        Tries ``.jsonld`` first, then ``.jsonl``.
-
-        Raises :class:`FileNotFoundError` if neither variant exists.
+        Raises :class:`FileNotFoundError` if the file does not exist.
         """
-        # New mind structure: boardroom/mind/{agent_id}/Manas/{agent_id}.ext
-        for ext in (".jsonld", ".jsonl"):
-            path = cls._MIND_DIR / filename / "Manas" / (filename + ext)
-            if path.exists():
-                return path
-        # Fallback to legacy state directory for backward compatibility
-        for ext in (".jsonld", ".jsonl"):
-            path = cls._STATE_DIR / (filename + ext)
-            if path.exists():
-                return path
+        path = cls._MIND_DIR / filename / "Manas" / (filename + ".jsonld")
+        if path.exists():
+            return path
         raise FileNotFoundError(
-            f"State file '{filename}' not found in "
-            f"{cls._MIND_DIR / filename / 'Manas'} or {cls._STATE_DIR} "
-            f"(tried .jsonld and .jsonl)"
+            f"State file '{filename}' not found at "
+            f"{cls._MIND_DIR / filename / 'Manas'}/{filename}.jsonld"
         )
 
     @classmethod
@@ -308,29 +299,25 @@ class BoardroomStateManager:
                 ) from full_error
 
     @classmethod
-    def _load_jsonl_records(cls, path: Path) -> List[Dict[str, Any]]:
-        """Load one-or-more JSON records from *path*."""
-        content = cls._read_text(path)
-        if not content:
-            return []
-        records: List[Dict[str, Any]] = []
-        for line in content.splitlines():
-            line = line.strip()
-            if not line:
-                continue
-            records.append(json.loads(line))
-        return records
+    def _load_graph_records(cls, path: Path) -> List[Dict[str, Any]]:
+        """Load JSON-LD ``@graph`` records from a ``.jsonld`` document.
+
+        Parses the document and extracts the ``@graph`` array.  Raises
+        :class:`ValueError` if the document does not contain ``@graph``.
+        """
+        document = cls._load_json_document(path)
+        if "@graph" not in document:
+            raise ValueError(
+                f"JSON-LD document at {path} has no '@graph' key"
+            )
+        return list(document["@graph"])
 
     @classmethod
     def _write_json_document(cls, path: Path, data: Dict[str, Any]) -> None:
-        """Write a single JSON document while preserving compact jsonl files."""
+        """Write a single JSON-LD document to *path*."""
         with open(path, "w", encoding="utf-8") as fh:
-            if path.suffix == ".jsonl":
-                fh.write(json.dumps(data, ensure_ascii=False))
-                fh.write("\n")
-            else:
-                json.dump(data, fh, indent=2, ensure_ascii=False)
-                fh.write("\n")
+            json.dump(data, fh, indent=2, ensure_ascii=False)
+            fh.write("\n")
 
     @classmethod
     def _default_context_management(cls) -> Dict[str, Any]:
@@ -431,8 +418,9 @@ class BoardroomStateManager:
             cls._validate_required_keys(data, schema["required_keys"], filename)
             return
 
+        # "jsonld_graph" mode: data is a list extracted from a JSON-LD @graph document
         if not isinstance(data, list):
-            raise ValueError(f"{filename} must contain a JSONL record list")
+            raise ValueError(f"{filename} must contain a list of @graph records")
         for index, record in enumerate(data):
             cls._validate_required_keys(
                 record,
@@ -500,6 +488,50 @@ class BoardroomStateManager:
                 f"Registered agents: {cls.get_registered_agent_ids()}"
             )
         path = cls._MIND_DIR / agent_id / "Buddhi" / "buddhi.jsonld"
+        return cls._load_json_document(path)
+
+    @classmethod
+    def load_agent_ahankara(cls, agent_id: str) -> Dict[str, Any]:
+        """Load the identity (Ahankara) for an agent from its Ahankara directory.
+
+        Ahankara is the ego/identity dimension of the mind — the sense of self
+        that gives the intellect its contextual axis.  The intellect (Buddhi)
+        can only function along the axis defined by Ahankara.
+
+        Returns the JSON-LD Ahankara document from
+        ``boardroom/mind/{agent_id}/Ahankara/ahankara.jsonld``.
+
+        Raises :class:`ValueError` for unknown agents.
+        Raises :class:`FileNotFoundError` if the Ahankara file is absent.
+        """
+        if agent_id not in cls._AGENT_FILES:
+            raise ValueError(
+                f"Unknown agent ID '{agent_id}'. "
+                f"Registered agents: {cls.get_registered_agent_ids()}"
+            )
+        path = cls._MIND_DIR / agent_id / "Ahankara" / "ahankara.jsonld"
+        return cls._load_json_document(path)
+
+    @classmethod
+    def load_agent_chitta(cls, agent_id: str) -> Dict[str, Any]:
+        """Load the pure intelligence (Chitta) for an agent from its Chitta directory.
+
+        Chitta is mind without memory — pure cosmic intelligence.  It connects
+        the agent to the basis of creation and transcends both identity (Ahankara)
+        and the memory-bound intellect (Buddhi).
+
+        Returns the JSON-LD Chitta document from
+        ``boardroom/mind/{agent_id}/Chitta/chitta.jsonld``.
+
+        Raises :class:`ValueError` for unknown agents.
+        Raises :class:`FileNotFoundError` if the Chitta file is absent.
+        """
+        if agent_id not in cls._AGENT_FILES:
+            raise ValueError(
+                f"Unknown agent ID '{agent_id}'. "
+                f"Registered agents: {cls.get_registered_agent_ids()}"
+            )
+        path = cls._MIND_DIR / agent_id / "Chitta" / "chitta.jsonld"
         return cls._load_json_document(path)
 
     @classmethod
@@ -574,8 +606,8 @@ class BoardroomStateManager:
         """Load and validate a non-agent state document by filename."""
         path = cls._STATE_DIR / filename
         schema = cls._DOCUMENT_SCHEMAS[filename]
-        if schema["mode"] == "jsonl":
-            records = cls._load_jsonl_records(path)
+        if schema["mode"] == "jsonld_graph":
+            records = cls._load_graph_records(path)
             cls._validate_document_schema(filename, records)
             return records
         document = cls._load_json_document(path)

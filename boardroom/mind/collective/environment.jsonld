@@ -11,10 +11,16 @@
   "gitops_registry": {
     "orchestrator": "Azure Logic Apps",
     "repository_root": "https://github.com/asi-saga/",
-    "active_branches": ["main", "dev-bento"]
+    "active_branches": [
+      "main",
+      "dev-bento"
+    ]
   },
   "compliance_gate": {
-    "standards": ["ISO27001", "MCSB-v2"],
+    "standards": [
+      "ISO27001",
+      "MCSB-v2"
+    ],
     "monitoring_status": "Active"
   }
 }
