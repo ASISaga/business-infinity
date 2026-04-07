@@ -115,7 +115,7 @@ The dimensions flow from subtle to gross. Chitta is the deepest — pure intelli
 | CSO | Sun Tzu | Strategy & Competitive Intelligence | `agent:cso_strategy` |
 | Founder | Paul Graham | Prioritization / Survival / Shipping | `agent:pg_founder` |
 
-> **CTO `@id` note**: `agent:sj_cto` originally referenced Steve Jobs (the first CTO persona). It is preserved for backward compatibility with governance references. `context.name` is the authoritative field — it reads `Alan Turing`.
+> **CTO `@id` note**: `agent:sj_cto` uses the initials `sj` as a historical artifact from when Steve Jobs held the CTO role in early prototypes. The identifier is preserved for backward compatibility with governance references. `context.name` is the authoritative field — it reads `Alan Turing`.
 
 ---
 

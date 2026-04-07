@@ -239,7 +239,7 @@ class BoardroomStateManager:
             },
         },
         "business-infinity.jsonld": {
-            "mode": "graph",
+            "mode": "jsonld_graph",
             "required_keys": {"@context", "@id", "@type"},
             "required_record_ids": _PRODUCT_MANIFEST_RECORD_IDS,
         },
@@ -255,7 +255,7 @@ class BoardroomStateManager:
             },
         },
         "mvp.jsonld": {
-            "mode": "graph",
+            "mode": "jsonld_graph",
             "required_keys": {"@context", "@id", "@type"},
         },
     }
@@ -418,7 +418,7 @@ class BoardroomStateManager:
             cls._validate_required_keys(data, schema["required_keys"], filename)
             return
 
-        # "graph" mode: data is a list of @graph records
+        # "jsonld_graph" mode: data is a list extracted from a JSON-LD @graph document
         if not isinstance(data, list):
             raise ValueError(f"{filename} must contain a list of @graph records")
         for index, record in enumerate(data):
@@ -606,7 +606,7 @@ class BoardroomStateManager:
         """Load and validate a non-agent state document by filename."""
         path = cls._STATE_DIR / filename
         schema = cls._DOCUMENT_SCHEMAS[filename]
-        if schema["mode"] == "graph":
+        if schema["mode"] == "jsonld_graph":
             records = cls._load_graph_records(path)
             cls._validate_document_schema(filename, records)
             return records
