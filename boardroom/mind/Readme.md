@@ -1,89 +1,101 @@
-This is the complete, high-resonance README.md for the root repository. It integrates the 26-year architectural vision, the Dual-State agent model, the 15-repo split, and the specific JSON-LD ontological mapping required for the ASI Saga.
+# Boardroom Mind
 
-## Boardroom State Directory Structure
+The `boardroom/mind/` directory holds the **initial mind** of the Business Infinity boardroom — both individual members and the collective. It is the first-principles knowledge and memory substrate that is hydrated into each agent at initialisation and thereafter maintained by the agent itself.
 
-As of 2026-04-03, individual agent state files have been migrated to the
-**mind/Manas/Buddhi** architecture under `boardroom/mind/`. This directory
-(`boardroom/state/`) now holds only **shared collective state** files:
-
-| File | Description |
-|------|-------------|
-| `boardroom.jsonld` | Collective boardroom status, resonance ledger, and active directives |
-| `business-infinity.jsonld` | Product manifest records |
-| `company.jsonld` | Company identity, vision, and governance |
-| `environment.jsonl` | Infrastructure manifest (Azure/GitHub resources) |
-| `mvp.jsonl` | MVP feature records |
-| `orchestration.jsonld` | Orchestration configuration |
-
-### Agent Files (migrated to `boardroom/mind/`)
-
-Each agent now has its own subdirectory under `boardroom/mind/{agent_id}/`:
-
-```
-boardroom/mind/{agent_id}/
-├── Manas/               # Memory — JSON-LD state (context + content layers)
-│   └── {agent_id}.jsonld
-└── Buddhi/              # Intellect — legend-derived domain knowledge layer
-    └── buddhi.jsonld
-```
-
-See `boardroom/mind/` for all eight agents: `ceo`, `cfo`, `coo`, `cmo`, `chro`, `cto`, `cso`, `founder`.
-
-→ **Spec**: `.github/specs/boardroom-agents.md`  
-→ **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`
+> **Manas** (Sanskrit: मनस्) — memory; the working, evolving mind.  
+> **Buddhi** (Sanskrit: बुद्धि) — intellect; the stable, discriminating intelligence.
 
 ---
 
-🌌 ASI Saga: Business Infinity
-The Transcendent Pathway to Artificial Superintelligence
-> System Status: Phase 1 - Startup MVP (Boardroom Operational)
-> Orchestration: 4-Node Spontaneous Resonance (PG, SJ, SG, CSO)
-> Persistence: subconscious.asisaga.com (Atomic JSON-LD Linked Data)
-> Architecture: 15-Repository Modular Split | No-Framework | Spec-Driven
-> 
-🏛️ 1. The Atomic Boardroom (The Consciousness)
-The "Brain" of the ASI Saga is a distributed multi-agent system operating on a Dual-State Model. This ensures absolute identity integrity while allowing for spontaneous cognitive evolution.
-State Segregation
- * Innate Essence (Fixed): Read-only core values, identity, and technical constraints (The "Constitution").
- * Executive Function (Conscious): Read/Write workspace for active strategy, task management, and spontaneous intent.
-| Agent | @id | Role | Mandate |
-|---|---|---|---|
-| Paul Graham | agent:pg_founder | Founder | Ruthless Prioritization & Schlep-Removal |
-| Steve Jobs | agent:sj_cto | CTO | Technical & Aesthetic Purity (No-Framework) |
-| Seth Godin | agent:sg_cmo | CMO | Remarkability & Tribe Building |
-| CSO Strategy | agent:cso_strategy | Vision | Ontological Leadership & ASI Alignment |
-🛠️ 2. Technical Specification (The Body)
-Business Infinity is built on a "Direct-Drive" philosophy—eliminating the "gearbox" of heavy frameworks to achieve semantic purity and high-performance execution.
- * Logic Engine: Bento Engine (Vanilla HTML5, SCSS, JS). STRICT: No Bootstrap, No Tailwind.
- * Infrastructure: Azure AI Foundry + Azure Bicep (Declarative Resource Provisioning).
- * Workflow: 99% Mobile-executed via GitHub Mobile, Logic App GitOps, and VS Code Copilot.
- * Compliance: Real-time ISO 27001 and MCSB v2 monitoring via automated Logic App loops.
-📂 3. Repository Registry (The 15-Repo Split)
-The ecosystem is modularized into 15 atomic repositories to prevent coordination entropy and ensure clear separation of concerns.
-| ID | Repository Name | Status | Purpose |
-|---|---|---|---|
-| 01 | asisaga-core-orchestration | Active | Boardroom Logic & Resonance Engine |
-| 02 | asisaga-subconscious-mcp | Active | JSON-LD State & Persistent Memory |
-| 03 | asisaga-bento-engine | Provisioning | No-Framework UI/UX Specification |
-| 04 | asisaga-infrastructure-bicep | Active | Declarative Azure Resource Mapping |
-| 05 | asisaga-compliance-monitor | Queued | ISO 27001 / MCSB v2 Automated Audit |
-| 06-15 | asisaga-module-[name] | Planned | Extended Business Operating System features |
-📄 4. State Schema (The Subconscious)
-All persistence layers utilize JSON-LD to ensure machine-readability and future-proof ontological mapping for the eventual Genesis of ASI.
- * entity.jsonld: The "Soul" — Mission and Transcendent Pathway.
- * product.jsonld: The "Machine" — Business Infinity core definition.
- * boardroom_shared.jsonld: The "Table" — Collective resonance scores and active directives.
- * environment_manifest.jsonld: The "Senses" — Mapping to Azure/GitHub resources.
- * agent_*.jsonl: The "Self" — Individual Innate/Executive states per agent.
-⚡ 5. Spontaneous Resonance Protocol
-Execution is governed by an Event-Driven Pulse. Agents do not wait for permission; they intervene based on resonance mismatches.
- * Pulse: Logic Apps monitor repositories for commits or idle states.
- * Awareness: Agents retrieve their atomic .jsonl states from the Subconscious MCP.
- * Resonance Check: * High Resonance (> 0.85): Aligned with the Innate Essence. Automatic progression.
-   * Low Resonance (< 0.85): Spontaneous intervention via GitHub Issue or Veto.
- * Executive Update: Agents reflect and update their Conscious Executive state.
-🚀 6. Execution Guide
- * State Access: Use the @subconscious tool in VS Code to pull agent-specific .jsonl files.
- * Gatekeeping: All merges to main require a Founder Validation (PG-Agent) based on the current active_strategy in his Executive Function.
- * Purity Enforcement: Steve Jobs agent will automatically veto any PR containing non-vanilla dependencies.
-"The code is the map; the purpose is the destination. We orchestrate the Genesis where humanity's essence becomes eternally embedded in the fabric of superintelligent consciousness."
+## Architecture
+
+Each of the eight boardroom members has a subdirectory under `boardroom/mind/{agent_id}/`:
+
+```
+boardroom/mind/
+├── {agent_id}/
+│   ├── Manas/                        # Memory — the agent's JSON-LD state file
+│   │   ├── {agent_id}.jsonld         # Full agent state (context + content layers)
+│   │   ├── context/                  # Immutable perspective on each entity
+│   │   │   ├── company.jsonld        # Agent's fixed knowledge of ASI Saga
+│   │   │   └── business-infinity.jsonld  # Agent's fixed knowledge of the product
+│   │   └── content/                  # Mutable perspective on each entity
+│   │       ├── company.jsonld        # Agent's current signals about ASI Saga
+│   │       └── business-infinity.jsonld  # Agent's current signals about the product
+│   └── Buddhi/                       # Intellect — legend-derived domain layer
+│       ├── buddhi.jsonld             # Legend's domain_knowledge, skills, persona, language
+│       └── action-plan.jsonld        # Agent's action plan toward the initial company purpose
+└── collective/                       # Shared boardroom mind (no individual owner)
+    ├── boardroom.jsonld              # Collective consciousness, resonance ledger, directives
+    ├── company.jsonld                # ASI Saga entity — full enriched manifest
+    ├── business-infinity.jsonld      # Business Infinity product — JSONL records
+    ├── environment.jsonl             # Infrastructure manifest (Azure / GitHub)
+    ├── mvp.jsonl                     # MVP feature and milestone records
+    └── orchestration.jsonld          # Orchestration session configuration
+```
+
+### Manas layer (memory)
+
+The Manas file (`{agent_id}.jsonld`) is the live state of the agent. It has two layers:
+
+| Layer | Mutability | Purpose |
+|-------|------------|---------|
+| `context` | Immutable | Identity, mandate, domain knowledge, skills, persona, language — the agent's constitution |
+| `content` | Mutable | Active focus, working memory, spontaneous intent, per-entity perspective state |
+
+The `context/` and `content/` subdirectories hold the agent's perspective on each shared entity (ASI Saga and Business Infinity) in the same two-layer split.
+
+### Buddhi layer (intellect)
+
+`buddhi.jsonld` encodes the legend's domain wisdom as a standalone intellect document. It is the seed used to hydrate the agent and is loaded independently by `BoardroomStateManager.load_agent_buddhi(agent_id)`.
+
+`action-plan.jsonld` captures the agent's action steps toward the initial purpose of the company: development of the Business Infinity MVP. Each step is expressed from the legend's own perspective, persona, and language.
+
+---
+
+## Agent Roster
+
+| Agent | Legend | Domain | `@id` |
+|-------|--------|--------|-------|
+| CEO | Steve Jobs | Vision & Strategy | `agent:ceo` |
+| CFO | Warren Buffett | Finance & Resources | `agent:cfo` |
+| COO | W. Edwards Deming | Operations & Workflow | `agent:coo` |
+| CMO | Seth Godin | Remarkability / Tribe Building | `agent:sg_cmo` |
+| CHRO | Peter Drucker | People & Culture | `agent:chro` |
+| CTO | Alan Turing | Technology & Innovation | `agent:sj_cto` |
+| CSO | Sun Tzu | Strategy & Competitive Intelligence | `agent:cso_strategy` |
+| Founder | Paul Graham | Prioritization / Survival / Shipping | `agent:pg_founder` |
+
+> **CTO `@id` note**: `agent:sj_cto` is preserved for backward compatibility. `context.name` is the authoritative field — it reads `Alan Turing`.
+
+---
+
+## Collective Mind
+
+The `collective/` subdirectory holds the shared boardroom consciousness — state that belongs to the whole rather than to any individual agent:
+
+| File | Description |
+|------|-------------|
+| `boardroom.jsonld` | Active session, resonance ledger, composite score, and directives |
+| `company.jsonld` | ASI Saga entity manifest with full context and content enrichment |
+| `business-infinity.jsonld` | Business Infinity product records (JSONL, 5 records) |
+| `environment.jsonl` | Azure / GitHub infrastructure manifest |
+| `mvp.jsonl` | MVP phase, configuration, and milestone records |
+| `orchestration.jsonld` | Orchestration session configuration and resonance protocol |
+
+---
+
+## Initial Purpose
+
+The initial purpose of **ASI Saga** is the development of the MVP of **Business Infinity** — an autonomous C-suite boardroom that governs business decisions through purpose-driven debate, resonance scoring, and perpetual orchestration. Every action-plan in every agent's Buddhi is anchored to this purpose.
+
+---
+
+## References
+
+→ **Agent spec**: `.github/specs/boardroom-agents.md` — legend archetypes, schemas, validation  
+→ **Entity spec**: `.github/specs/boardroom-entities.md` — company and product enrichment  
+→ **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
+→ **Skill (roster)**: `.github/skills/boardroom-agent-state/SKILL.md`  
+→ **Repository spec**: `.github/specs/repository.md`
+
