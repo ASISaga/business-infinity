@@ -1,6 +1,6 @@
 {
   "@context": "https://asisaga.com/ontology/v1/context.jsonld",
-  "@type": "CEOActionPlan",
+  "@type": "AgentActionPlan",
   "name": "Steve Jobs",
   "role": "CEO",
   "anchor": "Vision_and_Insanely_Great",

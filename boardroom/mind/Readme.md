@@ -66,7 +66,7 @@ The `context/` and `content/` subdirectories hold the agent's perspective on eac
 | CSO | Sun Tzu | Strategy & Competitive Intelligence | `agent:cso_strategy` |
 | Founder | Paul Graham | Prioritization / Survival / Shipping | `agent:pg_founder` |
 
-> **CTO `@id` note**: `agent:sj_cto` is preserved for backward compatibility. `context.name` is the authoritative field — it reads `Alan Turing`.
+> **CTO `@id` note**: `agent:sj_cto` originally referenced Steve Jobs (the first CTO persona). It is preserved for backward compatibility with governance references. `context.name` is the authoritative field — it reads `Alan Turing`.
 
 ---
 
