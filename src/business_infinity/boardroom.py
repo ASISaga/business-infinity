@@ -260,6 +260,131 @@ class BoardroomStateManager:
         },
     }
 
+    # ── Mind File Schemas ────────────────────────────────────────────────────
+    # Each entry maps a (dimension, filename) key to the required keys that
+    # BoardroomStateManager validates when loading that mind file.  The
+    # authoritative JSON Schema files live in boardroom/mind/schemas/.
+    #
+    # Key format: "{Dimension}/{filename}"  e.g. "Buddhi/buddhi.jsonld"
+    # Special key "Manas/{agent_id}.jsonld" is represented as "Manas/state"
+    # because the filename varies per agent.
+    _MIND_FILE_SCHEMAS: Dict[str, Dict[str, Any]] = {
+        "Manas/state": {
+            "description": "Agent memory state — context and content layers",
+            "schema_file": "manas.schema.json",
+            "required_keys": {
+                "@context",
+                "@id",
+                "@type",
+                "schema_version",
+                "context",
+                "context_management",
+                "content",
+                "content_management",
+            },
+        },
+        "Buddhi/buddhi.jsonld": {
+            "description": "Agent intellect — legend-derived domain wisdom",
+            "schema_file": "buddhi.schema.json",
+            "required_keys": {
+                "@context",
+                "@id",
+                "@type",
+                "schema_version",
+                "agent_id",
+                "name",
+                "domain",
+                "domain_knowledge",
+                "skills",
+                "persona",
+                "language",
+            },
+        },
+        "Buddhi/action-plan.jsonld": {
+            "description": "Agent action plan — steps toward the initial company purpose",
+            "schema_file": "action-plan.schema.json",
+            "required_keys": {
+                "@context",
+                "@type",
+                "name",
+                "role",
+                "anchor",
+                "status",
+                "overarchingPurpose",
+                "actionSteps",
+            },
+        },
+        "Ahankara/ahankara.jsonld": {
+            "description": "Agent identity — the ego that constrains the intellect",
+            "schema_file": "ahankara.schema.json",
+            "required_keys": {
+                "@context",
+                "@id",
+                "@type",
+                "schema_version",
+                "agent_id",
+                "name",
+                "identity",
+                "contextual_axis",
+                "non_negotiables",
+                "identity_markers",
+                "intellect_constraint",
+            },
+        },
+        "Chitta/chitta.jsonld": {
+            "description": "Pure intelligence — mind without memory, cosmic substrate",
+            "schema_file": "chitta.schema.json",
+            "required_keys": {
+                "@context",
+                "@id",
+                "@type",
+                "schema_version",
+                "agent_id",
+                "name",
+                "intelligence_nature",
+                "cosmic_intelligence",
+                "beyond_identity",
+                "consciousness_basis",
+            },
+        },
+        "Manas/context/entity": {
+            "description": "Immutable entity perspective (context layer)",
+            "schema_file": "entity-context.schema.json",
+            "required_keys": {
+                "@context",
+                "@id",
+                "@type",
+                "name",
+                "agent_perspective",
+                "legend",
+                "domain_knowledge",
+                "skills",
+                "persona",
+                "language",
+            },
+        },
+        "Manas/content/entity": {
+            "description": "Mutable entity perspective (content layer)",
+            "schema_file": "entity-content.schema.json",
+            "required_keys": {
+                "@context",
+                "@id",
+                "@type",
+                "name",
+                "agent_perspective",
+                "legend",
+                "perspective",
+                "software_interfaces",
+                "current_signals",
+            },
+        },
+    }
+
+    #: Path to the ``boardroom/mind/schemas/`` directory.
+    _SCHEMAS_DIR: Path = (
+        Path(__file__).parent.parent.parent / "boardroom" / "mind" / "schemas"
+    )
+
     @classmethod
     def _state_path(cls, filename: str) -> Path:
         """Resolve an agent state filename stem to its absolute path.
@@ -533,6 +658,117 @@ class BoardroomStateManager:
             )
         path = cls._MIND_DIR / agent_id / "Chitta" / "chitta.jsonld"
         return cls._load_json_document(path)
+
+    @classmethod
+    def _resolve_mind_schema_key(cls, dimension: str, filename: str) -> str:
+        """Return the ``_MIND_FILE_SCHEMAS`` key for a given dimension/filename pair.
+
+        Special cases:
+        - ``Manas`` + ``{agent_id}.jsonld`` → ``"Manas/state"``
+        - ``Manas/context`` + any ``.jsonld`` → ``"Manas/context/entity"``
+        - ``Manas/content`` + any ``.jsonld`` → ``"Manas/content/entity"``
+        - Other dimensions use ``"{dimension}/{filename}"`` directly.
+        """
+        if dimension == "Manas" and filename.endswith(".jsonld") and "/" not in filename:
+            return "Manas/state"
+        if dimension in ("Manas/context", "Manas/content"):
+            layer = "context" if dimension.endswith("context") else "content"
+            return f"Manas/{layer}/entity"
+        return f"{dimension}/{filename}"
+
+    @classmethod
+    def _validate_mind_file(
+        cls, key: str, data: Dict[str, Any], label: str
+    ) -> None:
+        """Validate a mind file document against its registered schema.
+
+        Uses the lightweight required-key validation consistent with
+        :meth:`_validate_required_keys`.  The schema key must be present in
+        :attr:`_MIND_FILE_SCHEMAS`.
+        """
+        schema = cls._MIND_FILE_SCHEMAS.get(key)
+        if schema is None:
+            return  # No schema registered — skip validation
+        cls._validate_required_keys(data, schema["required_keys"], label)
+
+    @classmethod
+    def load_mind_file(
+        cls,
+        agent_id: str,
+        dimension: str,
+        filename: str,
+    ) -> Dict[str, Any]:
+        """Load and schema-validate a single mind file for an agent.
+
+        This is the generic schema-based file loader for the purpose-driven
+        agent mind.  Given an agent ID, a dimension name (``Buddhi``,
+        ``Ahankara``, ``Chitta``, ``Manas``, ``Manas/context``,
+        ``Manas/content``), and a filename, it:
+
+        1. Resolves the absolute path under ``boardroom/mind/{agent_id}/``.
+        2. Loads the JSON-LD document.
+        3. Validates it against the registered schema (required keys).
+        4. Returns the validated document.
+
+        **Supported dimension/filename combinations:**
+
+        =============================  ===============================
+        dimension                      filename
+        =============================  ===============================
+        ``Buddhi``                     ``buddhi.jsonld``
+        ``Buddhi``                     ``action-plan.jsonld``
+        ``Ahankara``                   ``ahankara.jsonld``
+        ``Chitta``                     ``chitta.jsonld``
+        ``Manas``                      ``{agent_id}.jsonld``
+        ``Manas/context``              ``company.jsonld``
+        ``Manas/context``              ``business-infinity.jsonld``
+        ``Manas/content``              ``company.jsonld``
+        ``Manas/content``              ``business-infinity.jsonld``
+        =============================  ===============================
+
+        Raises :class:`ValueError` for unknown agents.
+        Raises :class:`FileNotFoundError` if the file is absent.
+        Raises :class:`ValueError` if required schema keys are missing.
+        """
+        if agent_id not in cls._AGENT_FILES:
+            raise ValueError(
+                f"Unknown agent ID '{agent_id}'. "
+                f"Registered agents: {cls.get_registered_agent_ids()}"
+            )
+        path = cls._MIND_DIR / agent_id / dimension / filename
+        document = cls._load_json_document(path)
+        schema_key = cls._resolve_mind_schema_key(dimension, filename)
+        cls._validate_mind_file(
+            schema_key, document, f"{agent_id}/{dimension}/{filename}"
+        )
+        return document
+
+    @classmethod
+    def load_agent_mind(cls, agent_id: str) -> Dict[str, Dict[str, Any]]:
+        """Load all four mind dimensions for an agent.
+
+        Returns a dict with keys ``"Manas"``, ``"Buddhi"``, ``"Ahankara"``,
+        and ``"Chitta"``, each containing the loaded and schema-validated
+        document for that dimension.
+
+        The Buddhi entry is the ``buddhi.jsonld`` document; the Manas entry is
+        the agent state document (``{agent_id}.jsonld``).  Each is validated
+        against its registered schema.
+
+        Raises :class:`ValueError` for unknown agents.
+        Raises :class:`FileNotFoundError` if any dimension file is absent.
+        """
+        return {
+            "Manas": cls.load_agent_state(agent_id),
+            "Buddhi": cls.load_agent_buddhi(agent_id),
+            "Ahankara": cls.load_agent_ahankara(agent_id),
+            "Chitta": cls.load_agent_chitta(agent_id),
+        }
+
+    @classmethod
+    def get_schemas_dir(cls) -> Path:
+        """Return the directory containing mind file JSON schema definitions."""
+        return cls._SCHEMAS_DIR
 
     @classmethod
     def update_agent_content(

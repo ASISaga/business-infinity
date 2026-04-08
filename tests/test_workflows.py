@@ -783,6 +783,161 @@ class TestBoardroomStateManager:
             )
 
 
+class TestMindFileSchemas:
+    """Test the schema registry and schema-based file loading mechanism."""
+
+    def test_schemas_dir_exists(self):
+        """get_schemas_dir returns an existing boardroom/mind/schemas/ directory."""
+        schemas_dir = BoardroomStateManager.get_schemas_dir()
+        assert schemas_dir.is_dir(), f"Schemas directory missing at {schemas_dir}"
+        assert schemas_dir.name == "schemas"
+        assert schemas_dir.parent.name == "mind"
+
+    def test_all_expected_schema_files_present(self):
+        """All seven mind schema files exist in the schemas directory."""
+        schemas_dir = BoardroomStateManager.get_schemas_dir()
+        expected = [
+            "manas.schema.json",
+            "buddhi.schema.json",
+            "action-plan.schema.json",
+            "ahankara.schema.json",
+            "chitta.schema.json",
+            "entity-context.schema.json",
+            "entity-content.schema.json",
+        ]
+        for name in expected:
+            path = schemas_dir / name
+            assert path.exists(), f"Schema file missing: {path}"
+
+    def test_mind_file_schemas_keys_registered(self):
+        """_MIND_FILE_SCHEMAS contains all expected dimension keys."""
+        schemas = BoardroomStateManager._MIND_FILE_SCHEMAS
+        expected_keys = {
+            "Manas/state",
+            "Buddhi/buddhi.jsonld",
+            "Buddhi/action-plan.jsonld",
+            "Ahankara/ahankara.jsonld",
+            "Chitta/chitta.jsonld",
+            "Manas/context/entity",
+            "Manas/content/entity",
+        }
+        assert expected_keys == set(schemas.keys())
+
+    def test_load_mind_file_buddhi(self):
+        """load_mind_file loads and validates buddhi.jsonld for each agent."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            doc = BoardroomStateManager.load_mind_file(
+                agent_id, "Buddhi", "buddhi.jsonld"
+            )
+            assert doc["@type"] == "Buddhi", f"{agent_id}: missing @type"
+            assert doc["agent_id"] == agent_id
+
+    def test_load_mind_file_ahankara(self):
+        """load_mind_file loads and validates ahankara.jsonld for each agent."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            doc = BoardroomStateManager.load_mind_file(
+                agent_id, "Ahankara", "ahankara.jsonld"
+            )
+            assert doc["@type"] == "Ahankara", f"{agent_id}: missing @type"
+            assert doc["agent_id"] == agent_id
+            for field in (
+                "identity",
+                "contextual_axis",
+                "non_negotiables",
+                "identity_markers",
+                "intellect_constraint",
+            ):
+                assert field in doc, f"{agent_id} Ahankara missing '{field}'"
+
+    def test_load_mind_file_chitta(self):
+        """load_mind_file loads and validates chitta.jsonld for each agent."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            doc = BoardroomStateManager.load_mind_file(
+                agent_id, "Chitta", "chitta.jsonld"
+            )
+            assert doc["@type"] == "Chitta", f"{agent_id}: missing @type"
+            assert doc["agent_id"] == agent_id
+            for field in (
+                "intelligence_nature",
+                "cosmic_intelligence",
+                "beyond_identity",
+                "consciousness_basis",
+            ):
+                assert field in doc, f"{agent_id} Chitta missing '{field}'"
+
+    def test_load_mind_file_action_plan(self):
+        """load_mind_file loads and validates action-plan.jsonld for each agent."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            doc = BoardroomStateManager.load_mind_file(
+                agent_id, "Buddhi", "action-plan.jsonld"
+            )
+            assert "@type" in doc, f"{agent_id}: action-plan missing @type"
+            assert "actionSteps" in doc
+            assert len(doc["actionSteps"]) >= 1
+
+    def test_load_mind_file_entity_context(self):
+        """load_mind_file loads and validates Manas/context entity files."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            for entity_file in ("company.jsonld", "business-infinity.jsonld"):
+                doc = BoardroomStateManager.load_mind_file(
+                    agent_id, "Manas/context", entity_file
+                )
+                assert "agent_perspective" in doc, (
+                    f"{agent_id} context/{entity_file} missing 'agent_perspective'"
+                )
+                assert "domain_knowledge" in doc
+                assert "skills" in doc
+
+    def test_load_mind_file_entity_content(self):
+        """load_mind_file loads and validates Manas/content entity files."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            for entity_file in ("company.jsonld", "business-infinity.jsonld"):
+                doc = BoardroomStateManager.load_mind_file(
+                    agent_id, "Manas/content", entity_file
+                )
+                assert "agent_perspective" in doc, (
+                    f"{agent_id} content/{entity_file} missing 'agent_perspective'"
+                )
+                assert "perspective" in doc
+                assert "current_signals" in doc
+
+    def test_load_mind_file_unknown_agent_raises(self):
+        """load_mind_file raises ValueError for unknown agent IDs."""
+        with pytest.raises(ValueError, match="Unknown agent ID"):
+            BoardroomStateManager.load_mind_file(
+                "unknown_agent", "Buddhi", "buddhi.jsonld"
+            )
+
+    def test_load_agent_mind_returns_all_dimensions(self):
+        """load_agent_mind returns all four dimensions for each agent."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            mind = BoardroomStateManager.load_agent_mind(agent_id)
+            assert set(mind.keys()) == {"Manas", "Buddhi", "Ahankara", "Chitta"}, (
+                f"{agent_id}: load_agent_mind missing dimensions"
+            )
+
+    def test_load_agent_mind_manas_matches_load_agent_state(self):
+        """load_agent_mind Manas matches load_agent_state for all agents."""
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            mind = BoardroomStateManager.load_agent_mind(agent_id)
+            state = BoardroomStateManager.load_agent_state(agent_id)
+            assert mind["Manas"]["@id"] == state["@id"], (
+                f"{agent_id}: load_agent_mind Manas @id mismatch"
+            )
+
+    def test_load_agent_mind_unknown_agent_raises(self):
+        """load_agent_mind raises ValueError for unknown agent IDs."""
+        with pytest.raises(ValueError, match="Unknown agent ID"):
+            BoardroomStateManager.load_agent_mind("unknown_agent")
+
+    def test_per_agent_readme_files_exist(self):
+        """Each agent directory contains a Readme.md file."""
+        mind_dir = BoardroomStateManager.get_mind_dir()
+        for agent_id in BoardroomStateManager.get_registered_agent_ids():
+            readme = mind_dir / agent_id / "Readme.md"
+            assert readme.exists(), f"{agent_id}: Readme.md missing at {readme}"
+
+
 class TestBoardroomWorkflowContext:
     """Test that workflow payloads include per-agent company/product state."""
 

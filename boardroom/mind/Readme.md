@@ -140,12 +140,52 @@ The initial purpose of **ASI Saga** is the development of the MVP of **Business 
 
 ---
 
+## Schemas
+
+JSON Schema files for each mind file type live in `boardroom/mind/schemas/`:
+
+| Schema file | File type validated |
+|-------------|---------------------|
+| `manas.schema.json` | `Manas/{agent_id}.jsonld` — agent state (context + content) |
+| `buddhi.schema.json` | `Buddhi/buddhi.jsonld` — intellect document |
+| `action-plan.schema.json` | `Buddhi/action-plan.jsonld` — action plan |
+| `ahankara.schema.json` | `Ahankara/ahankara.jsonld` — identity document |
+| `chitta.schema.json` | `Chitta/chitta.jsonld` — pure intelligence document |
+| `entity-context.schema.json` | `Manas/context/{entity}.jsonld` — immutable entity perspective |
+| `entity-content.schema.json` | `Manas/content/{entity}.jsonld` — mutable entity perspective |
+
+`BoardroomStateManager` uses these schemas to validate mind files when they are loaded via:
+
+- `load_mind_file(agent_id, dimension, filename)` — load and validate any single mind file
+- `load_agent_mind(agent_id)` — load all four dimensions (Manas, Buddhi, Ahankara, Chitta)
+- `get_schemas_dir()` — return the path to the schemas directory
+
+---
+
+## Per-Agent Readme Files
+
+Each agent directory contains a `Readme.md` documenting its specific files:
+
+| Agent | File |
+|-------|------|
+| CEO (Steve Jobs) | `boardroom/mind/ceo/Readme.md` |
+| CFO (Warren Buffett) | `boardroom/mind/cfo/Readme.md` |
+| COO (W. Edwards Deming) | `boardroom/mind/coo/Readme.md` |
+| CMO (Seth Godin) | `boardroom/mind/cmo/Readme.md` |
+| CHRO (Peter Drucker) | `boardroom/mind/chro/Readme.md` |
+| CTO (Alan Turing) | `boardroom/mind/cto/Readme.md` |
+| CSO (Sun Tzu) | `boardroom/mind/cso/Readme.md` |
+| Founder (Paul Graham) | `boardroom/mind/founder/Readme.md` |
+
+---
+
 ## References
 
 → **Agent spec**: `.github/specs/boardroom-agents.md` — legend archetypes, schemas, validation  
 → **Entity spec**: `.github/specs/boardroom-entities.md` — company and product enrichment  
 → **State manager**: `src/business_infinity/boardroom.py` → `BoardroomStateManager`  
 → **Skill (roster)**: `.github/skills/boardroom-agent-state/SKILL.md`  
+→ **Schemas**: `boardroom/mind/schemas/` — JSON Schema files for each dimension  
 → **Repository spec**: `.github/specs/repository.md`
 
 
