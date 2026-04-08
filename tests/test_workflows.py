@@ -936,6 +936,9 @@ class TestMindFileSchemas:
         for agent_id in BoardroomStateManager.get_registered_agent_ids():
             readme = mind_dir / agent_id / "Readme.md"
             assert readme.exists(), f"{agent_id}: Readme.md missing at {readme}"
+
+
+class TestBoardroomWorkflowContext:
     """Test that workflow payloads include per-agent company/product state."""
 
     @pytest.mark.asyncio
