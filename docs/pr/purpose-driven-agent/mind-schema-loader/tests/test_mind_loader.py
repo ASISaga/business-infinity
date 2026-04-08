@@ -51,7 +51,7 @@ def _make_mind_dir(tmp_path: Path, agent_id: str = AGENT_ID) -> Path:
             "context": {"name": "Test Agent"},
             "context_management": {"access": "read-only", "mutability": "immutable", "manager": "system"},
             "content": {"current_focus": "testing"},
-            "content_management": {"access": "read-write", "mutability": "mutable", "manager": agent_id},
+            "content_management": {"access": "read-write", "mutability": "mutable", "manager": "system"},
         },
     )
     _write(

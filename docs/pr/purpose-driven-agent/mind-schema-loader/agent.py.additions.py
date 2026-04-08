@@ -11,10 +11,10 @@ PR: feat/mind-schema-loader — schema-based mind file loading for PurposeDriven
 from __future__ import annotations
 
 # ── STEP 1: New import ────────────────────────────────────────────────────────
-# Add this import at the top of agent.py alongside the other local imports
+# Add these lines at the top of agent.py alongside the other local imports
 # (e.g. after "from purpose_driven_agent.ml_interface import ...").
 #
-from pathlib import Path  # only if not already imported
+from pathlib import Path
 from purpose_driven_agent.mind_loader import MindLoader
 
 
@@ -44,94 +44,93 @@ from purpose_driven_agent.mind_loader import MindLoader
 
 
 # ── STEP 3: New instance methods ─────────────────────────────────────────────
-# Add the four methods below to the PurposeDrivenAgent class body.
-# A good place is after the ``get_metadata`` method, before the private
-# lifecycle methods (``_perpetual_loop``, ``_awaken``, etc.).
+# Copy each of the four methods below verbatim into the PurposeDrivenAgent
+# class body.  A good place is after the ``get_metadata`` method, before the
+# private lifecycle helpers (``_perpetual_loop``, ``_awaken``, etc.).
+#
+# ╔══════════════════════════════════════════════════════════════════════════╗
+# ║  IMPORTANT: do NOT copy the _MindLoaderMethodsMixin class declaration.  ║
+# ║  Copy only the def bodies below and paste them into PurposeDrivenAgent. ║
+# ╚══════════════════════════════════════════════════════════════════════════╝
 
-class _MindLoaderMethodsMixin:
+def get_mind_dir(self) -> Optional[Path]:
+    """Return the agent's mind directory, or ``None`` if not configured.
+
+    The mind directory is set via the ``mind_dir`` constructor parameter.
+    Subclasses (e.g. boardroom agents) typically receive this path from
+    their repository layout, pointing to a directory with the structure::
+
+        <mind_dir>/
+        ├── schemas/
+        └── <agent_id>/
+            ├── Manas/
+            ├── Buddhi/
+            ├── Ahankara/
+            └── Chitta/
     """
-    Mixin fragment — do NOT copy this class declaration into agent.py.
+    return self.mind_dir
 
-    Copy only the four method bodies below into the PurposeDrivenAgent class.
+
+def get_schemas_dir(self) -> Optional[Path]:
+    """Return the schemas directory inside the agent's mind directory.
+
+    Returns ``None`` if :attr:`mind_dir` is not configured.
+
+    The schemas directory holds the authoritative JSON Schema files for
+    each mind file type (``manas.schema.json``, ``buddhi.schema.json``,
+    etc.).  These are informative — runtime validation uses the in-code
+    ``MindLoader.MIND_FILE_SCHEMAS`` registry.
     """
+    if self.mind_dir is None:
+        return None
+    return MindLoader.get_schemas_dir(self.mind_dir)
 
-    def get_mind_dir(self) -> Optional[Path]:
-        """Return the agent's mind directory, or ``None`` if not configured.
 
-        The mind directory is set via the ``mind_dir`` constructor parameter.
-        Subclasses (e.g. boardroom agents) typically receive this path from
-        their repository layout, pointing to a directory with the structure::
+def load_mind_file(self, dimension: str, filename: str) -> dict:
+    """Load and schema-validate a single mind file for this agent.
 
-            <mind_dir>/
-            ├── schemas/
-            └── <agent_id>/
-                ├── Manas/
-                ├── Buddhi/
-                ├── Ahankara/
-                └── Chitta/
-        """
-        return self.mind_dir  # type: ignore[attr-defined]
+    Delegates to :meth:`~purpose_driven_agent.mind_loader.MindLoader.load_mind_file`
+    using ``self.mind_dir`` and ``self.agent_id``.
 
-    def get_schemas_dir(self) -> Optional[Path]:
-        """Return the schemas directory inside the agent's mind directory.
+    Args:
+        dimension: Mind dimension name (``"Buddhi"``, ``"Ahankara"``,
+            ``"Chitta"``, ``"Manas"``, ``"Manas/context"``,
+            ``"Manas/content"``).
+        filename: JSON-LD filename inside the dimension directory.
 
-        Returns ``None`` if :attr:`mind_dir` is not configured.
+    Returns:
+        Parsed and schema-validated document as a :class:`dict`.
 
-        The schemas directory holds the authoritative JSON Schema files for
-        each mind file type (``manas.schema.json``, ``buddhi.schema.json``,
-        etc.).  These are informative — runtime validation uses the in-code
-        ``MindLoader.MIND_FILE_SCHEMAS`` registry.
-        """
-        if self.mind_dir is None:  # type: ignore[attr-defined]
-            return None
-        return MindLoader.get_schemas_dir(self.mind_dir)  # type: ignore[attr-defined]
-
-    def load_mind_file(self, dimension: str, filename: str) -> dict:
-        """Load and schema-validate a single mind file for this agent.
-
-        Delegates to :meth:`~purpose_driven_agent.mind_loader.MindLoader.load_mind_file`
-        using ``self.mind_dir`` and ``self.agent_id``.
-
-        Args:
-            dimension: Mind dimension name (``"Buddhi"``, ``"Ahankara"``,
-                ``"Chitta"``, ``"Manas"``, ``"Manas/context"``,
-                ``"Manas/content"``).
-            filename: JSON-LD filename inside the dimension directory.
-
-        Returns:
-            Parsed and schema-validated document as a :class:`dict`.
-
-        Raises:
-            :class:`RuntimeError` if :attr:`mind_dir` is not configured.
-            :class:`FileNotFoundError` if the file is absent.
-            :class:`ValueError` if the file fails required-key validation.
-        """
-        if self.mind_dir is None:  # type: ignore[attr-defined]
-            raise RuntimeError(
-                f"Agent '{self.agent_id}' has no mind_dir configured. "  # type: ignore[attr-defined]
-                "Pass mind_dir=<Path> to the constructor."
-            )
-        return MindLoader.load_mind_file(
-            self.mind_dir, self.agent_id, dimension, filename  # type: ignore[attr-defined]
+    Raises:
+        :class:`RuntimeError` if :attr:`mind_dir` is not configured.
+        :class:`FileNotFoundError` if the file is absent.
+        :class:`ValueError` if the file fails required-key validation.
+    """
+    if self.mind_dir is None:
+        raise RuntimeError(
+            f"Agent '{self.agent_id}' has no mind_dir configured. "
+            "Pass mind_dir=<Path> to the constructor."
         )
+    return MindLoader.load_mind_file(self.mind_dir, self.agent_id, dimension, filename)
 
-    def load_agent_mind(self) -> dict:
-        """Load all four mind dimensions for this agent.
 
-        Delegates to :meth:`~purpose_driven_agent.mind_loader.MindLoader.load_agent_mind`
-        using ``self.mind_dir`` and ``self.agent_id``.
+def load_agent_mind(self) -> dict:
+    """Load all four mind dimensions for this agent.
 
-        Returns a dict with keys ``"Manas"``, ``"Buddhi"``, ``"Ahankara"``,
-        and ``"Chitta"``, each containing the parsed and validated document.
+    Delegates to :meth:`~purpose_driven_agent.mind_loader.MindLoader.load_agent_mind`
+    using ``self.mind_dir`` and ``self.agent_id``.
 
-        Raises:
-            :class:`RuntimeError` if :attr:`mind_dir` is not configured.
-            :class:`FileNotFoundError` if any dimension file is absent.
-            :class:`ValueError` if any file fails required-key validation.
-        """
-        if self.mind_dir is None:  # type: ignore[attr-defined]
-            raise RuntimeError(
-                f"Agent '{self.agent_id}' has no mind_dir configured. "  # type: ignore[attr-defined]
-                "Pass mind_dir=<Path> to the constructor."
-            )
-        return MindLoader.load_agent_mind(self.mind_dir, self.agent_id)  # type: ignore[attr-defined]
+    Returns a dict with keys ``"Manas"``, ``"Buddhi"``, ``"Ahankara"``,
+    and ``"Chitta"``, each containing the parsed and validated document.
+
+    Raises:
+        :class:`RuntimeError` if :attr:`mind_dir` is not configured.
+        :class:`FileNotFoundError` if any dimension file is absent.
+        :class:`ValueError` if any file fails required-key validation.
+    """
+    if self.mind_dir is None:
+        raise RuntimeError(
+            f"Agent '{self.agent_id}' has no mind_dir configured. "
+            "Pass mind_dir=<Path> to the constructor."
+        )
+    return MindLoader.load_agent_mind(self.mind_dir, self.agent_id)
