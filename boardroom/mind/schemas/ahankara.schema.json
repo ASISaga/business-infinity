@@ -66,6 +66,10 @@
     "intellect_constraint": {
       "type": "string",
       "description": "How this Ahankara shapes and limits the Buddhi to its domain axis"
+    },
+    "chitta_coloring": {
+      "type": "string",
+      "description": "How this identity lens colors the pure light of Chitta — the personal flavor that the Ahankara adds to undivided cosmic intelligence, creating the agent's distinctive perception of knowing."
     }
   }
 }
