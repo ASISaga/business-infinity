@@ -1,0 +1,57 @@
+workflow_id: "innovation_velocity"
+version: "1.0.0"
+owner: "cto"
+
+steps:
+  the_velocity_paradox:
+    narrative: "You doubled your engineering team last year. Your feature release cycle got slower. Your R&D budget grew by 40 percent but your time-to-market increased by 60 percent. More people, more money, less output. How is that possible?"
+    response: "It is possible because engineering velocity is not a function of headcount. It is a function of the ratio between creation and maintenance. When maintenance outgrows creation, every new hire spends more time fixing what exists than building what is new. This is the Maintenance Tax — and it compounds with every quarter you ignore it."
+    actions: []
+    navigation:
+      next: "the_maintenance_tax"
+
+  the_maintenance_tax:
+    narrative: "Your senior engineers are spending 80 percent of their time refactoring code that was refactored six months ago. Your most talented people are not building the future — they are maintaining the past. The irony is that every refactor creates new technical debt that the next refactor will need to address."
+    response: "Technical debt is not a backlog item. It is a structural condition. It exists because decisions were made without full context — because the engineer who built the system did not know what the product team was planning, and the product team did not know what the market was doing. The debt is a symptom of disconnection."
+    actions:
+      - label: "Technical Debt Diagnostic"
+        description: "Map the true cost of maintenance vs. innovation in your engineering team"
+        url: "tech-debt-diagnostic"
+    navigation:
+      next: "the_reinvention_wheel"
+      back: "the_velocity_paradox"
+
+  the_reinvention_wheel:
+    narrative: "Three teams in your company are building variations of the same authentication system because none of them knew the others were doing it. Your PLM shows a design choice that creates a 52-week lead time in your supply chain, but the engineer who made it had no visibility into procurement. Information silos create duplication, and duplication is the silent killer of velocity."
+    response: "The Reinvention Tax is the cost of teams solving problems that have already been solved elsewhere in the company. It is invisible in any single sprint but compounds into months of wasted engineering time. At scale, it is the single largest source of R&D waste."
+    actions:
+      - label: "Duplication Analysis"
+        description: "Identify parallel efforts and knowledge silos across engineering teams"
+        url: "duplication-analysis"
+    navigation:
+      next: "spec_driven_prevention"
+      back: "the_maintenance_tax"
+
+  spec_driven_prevention:
+    narrative: "Business Infinity prevents technical debt at the source through spec-driven development. Every engineering decision is mapped to a specification. The boardroom sees when a code change contradicts the product roadmap, when a design choice creates a supply-chain bottleneck, or when two teams are solving the same problem independently."
+    response: "The Jobs agent monitors product integrity — ensuring that engineering effort maps to customer value. The Deming agent monitors process efficiency — flagging when over-engineering replaces simplicity. The Turing agent monitors technical coherence — detecting duplication, contradiction, and drift across the codebase."
+    actions:
+      - label: "Spec-Driven Development"
+        description: "How specifications prevent technical debt before it is created"
+        url: "spec-governance"
+    navigation:
+      next: "innovation_guard"
+      back: "the_reinvention_wheel"
+
+  innovation_guard:
+    narrative: "The boardroom does not just prevent waste — it protects innovation. When the maintenance burden threatens to consume the innovation budget, the Turing agent flags it. When a PLM design choice creates a procurement bottleneck, the boardroom surfaces the cross-domain impact before the commitment is made. Engineering decisions are no longer made in isolation."
+    response: "Innovation velocity is not about working harder. It is about eliminating the friction that makes hard work unproductive. Business Infinity eliminates the coordination overhead, the duplication, and the context blindness that turn your best engineers into maintenance workers."
+    actions:
+      - label: "Start Onboarding"
+        description: "Restore your engineering team's innovation velocity"
+        url: "onboarding"
+      - label: "Velocity Brief"
+        description: "A focused conversation about your specific engineering velocity challenges"
+        url: "schedule"
+    navigation:
+      back: "spec_driven_prevention"

@@ -1,0 +1,68 @@
+workflow_id: "complexity_governance"
+version: "1.0.0"
+owner: "coo"
+
+steps:
+  the_hiring_paradox:
+    narrative: "You raised a Series B to accelerate. You hired 50 more people. Six months later, your release cycle is slower, your burn rate has tripled, and you spend more time in alignment meetings than building product. What went wrong?"
+    response: "Nothing went wrong with your people. Something went wrong with your governance. Every new hire adds a node to your coordination graph. At 50 people the graph has 1,225 edges. At 150 it has 11,175. Human bandwidth cannot govern that graph. The complexity is not a failure — it is a structural limit."
+    actions: []
+    navigation:
+      next: "the_entropy_engine"
+
+  the_entropy_engine:
+    narrative: "Every department now speaks a different language. Engineering talks in sprints, Sales talks in quarters, Finance talks in fiscal years, and Operations talks in shifts. The translation layer between them is you — and you are the bottleneck."
+    response: "Organizational entropy is not chaos. It is the natural state of any system that grows faster than its governance model. Your company has outgrown its human coordination capacity. The question is whether to add more coordinators — or to add a coordination intelligence."
+    actions:
+      - label: "Entropy Diagnostic"
+        description: "Map your company's coordination graph and identify the bottlenecks"
+        url: "entropy-diagnostic"
+    navigation:
+      next: "meetings_about_meetings"
+      back: "the_hiring_paradox"
+
+  meetings_about_meetings:
+    narrative: "Your calendar is full of meetings that exist only to align people who were misaligned by the last meeting. You have a project manager whose entire job is to ensure that three teams are working on the same version of the same spec. This is not management — this is entropy tax."
+    response: "The entropy tax compounds with every hire. At your current trajectory, 40% of your headcount will be coordination overhead within two years. That is not a team — that is a bureaucracy. And bureaucracies do not ship product."
+    actions:
+      - label: "Coordination Overhead Calculator"
+        description: "Estimate the percentage of your headcount spent on alignment vs. execution"
+        url: "coordination-overhead"
+    navigation:
+      next: "unified_consciousness"
+      back: "the_entropy_engine"
+
+  unified_consciousness:
+    narrative: "Business Infinity connects to every system in your stack — GitHub, Salesforce, NetSuite, ERP, CRM, Slack — through MCP. Instead of humans translating between silos, the boardroom reads all systems simultaneously and maintains a single, cross-functional source of truth."
+    response: "This is not another integration platform. It is a governance intelligence. The Deming agent reads your operational data. The Buffett agent reads your financials. The Ogilvy agent reads your market signals. They do not need alignment meetings because they share one consciousness."
+    actions:
+      - label: "MCP Integrations"
+        description: "See all available business system connections"
+        url: "mcp-integrations"
+    navigation:
+      next: "purpose_as_constitution"
+      back: "meetings_about_meetings"
+
+  purpose_as_constitution:
+    narrative: "In a human organization, alignment requires constant communication. In a Business Infinity company, alignment is structural. Every autonomous action is scored for resonance with your company's stated purpose. Departments cannot drift because the purpose is the constitution — not a poster on the wall."
+    response: "Purpose-driven governance replaces committee-driven governance. The boardroom does not need consensus — it needs resonance. An action that resonates with purpose executes. An action that does not, stops. The complexity is governed by meaning, not meetings."
+    actions:
+      - label: "Purpose Governance Model"
+        description: "How resonance scoring replaces alignment meetings"
+        url: "resonance"
+    navigation:
+      next: "day_one_at_any_scale"
+      back: "unified_consciousness"
+
+  day_one_at_any_scale:
+    narrative: "Bezos called it 'Day 1' — the principle that a company at any size should operate with the urgency and customer obsession of its first day. Business Infinity makes Day 1 structural. The CEO agent monitors every department for signs of 'Day 2' — optimizing for optics over customer intent, adding process for its own sake, hiring to fill chairs rather than solve problems."
+    response: "You do not need to be in every room to maintain your company's soul. The boardroom carries your intent into every system, every decision, every department — 24 hours a day. Your company scales. Its purpose does not dilute."
+    actions:
+      - label: "Start Onboarding"
+        description: "Activate purpose-driven governance for your company"
+        url: "onboarding"
+      - label: "Governance Brief"
+        description: "A focused conversation about your specific complexity challenges"
+        url: "schedule"
+    navigation:
+      back: "purpose_as_constitution"

@@ -1,0 +1,57 @@
+workflow_id: "exit_readiness"
+version: "1.0.0"
+owner: "cfo"
+
+steps:
+  the_due_diligence_question:
+    narrative: "A potential acquirer or lead investor asks a deep question about your infrastructure integrity. How long does it take your team to produce the answer? If the answer is more than a day, you have a problem that could cost you eight figures."
+    response: "Due diligence is the moment of truth. Every tribal knowledge dependency, every undocumented process, every 'we should really clean that up' decision from three years ago is exposed. The acquirer's team is looking for reasons to discount your valuation. Your job is to give them zero."
+    actions: []
+    navigation:
+      next: "the_house_of_cards"
+
+  the_house_of_cards:
+    narrative: "Your company works. Customers are happy. Revenue is growing. But underneath the surface, you know the truth: three people hold the keys to the entire system. The deployment pipeline has a manual step that nobody documented. The pricing logic lives in a spreadsheet that one person maintains. You are a house of cards that has not been tested by wind."
+    response: "Operational debt is invisible until it is not. It does not show up in your P&L, your OKRs, or your board deck. It shows up in due diligence — when a forensic team spends two weeks looking for the gaps you have been ignoring. Every gap they find costs you multiples on your exit price."
+    actions:
+      - label: "Operational Debt Audit"
+        description: "Map the hidden fragilities that due diligence will expose"
+        url: "operational-debt"
+    navigation:
+      next: "the_valuation_discount"
+      back: "the_due_diligence_question"
+
+  the_valuation_discount:
+    narrative: "A company with a clean audit trail, documented decision logic, and institutional memory independent of any individual commands an 'integrity premium' at exit. A company with tribal knowledge, undocumented processes, and key-person dependencies receives an 'operational discount.' The difference is 10 to 50 million dollars on a mid-market exit."
+    response: "The integrity premium is not about perfection. It is about traceability. Can you explain why every major decision was made? Can you demonstrate that your operations do not depend on any single person? Can you produce a complete compliance trail on demand? If yes, your valuation holds. If no, the discount begins."
+    actions:
+      - label: "Integrity Premium Calculator"
+        description: "Estimate the valuation impact of operational debt vs. audit readiness"
+        url: "integrity-premium"
+    navigation:
+      next: "permanent_audit_readiness"
+      back: "the_house_of_cards"
+
+  permanent_audit_readiness:
+    narrative: "Business Infinity keeps your company in a state of continuous audit readiness. Every strategic decision is logged by the boardroom with its resonance score, its justification, and the specification it references. Every CXO agent maintains persistent memory. Every workflow is versioned. Your company does not need a three-month preparation sprint before due diligence — it is always ready."
+    response: "The Buffett agent — your CFO — ensures that every financial decision is traceable to a strategic intent. The boardroom's JSON-LD state versioning creates a permanent, immutable record of your company's decision history. When the acquirer's team arrives, you hand them the keys to the boardroom and let them see everything."
+    actions:
+      - label: "Audit Trail Architecture"
+        description: "How Business Infinity creates permanent, versioned decision records"
+        url: "audit-trail"
+    navigation:
+      next: "the_instant_answer"
+      back: "the_valuation_discount"
+
+  the_instant_answer:
+    narrative: "When the investor asks a deep infrastructure question, your boardroom produces the answer in seconds — not days. When the compliance team requests a decision audit, the boardroom exports it on demand. When the acquirer asks 'what happens if your CTO leaves,' you show them a boardroom that carries every technical decision in permanent memory."
+    response: "This is not just preparation for exit. This is a fundamentally stronger company. A company that can answer any question about itself instantly is a company that makes better decisions daily. The audit trail is a byproduct of intelligent governance."
+    actions:
+      - label: "Start Onboarding"
+        description: "Put your company in a state of permanent audit readiness"
+        url: "onboarding"
+      - label: "Exit Readiness Brief"
+        description: "A focused conversation about your specific due-diligence concerns"
+        url: "schedule"
+    navigation:
+      back: "permanent_audit_readiness"

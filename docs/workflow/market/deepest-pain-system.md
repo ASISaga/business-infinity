@@ -610,14 +610,20 @@ Each pain point below is backed by a registered, executable boardroom workflow.
 The workflows are owned by the most relevant CXO agent and deliver a structured
 consultation that diagnoses the pain and reveals the Business Infinity solution.
 
-| Pain Category | Workflow | Owner | YAML |
-|---|---|---|---|
-| Cognitive & Decision Overload / Complexity Bloat | `founder_sovereignty` | CEO (Jobs) | `docs/workflow/samples/founder-sovereignty.yaml` |
-| Key-Person & Knowledge Fragility | `knowledge_continuity` | CHRO (Drucker) | `docs/workflow/samples/knowledge-continuity.yaml` |
-| Operational Fragility & Supply-Chain Chaos | `resilience_consultation` | CSO (Sun Tzu) | `docs/workflow/samples/resilience-consultation.yaml` |
-| Data-Rich / Insight-Poor Trap | `data_synthesis` | CMO (Ogilvy) | `docs/workflow/samples/data-synthesis.yaml` |
+| # | Pain Category | Workflow | Owner | YAML |
+|---|---|---|---|---|
+| 1 | Cognitive & Decision Overload | `founder_sovereignty` | CEO (Jobs) | `docs/workflow/samples/founder-sovereignty.yaml` |
+| 2 | Organizational Entropy & Complexity Bloat | `complexity_governance` | COO (Deming) | `docs/workflow/samples/complexity-governance.yaml` |
+| 3 | Data-Rich / Insight-Poor Trap | `data_synthesis` | CMO (Ogilvy) | `docs/workflow/samples/data-synthesis.yaml` |
+| 4 | Key-Person & Knowledge Fragility | `knowledge_continuity` | CHRO (Drucker) | `docs/workflow/samples/knowledge-continuity.yaml` |
+| 5 | Strategy–Execution Divorce | `strategy_execution` | CEO (Jobs) | `docs/workflow/samples/strategy-execution.yaml` |
+| 6 | Culture Dilution at Scale | `culture_integrity` | CHRO (Drucker) | `docs/workflow/samples/culture-integrity.yaml` |
+| 7 | AI Sprawl & Agentic Risk | `ai_governance` | CTO (Turing) | `docs/workflow/samples/ai-governance.yaml` |
+| 8 | Exit & Due-Diligence Anxiety | `exit_readiness` | CFO (Buffett) | `docs/workflow/samples/exit-readiness.yaml` |
+| 9 | Operational Fragility & Supply-Chain Chaos | `resilience_consultation` | CSO (Sun Tzu) | `docs/workflow/samples/resilience-consultation.yaml` |
+| 10 | Innovation vs. Maintenance Deadlock | `innovation_velocity` | CTO (Turing) | `docs/workflow/samples/innovation-velocity.yaml` |
 
-All four are registered in `WORKFLOW_REGISTRY` in `src/business_infinity/boardroom.py`
+All ten are registered in `WORKFLOW_REGISTRY` in `src/business_infinity/boardroom.py`
 and are accessible via the generic `workflow-orchestration` endpoint with the
 corresponding `workflow_id` in the request body.
 
@@ -635,7 +641,13 @@ corresponding `workflow_id` in the request body.
 → **Founder sovereignty workflow**: `docs/workflow/samples/founder-sovereignty.yaml`
 → **Knowledge continuity workflow**: `docs/workflow/samples/knowledge-continuity.yaml`
 → **Resilience consultation workflow**: `docs/workflow/samples/resilience-consultation.yaml`
+→ **Complexity governance workflow**: `docs/workflow/samples/complexity-governance.yaml`
 → **Data synthesis workflow**: `docs/workflow/samples/data-synthesis.yaml`
+→ **Strategy execution workflow**: `docs/workflow/samples/strategy-execution.yaml`
+→ **Culture integrity workflow**: `docs/workflow/samples/culture-integrity.yaml`
+→ **AI governance workflow**: `docs/workflow/samples/ai-governance.yaml`
+→ **Exit readiness workflow**: `docs/workflow/samples/exit-readiness.yaml`
+→ **Innovation velocity workflow**: `docs/workflow/samples/innovation-velocity.yaml`
 → **Marketing workflow**: `docs/workflow/samples/marketing.yaml`
 → **Pitch workflow**: `docs/workflow/samples/pitch.yaml`
 → **Onboarding workflow**: `docs/workflow/samples/onboarding.yaml`
