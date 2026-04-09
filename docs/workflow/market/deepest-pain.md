@@ -1,3 +1,7 @@
+> **Structured Reference**: For the organized pain-point taxonomy, panic-search
+> maps, and feature-to-pain resolution matrix derived from this document, see
+> [`deepest-pain-system.md`](deepest-pain-system.md).
+
 Whichever you feel are the potential customers with deepest pain, which can be addressed by Business Infinity
 
 The customers with the deepest, most addressable pain are those caught in the **"Execution Gap"**—where the speed of their data (ERP, MES, CRM) has far outpaced the speed of their human leadership.

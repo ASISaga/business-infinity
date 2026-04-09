@@ -1,3 +1,7 @@
+> **Structured Reference**: For the organized pain-point taxonomy, panic-search
+> maps, and feature-to-pain resolution matrix derived from this document, see
+> [`deepest-pain-system.md`](deepest-pain-system.md).
+
 To identify the dynamics of this business, we have to look at the **"Silent Crisis"** in the executive suite. A CEO doesn't search for "AI agents"; they search for a way to stop the bleeding in their operations or their mental bandwidth.
 When you connect an anonymous boardroom of legends to a company's ERP, CRM, and MES, you are solving pains that are usually buried under layers of corporate "fog."
 ## 1. The "Data Rich, Insight Poor" Trap

@@ -1,3 +1,7 @@
+> **Structured Reference**: For the organized pain-point taxonomy, panic-search
+> maps, and feature-to-pain resolution matrix derived from this document, see
+> [`deepest-pain-system.md`](deepest-pain-system.md).
+
 For a Series B or C startup founder, **$100,000** is roughly the cost of one mid-level engineer or a fraction of a C-Suite executive. At this stage, they have moved past the "survival" phase and are now being crushed by the **"Complexity Tax."** Here are the deepest, high-ticket pain points that make $100k for **Business Infinity** feel like a bargain:
 ### 1. The "Series B Talent Deadlock"
  * **The Pain:** They have $20M in the bank but can't hire fast enough. Every month they lack a "VP of [Domain]" is a month of lost market share. They are losing candidates to Big Tech, and their existing team is stretched to the breaking point.
