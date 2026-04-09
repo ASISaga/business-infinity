@@ -1,0 +1,90 @@
+workflow_id: "founder_sovereignty"
+version: "1.0.0"
+owner: "ceo"
+
+steps:
+  the_burning_question:
+    narrative: "Let's start with one question. In a typical week, how many hours do you spend in meetings aligning your team—versus actually thinking about where this company should go?"
+    response: "For most Series B founders the honest answer is 15 to 25 hours. That's half the working week spent on alignment instead of architecture. That gap is what we call the Complexity Tax."
+    actions: []
+    navigation:
+      next: "the_complexity_tax"
+
+  the_complexity_tax:
+    narrative: "You raised capital to accelerate. Instead, hiring 50 more people made things slower. Every new manager adds a layer of coordination, every new system adds a silo, and every silo costs you $20,000 a day in delayed decisions."
+    response: "The Complexity Tax isn't a management failure—it's a structural limit of human bandwidth. No founder can hold 150 people's work in their head. The question is whether that limit belongs to you or to a system."
+    actions:
+      - label: "Burn Rate Calculator"
+        description: "See the true cost of human decision latency at your scale"
+        url: "complexity-tax"
+    navigation:
+      next: "signal_vs_noise"
+      back: "the_burning_question"
+
+  signal_vs_noise:
+    narrative: "You have 20 tabs open: Jira, Salesforce, NetSuite, Slack, GitHub, and six dashboards. None of them tells you whether your company is actually performing or just running. You are an air traffic controller, not a pilot."
+    response: "Software records what happened. It has no opinion about what should happen next. The synthesis layer—the intelligence between your data and your decisions—is still a human bottleneck. That human is you."
+    actions:
+      - label: "The Synthesis Gap"
+        description: "Why data abundance does not produce strategic clarity"
+        url: "synthesis-gap"
+    navigation:
+      next: "the_decision_gap"
+      back: "the_complexity_tax"
+
+  the_decision_gap:
+    narrative: "Six months ago your board agreed on a strategy. Today, your engineering team is refactoring code that is about to be deprecated, and your sales team is promising a feature that was killed in the last sprint. They are not being reckless—they simply have no shared source of truth."
+    response: "This is the Strategy–Execution Divorce. Intent lives in a slide deck; execution lives in disconnected tools. The gap compounds with every hire and every quarter."
+    actions:
+      - label: "Alignment Report"
+        description: "How Business Infinity detects and closes the strategy–execution gap"
+        url: "alignment-report"
+    navigation:
+      next: "legendary_offload"
+      back: "signal_vs_noise"
+
+  legendary_offload:
+    narrative: "Business Infinity gives you a boardroom of legendary CXO agents—Jobs for vision and narrative, Buffett for financial discipline, Deming for operational precision, Ogilvy for market intelligence, Drucker for people and culture, Turing for technology, Sun Tzu for strategy. They run perpetually, connected to your ERP, CRM, and GitHub, and they handle the L1 and L2 strategic decisions without you in the loop."
+    response: "You are not replaced. You are elevated. The boardroom handles the 90% that can be governed by purpose. You preside over the final 10% that requires your unique judgment. Twenty hours a week return to you—immediately."
+    actions:
+      - label: "Meet the Boardroom"
+        description: "The seven legendary CXO archetypes and their domains"
+        url: "agent-catalogue"
+    navigation:
+      next: "purpose_as_governor"
+      back: "the_decision_gap"
+
+  purpose_as_governor:
+    narrative: "You might ask: how do you trust autonomous decisions? The answer is resonance. Every proposed action is scored against your company's stated purpose before it executes. If it does not resonate, it does not run. Your purpose is the only authority above the boardroom."
+    response: "Resonance is not consensus—it is alignment with meaning. A high-resonance action can be bold and uncomfortable. But it will always be true to who your company is. The boardroom cannot drift from your vision because your vision is the governor."
+    actions:
+      - label: "Resonance Explained"
+        description: "How purpose-driven scoring governs every autonomous action"
+        url: "resonance"
+    navigation:
+      next: "the_sovereign_role"
+      back: "legendary_offload"
+
+  the_sovereign_role:
+    narrative: "Imagine entering your next board meeting having already pre-gamed every scenario with a boardroom of Buffetts and Jobses, working from your live ERP and CRM data. You walk in as the highest-integrity person in the room—not because you are the smartest, but because your system never sleeps."
+    response: "This is sovereignty. You stop being a janitor of complexity and return to being the architect of a saga. The boardroom handles the machine. You hold the vision."
+    actions:
+      - label: "Board Preparation Workflow"
+        description: "See how the boardroom prepares a founder for a high-stakes meeting"
+        url: "board-prep"
+    navigation:
+      next: "reclaim_your_saga"
+      back: "purpose_as_governor"
+
+  reclaim_your_saga:
+    narrative: "You built this company to change something. The complexity you are managing right now is not the work—it is the overhead. Business Infinity removes the overhead. For the cost of one mid-level hire, you get a 24/7 boardroom that executes your intent with the wisdom of legends."
+    response: "Onboarding takes minutes. Your boardroom starts running immediately. The first thing it does is read your existing systems and surface the three decisions you have been deferring. Let's begin."
+    actions:
+      - label: "Start Onboarding"
+        description: "Set up your Business Infinity boardroom now"
+        url: "onboarding"
+      - label: "Schedule a Deep Dive"
+        description: "Talk to our team about your specific complexity challenge"
+        url: "schedule"
+    navigation:
+      back: "the_sovereign_role"

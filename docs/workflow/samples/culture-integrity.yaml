@@ -1,0 +1,57 @@
+workflow_id: "culture_integrity"
+version: "1.0.0"
+owner: "chro"
+
+steps:
+  the_soul_question:
+    narrative: "When your company was 15 people, everyone understood the mission. You could feel the culture in the room. Now you have 150 people and half of them have never met you. The culture you built is being diluted by every hire who does not carry it. When did the soul start to fade?"
+    response: "Culture dilution is not a betrayal — it is physics. At 15 people, culture transmits through proximity. At 150, it transmits through systems, rituals, and enforcement. Most companies invest in the first two and neglect the third. The result is a culture that exists in the handbook but not in the hallways."
+    actions: []
+    navigation:
+      next: "the_bozo_explosion"
+
+  the_bozo_explosion:
+    narrative: "Steve Jobs called it the 'Bozo Explosion' — when B-players hire C-players, and C-players hire D-players, until the company is full of people who would never have been hired by the original team. Your A-players are leaving because they are surrounded by people who do not share their standards."
+    response: "The Bozo Explosion is not caused by bad hiring. It is caused by the absence of a cultural immune system. When the founder can no longer personally vet every hire, the company needs a mechanism that carries the founder's standards into every hiring decision, every performance review, and every promotion."
+    actions:
+      - label: "Cultural Immune System"
+        description: "How Business Infinity prevents cultural dilution at scale"
+        url: "cultural-immune"
+    navigation:
+      next: "quiet_quitting"
+      back: "the_soul_question"
+
+  quiet_quitting:
+    narrative: "Your engagement surveys say 78% satisfaction. Your retention numbers say something different. The middle managers who were once your most passionate advocates are now doing the minimum. They have not quit — they have disengaged. And disengagement is contagious."
+    response: "Quiet quitting is the symptom of a culture that has become performative. People optimize for optics — the appearance of productivity — rather than for impact. The metrics say everything is fine. The energy in the room says otherwise. Traditional tools cannot detect this gap because they measure activity, not integrity."
+    actions:
+      - label: "Engagement Integrity Analysis"
+        description: "Distinguish between performative productivity and authentic engagement"
+        url: "engagement-integrity"
+    navigation:
+      next: "drucker_as_guardian"
+      back: "the_bozo_explosion"
+
+  drucker_as_guardian:
+    narrative: "The Drucker agent — your CHRO — monitors the cultural health of your organization across every system. It reads project velocity, communication patterns, and decision logs. It does not just measure what people do — it detects when 'Pressure to Perform' violates 'Commitment to People.' It flags when complexity is added for its own sake. It alerts when teams optimize for optics over customer intent."
+    response: "Drucker understood that the purpose of management is not to control people but to make people effective. The CHRO agent carries that philosophy into every corner of your organization — not as a policy document, but as a living, active intelligence."
+    actions:
+      - label: "Meet the Drucker Agent"
+        description: "How the CHRO agent monitors cultural health in real time"
+        url: "agent-catalogue"
+    navigation:
+      next: "culture_at_scale"
+      back: "quiet_quitting"
+
+  culture_at_scale:
+    narrative: "Every boardroom debate in Business Infinity includes a people-centric pathway from the Drucker agent. Before any strategic action is approved, the boardroom asks: what does this do to our people? Does this decision strengthen or erode the culture we built? Is this consistent with the standards that made our A-players join?"
+    response: "Culture is not preserved by intention. It is preserved by enforcement. Business Infinity enforces culture the way it enforces strategy — through purpose resonance. An action that dilutes culture does not pass the resonance threshold, no matter how financially attractive it appears."
+    actions:
+      - label: "Start Onboarding"
+        description: "Activate cultural governance for your growing company"
+        url: "onboarding"
+      - label: "Culture Brief"
+        description: "A focused conversation about your specific cultural health challenges"
+        url: "schedule"
+    navigation:
+      back: "drucker_as_guardian"

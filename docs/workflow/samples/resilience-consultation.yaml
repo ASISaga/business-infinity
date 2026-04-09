@@ -1,0 +1,79 @@
+workflow_id: "resilience_consultation"
+version: "1.0.0"
+owner: "cso"
+
+steps:
+  the_48_hour_window:
+    narrative: "A new trade restriction was announced 90 minutes ago. It affects three of your top five suppliers. Your team is waiting for guidance. Your planning cycle assumes a 90-day horizon. You now have 48 hours. What does your company do in the next two hours?"
+    response: "For most companies the answer is a war room of tired executives making decisions with yesterday's data, a cascade of Slack messages to suppliers who are also scrambling, and a CRM full of customer commitments that may now be impossible to keep."
+    actions: []
+    navigation:
+      next: "cascade_failure"
+
+  cascade_failure:
+    narrative: "Operational fragility is not the fault of any one system. It is the fault of the gaps between them. Your MES tells you what is on the shop floor. Your ERP tells you what is in the warehouse. Your CRM tells you what you have promised. None of them tells you what happens to each other when one breaks."
+    response: "The cascade starts when a disruption in one node outpaces the communication speed between your systems. By the time the MES failure shows up in the CRM as a delivery risk, you have already made three promises you cannot keep."
+    actions:
+      - label: "Cascade Failure Map"
+        description: "How cross-system fragility compounds during disruption"
+        url: "cascade-failure"
+    navigation:
+      next: "the_response_gap"
+      back: "the_48_hour_window"
+
+  the_response_gap:
+    narrative: "The gap between when a disruption occurs and when your leadership team converges on a response is where companies lose the most value. It is not the disruption itself—it is the hours of uncoordinated reaction, duplicated decisions, and contradictory customer communications that destroy trust."
+    response: "Every hour of the response gap costs you in one of three ways: margin erosion from expedited alternatives, customer trust from missed commitments, or competitive position from a competitor who moved faster. Speed of coordinated response is the competitive advantage you cannot buy with software alone."
+    actions:
+      - label: "Response Gap Analysis"
+        description: "Quantify your company's current time-to-coordinated-response"
+        url: "response-gap"
+    navigation:
+      next: "spontaneous_war_room"
+      back: "cascade_failure"
+
+  spontaneous_war_room:
+    narrative: "When a disruption event hits a Business Infinity company, the boardroom does not wait to be convened. The CSO agent detects the competitive and strategic signal. The COO agent assesses operational impact across all connected systems simultaneously. The CMO agent drafts customer communication. The CFO agent models the financial exposure. All of this happens in seconds, not hours."
+    response: "This is the spontaneous war room. No calendar invite. No alignment meeting. No waiting for the CEO to read the news. The boardroom activates the moment the signal enters any connected system, and every CXO domain responds in parallel."
+    actions:
+      - label: "See the War Room in Action"
+        description: "Watch a boardroom activation during a simulated supply-chain disruption"
+        url: "boardroom-demo"
+    navigation:
+      next: "cross_domain_convergence"
+      back: "the_response_gap"
+
+  cross_domain_convergence:
+    narrative: "Resilience is not surviving a disruption—it is improving because of it. While your competitors are still holding their emergency call, your boardroom has already proposed five strategic pathways, debated them against your purpose, scored them for resonance, and is executing the highest-integrity response."
+    response: "The CSO positions the company against the new competitive landscape. The COO routes the operations around the broken node. The CMO issues proactive customer communication before the first complaint arrives. The CFO has already identified the alternative cash flow pathway. All within minutes."
+    actions:
+      - label: "Cross-Domain Response"
+        description: "How the full boardroom converges on a unified resilience pathway"
+        url: "cross-domain-response"
+    navigation:
+      next: "antifragility_by_design"
+      back: "spontaneous_war_room"
+
+  antifragility_by_design:
+    narrative: "Resilience means surviving disruption. Antifragility means getting stronger from it. Business Infinity does not just respond to disruption—it learns from each event, updates the boardroom's institutional memory, and uses that intelligence to make the next response faster and more precise."
+    response: "Every disruption response is scored for resonance with your company's purpose and logged as institutional memory. The boardroom that faced your last supply chain crisis is smarter than the one that faced the previous one. Your company compounds its resilience with every challenge it survives."
+    actions:
+      - label: "Antifragility Framework"
+        description: "How Business Infinity compounds resilience over time"
+        url: "antifragility"
+    navigation:
+      next: "fortify_your_company"
+      back: "cross_domain_convergence"
+
+  fortify_your_company:
+    narrative: "The next disruption will not announce itself. A tariff, a shipping route closure, a regulatory change, a competitor move—any of these can compress your planning horizon to hours. Business Infinity does not predict disruptions. It ensures that when one arrives, your company responds faster and with greater integrity than any competitor still running on human reaction time."
+    response: "Onboarding takes minutes. Your boardroom connects to your existing systems immediately. The first thing it does is map your current operational dependencies and identify the three points of greatest fragility. Let's start there."
+    actions:
+      - label: "Start Onboarding"
+        description: "Activate your resilience boardroom now"
+        url: "onboarding"
+      - label: "Resilience Brief"
+        description: "A focused conversation about your highest operational fragility risks"
+        url: "schedule"
+    navigation:
+      back: "antifragility_by_design"

@@ -1,0 +1,68 @@
+workflow_id: "ai_governance"
+version: "1.0.0"
+owner: "cto"
+
+steps:
+  the_sprawl_question:
+    narrative: "How many AI tools, chatbots, and automations are running inside your company right now? Not the ones you approved — the ones that actually exist. Most CEOs discover the answer is three to ten times what they expected."
+    response: "AI sprawl is the shadow IT crisis of the 2020s. Every department has its own chatbot, its own automation, its own 'AI strategy.' None of them talk to each other. None of them are governed. And none of them can explain their decisions to your compliance team."
+    actions: []
+    navigation:
+      next: "the_black_box"
+
+  the_black_box:
+    narrative: "Last month one of your automated systems made a pricing decision that lost a key account. Nobody can explain why. The system was built by a contractor who left, configured by a team that rotated, and monitored by nobody. You are liable for decisions you cannot trace."
+    response: "The black box problem is not a technology problem — it is a governance problem. When AI tools are deployed without a unified operating system, every tool is its own island of unexplainable logic. The risk is not that AI fails — it is that you cannot explain why it failed."
+    actions:
+      - label: "AI Risk Assessment"
+        description: "Map the ungoverned AI tools in your organization"
+        url: "ai-risk-assessment"
+    navigation:
+      next: "who_is_responsible"
+      back: "the_sprawl_question"
+
+  who_is_responsible:
+    narrative: "When an AI agent makes a decision that harms a customer, who is responsible? The engineer who built it? The manager who deployed it? The CEO who did not know it existed? Your legal team does not have an answer. Your board is asking."
+    response: "Accountability requires traceability. Traceability requires governance. Governance requires a single operating system that orchestrates every agent, logs every decision, and scores every action against a stated purpose. Without that, your AI tools are autonomous but ungoverned — which is the definition of risk."
+    actions:
+      - label: "Accountability Framework"
+        description: "How Business Infinity creates auditable AI governance"
+        url: "accountability"
+    navigation:
+      next: "resonance_as_governor"
+      back: "the_black_box"
+
+  resonance_as_governor:
+    narrative: "In Business Infinity, every agent action is governed by resonance scoring. Before any autonomous decision executes, it is scored against your company's stated purpose. If it does not resonate, it does not run. Every decision is logged with its resonance score, its justification, and the specification it references. Your compliance team can audit every AI decision your company has ever made."
+    response: "This is not 'AI safety theater.' This is structural governance. The Turing agent — your CTO — ensures that every technology decision is explainable, every agent is accountable, and every autonomous action is traceable back to a human-authored specification."
+    actions:
+      - label: "Resonance Governance"
+        description: "How purpose-driven scoring creates explainable, auditable AI"
+        url: "resonance"
+    navigation:
+      next: "one_operating_system"
+      back: "who_is_responsible"
+
+  one_operating_system:
+    narrative: "Business Infinity sits atop AOS — the Agent Operating System — as a single governance layer for all your AI agents. No more sprawl. No more shadow automations. Every agent is registered, orchestrated, logged, and scored. Your CEO can see every autonomous decision in real time through the boardroom interface."
+    response: "AOS replaces AI sprawl with AI sovereignty. Your company does not need fewer AI tools — it needs one operating system that governs them all. The boardroom is the dashboard. The purpose is the constitution. Every agent serves the same mission."
+    actions:
+      - label: "AOS Architecture"
+        description: "How the Agent Operating System governs all agents"
+        url: "aos-architecture"
+    navigation:
+      next: "govern_your_agents"
+      back: "resonance_as_governor"
+
+  govern_your_agents:
+    narrative: "Your board is asking about AI governance. Your compliance team is asking about AI auditability. Your legal team is asking about AI liability. Business Infinity answers all three questions with one system: a purpose-driven boardroom that governs every agent, logs every decision, and can produce a complete audit trail on demand."
+    response: "Onboarding takes minutes. The first thing the boardroom does is discover every AI tool and automation in your stack and bring them under unified governance. Most companies are surprised by what they find."
+    actions:
+      - label: "Start Onboarding"
+        description: "Bring your AI tools under unified governance"
+        url: "onboarding"
+      - label: "Governance Brief"
+        description: "A focused conversation about your specific AI governance challenges"
+        url: "schedule"
+    navigation:
+      back: "one_operating_system"
