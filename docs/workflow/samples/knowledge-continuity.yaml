@@ -1,0 +1,79 @@
+workflow_id: "knowledge_continuity"
+version: "1.0.0"
+owner: "chro"
+
+steps:
+  the_empty_chair:
+    narrative: "Think of the one person in your company whose departure would cause the most damage—not because of their title, but because of what they carry in their head. Now ask yourself: if they resigned tomorrow, how long would recovery take?"
+    response: "For most companies at scale, the honest answer is months—sometimes years. That single person is not a resource. They are the living memory of your company's most critical decisions."
+    actions: []
+    navigation:
+      next: "what_walks_out"
+
+  what_walks_out:
+    narrative: "When a senior engineer, a veteran operations lead, or a founding team member leaves, they take more than their skills. They take the 'why' behind every architectural choice, every process shortcut, and every hard-won lesson your company paid dearly to learn."
+    response: "Documentation captures the 'what.' It almost never captures the 'why.' The reasoning behind your most important decisions lives nowhere except in the minds of the people who made them. That is not a knowledge base—it is a fragility."
+    actions:
+      - label: "Knowledge Fragility Assessment"
+        description: "Map the concentration of critical knowledge in your company"
+        url: "knowledge-assessment"
+    navigation:
+      next: "the_reinvention_tax"
+      back: "the_empty_chair"
+
+  the_reinvention_tax:
+    narrative: "New hires make the same mistakes your team solved two years ago because no one told them the solution existed. Different teams rebuild the same infrastructure because search reveals tickets, not decisions. The compound interest of your company's intelligence is being reset with every departure."
+    response: "This is the Reinvention Tax. It is invisible in any single quarter, but it compounds into millions of wasted engineering hours and months of lost runway. High-growth companies pay it hardest because they hire fastest."
+    actions:
+      - label: "Reinvention Tax Calculator"
+        description: "Estimate the true cost of knowledge loss in your organisation"
+        url: "reinvention-tax"
+    navigation:
+      next: "the_wisdom_gap"
+      back: "what_walks_out"
+
+  the_wisdom_gap:
+    narrative: "Most companies respond to knowledge loss with documentation sprints, Notion wikis, and Confluence pages. These help. But they capture facts, not judgment. The wisdom of a senior leader—when to act, when to wait, which signals matter, which data to distrust—cannot be written down in a wiki article."
+    response: "The gap between information and wisdom is the gap between knowing that a decision was made and understanding why it was the right decision in that specific context. Closing that gap requires more than a knowledge base—it requires a living intelligence."
+    actions:
+      - label: "Wisdom vs. Information"
+        description: "Why documentation alone cannot prevent institutional amnesia"
+        url: "wisdom-gap"
+    navigation:
+      next: "perpetual_memory"
+      back: "the_reinvention_tax"
+
+  perpetual_memory:
+    narrative: "Business Infinity captures your company's institutional intelligence across four dimensions: Manas—the living memory of decisions and context; Buddhi—the domain knowledge, skills, and reasoning frameworks; Ahankara—the identity and mandate of each function; and Chitta—the pure strategic intelligence that transcends any individual."
+    response: "These are not static documents. They are the structured mind of each CXO agent, continuously updated as the company evolves. When a new team member arrives, they inherit not just documentation but a reasoning partner who carries the institutional DNA."
+    actions:
+      - label: "The Agent Mind"
+        description: "How Business Infinity structures and preserves organisational intelligence"
+        url: "agent-mind"
+    navigation:
+      next: "legends_dont_leave"
+      back: "the_wisdom_gap"
+
+  legends_dont_leave:
+    narrative: "Each CXO agent in your Business Infinity boardroom is modelled on a legendary archetype: Drucker for people and culture, Deming for operational excellence, Buffett for financial judgment. These archetypes carry domain wisdom that your best employees aspire to—and they are permanently embedded in your company's operating system."
+    response: "Your veteran operations lead retires. The Deming agent does not. Your founding CFO moves on. The Buffett agent does not. The institutional wisdom your company has earned does not walk out the door—it becomes part of the boardroom that never sleeps."
+    actions:
+      - label: "Meet the CXO Agents"
+        description: "The legendary archetypes that carry your company's institutional intelligence"
+        url: "agent-catalogue"
+    navigation:
+      next: "succession_begins"
+      back: "perpetual_memory"
+
+  succession_begins:
+    narrative: "Business Infinity does not just preserve the past—it actively uses it. When a situation arises that resembles a challenge your company solved two years ago, the boardroom surfaces that historical context instantly. New hires do not start from zero. They start from the accumulated intelligence of everyone who came before them."
+    response: "Onboarding takes minutes. Within hours, your boardroom is reading your existing systems and building the first layer of institutional memory. The knowledge that is most at risk right now can be the first thing we preserve."
+    actions:
+      - label: "Start Onboarding"
+        description: "Begin building your company's permanent institutional intelligence"
+        url: "onboarding"
+      - label: "Knowledge Continuity Brief"
+        description: "A focused conversation about your highest-risk knowledge gaps"
+        url: "schedule"
+    navigation:
+      back: "legends_dont_leave"

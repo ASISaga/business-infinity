@@ -32,7 +32,8 @@
 5. [Feature-to-Pain Resolution Matrix](#5-feature-to-pain-resolution-matrix)
 6. [The $100K Value Equation](#6-the-100k-value-equation)
 7. [Entry-Point Conversations](#7-entry-point-conversations)
-8. [References](#8-references)
+8. [Live Workflows](#8-live-workflows)
+9. [References](#9-references)
 
 ---
 
@@ -603,7 +604,26 @@ your velocity, and your vision — executed 24/7 by a boardroom of legends.*
 
 ---
 
-## 8. References
+## 8. Live Workflows
+
+Each pain point below is backed by a registered, executable boardroom workflow.
+The workflows are owned by the most relevant CXO agent and deliver a structured
+consultation that diagnoses the pain and reveals the Business Infinity solution.
+
+| Pain Category | Workflow | Owner | YAML |
+|---|---|---|---|
+| Cognitive & Decision Overload / Complexity Bloat | `founder_sovereignty` | CEO (Jobs) | `docs/workflow/samples/founder-sovereignty.yaml` |
+| Key-Person & Knowledge Fragility | `knowledge_continuity` | CHRO (Drucker) | `docs/workflow/samples/knowledge-continuity.yaml` |
+| Operational Fragility & Supply-Chain Chaos | `resilience_consultation` | CSO (Sun Tzu) | `docs/workflow/samples/resilience-consultation.yaml` |
+| Data-Rich / Insight-Poor Trap | `data_synthesis` | CMO (Ogilvy) | `docs/workflow/samples/data-synthesis.yaml` |
+
+All four are registered in `WORKFLOW_REGISTRY` in `src/business_infinity/boardroom.py`
+and are accessible via the generic `workflow-orchestration` endpoint with the
+corresponding `workflow_id` in the request body.
+
+---
+
+## 9. References
 
 → **Early adopters detail**: `docs/workflow/market/early-adopters.md`
 → **Raw pain-point exploration**: `docs/workflow/market/pain-points.md`
@@ -612,6 +632,10 @@ your velocity, and your vision — executed 24/7 by a boardroom of legends.*
 → **Architecture**: `docs/specifications/architecture.md`
 → **Boardroom module**: `src/business_infinity/boardroom.py`
 → **Workflows module**: `src/business_infinity/workflows.py`
+→ **Founder sovereignty workflow**: `docs/workflow/samples/founder-sovereignty.yaml`
+→ **Knowledge continuity workflow**: `docs/workflow/samples/knowledge-continuity.yaml`
+→ **Resilience consultation workflow**: `docs/workflow/samples/resilience-consultation.yaml`
+→ **Data synthesis workflow**: `docs/workflow/samples/data-synthesis.yaml`
 → **Marketing workflow**: `docs/workflow/samples/marketing.yaml`
 → **Pitch workflow**: `docs/workflow/samples/pitch.yaml`
 → **Onboarding workflow**: `docs/workflow/samples/onboarding.yaml`

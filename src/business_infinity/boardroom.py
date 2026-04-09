@@ -1038,6 +1038,66 @@ WORKFLOW_REGISTRY: Dict[str, Dict[str, str]] = {
         ),
         "yaml_path": "docs/workflow/samples/product-launch.yaml",
     },
+    "founder_sovereignty": {
+        "owner": "ceo",
+        "purpose": (
+            "Consult a burnt-out founder or scaling CEO on reclaiming strategic "
+            "sovereignty by offloading the Complexity Tax to a perpetual boardroom "
+            "of legendary CXO agents, restoring 20+ hours per week of focused "
+            "leadership time."
+        ),
+        "scope": (
+            "Founder sovereignty consultation: complexity tax diagnosis, "
+            "strategy-execution gap identification, legendary CXO offloading, "
+            "resonance governance introduction, and onboarding call-to-action."
+        ),
+        "yaml_path": "docs/workflow/samples/founder-sovereignty.yaml",
+    },
+    "knowledge_continuity": {
+        "owner": "chro",
+        "purpose": (
+            "Help a company facing key-person fragility and institutional amnesia "
+            "preserve its strategic DNA permanently through the boardroom's "
+            "four-dimensional agent mind, ensuring critical wisdom survives "
+            "any departure."
+        ),
+        "scope": (
+            "Knowledge continuity consultation: veteran departure risk diagnosis, "
+            "reinvention tax quantification, wisdom-vs-documentation gap framing, "
+            "perpetual agent memory introduction, and onboarding call-to-action."
+        ),
+        "yaml_path": "docs/workflow/samples/knowledge-continuity.yaml",
+    },
+    "resilience_consultation": {
+        "owner": "cso",
+        "purpose": (
+            "Guide a company exposed to supply-chain chaos or geopolitical "
+            "disruption through the Business Infinity resilience model: spontaneous "
+            "boardroom war room, cross-domain convergence, and antifragility by "
+            "design."
+        ),
+        "scope": (
+            "Resilience consultation: cascade failure diagnosis, response gap "
+            "analysis, spontaneous war room demonstration, cross-domain convergence "
+            "walkthrough, antifragility framing, and onboarding call-to-action."
+        ),
+        "yaml_path": "docs/workflow/samples/resilience-consultation.yaml",
+    },
+    "data_synthesis": {
+        "owner": "cmo",
+        "purpose": (
+            "Help a data-rich but insight-poor CEO replace disconnected dashboards "
+            "with a unified boardroom synthesis layer that reads across all connected "
+            "systems and surfaces the decisions that matter most."
+        ),
+        "scope": (
+            "Data synthesis consultation: dashboard trap diagnosis, inter-silo "
+            "silence framing, synthesis gap analysis, cross-system truth "
+            "demonstration, legend-as-synthesizer walkthrough, and onboarding "
+            "call-to-action."
+        ),
+        "yaml_path": "docs/workflow/samples/data-synthesis.yaml",
+    },
 }
 
 

@@ -1,0 +1,90 @@
+workflow_id: "data_synthesis"
+version: "1.0.0"
+owner: "cmo"
+
+steps:
+  the_dashboard_question:
+    narrative: "How many dashboards does your company have? And of those—how many tell you what to do next, rather than what already happened?"
+    response: "Most leaders answer this honestly: dozens of dashboards, none of which provide a decision. They provide data. The decision still belongs to the human in the room—who is already overwhelmed, already behind, and already second-guessing the numbers."
+    actions: []
+    navigation:
+      next: "the_silence_between_silos"
+
+  the_silence_between_silos:
+    narrative: "Your CRM says revenue is growing. Your ERP says margins are shrinking. Your MES says the factory is at 95% efficiency. Your CFO says the cash position is tighter than it should be for those numbers. Which system is telling the truth?"
+    response: "All of them are. And none of them are. Each system captures one signal in isolation. The truth lives in the space between them—in the relationship between CRM activity and ERP costs, between factory output and actual customer value delivered. That space has no software. Yet."
+    actions:
+      - label: "The Silo Map"
+        description: "How disconnected systems create conflicting narratives"
+        url: "silo-map"
+    navigation:
+      next: "what_software_cannot_say"
+      back: "the_dashboard_question"
+
+  what_software_cannot_say:
+    narrative: "Your Salesforce tells you a deal closed. It does not tell you whether that deal will generate profitable revenue or subsidised churn. Your GitHub tells you a feature shipped. It does not tell you whether it moved the product closer to or further from your founding vision. Software records. It does not reason."
+    response: "The software you have invested in is world-class at answering the question 'what happened.' The question your company needs answered is 'so what—and what next.' That question requires synthesis, judgment, and the ability to hold your entire business in one view simultaneously."
+    actions:
+      - label: "The Synthesis Gap"
+        description: "Why data abundance still leaves leaders without clarity"
+        url: "synthesis-gap"
+    navigation:
+      next: "the_synthesis_gap"
+      back: "the_silence_between_silos"
+
+  the_synthesis_gap:
+    narrative: "The synthesis gap is the distance between your data and your decision. It is filled today by your most senior people—the CFO who intuitively senses that the CRM numbers are masking a churn problem, the COO who knows that the MES efficiency figure hides a margin trap. That synthesis is expensive, slow, and leaves when those people do."
+    response: "You have been hiring into the synthesis gap without realising it. Every Chief of Staff, every Head of Analytics, every Business Intelligence team—they are all attempts to bridge the distance between your systems and your decisions. Business Infinity is the synthesis layer itself."
+    actions:
+      - label: "The Synthesis Layer"
+        description: "How Business Infinity sits between your data and your decisions"
+        url: "synthesis-layer"
+    navigation:
+      next: "cross_system_truth"
+      back: "what_software_cannot_say"
+
+  cross_system_truth:
+    narrative: "Business Infinity agents are connected to your ERP, CRM, MES, and every other business system through MCP—Model Context Protocol. They do not just read each system in isolation. They read the relationships between them. The Buffett agent sees that CRM growth is generating low-margin deals by correlating it with ERP data. The Deming agent sees that factory efficiency is masking a product mix problem."
+    response: "This is cross-system truth. Not a single source of data, but a single layer of intelligence that synthesises all sources simultaneously. The boardroom does not report what each system says. It tells you what all of them together mean."
+    actions:
+      - label: "MCP Integrations"
+        description: "See all available business system connections"
+        url: "mcp-integrations"
+    navigation:
+      next: "legend_as_synthesizer"
+      back: "the_synthesis_gap"
+
+  legend_as_synthesizer:
+    narrative: "The Ogilvy agent reads your CRM for the quality of customer relationships, not just the quantity of deals. The Buffett agent reads your ERP for the durability of your margins, not just the size of your revenue. The Deming agent reads your operational data for the systemic causes of inefficiency, not just the surface metrics. Together, they give you the perspective of the world's greatest business minds—applied to your actual data."
+    response: "Your software tells you the score. The Business Infinity boardroom tells you whether you are playing the right game. That difference is worth more than any dashboard."
+    actions:
+      - label: "Legend Synthesis Demo"
+        description: "See how legend agents synthesise cross-system data into strategic insight"
+        url: "boardroom-demo"
+    navigation:
+      next: "boardroom_synthesis"
+      back: "cross_system_truth"
+
+  boardroom_synthesis:
+    narrative: "Instead of 20 dashboards requiring human synthesis, Business Infinity delivers a single narrated boardroom synthesis: here is what your systems are collectively saying, here is what it means for your company's purpose, and here is the response the boardroom recommends. Every morning. Every event. Every decision."
+    response: "This is not a report. It is a conversation with a boardroom that has already read everything, reasoned across it, debated the implications, and is waiting to tell you the one thing that matters most right now."
+    actions:
+      - label: "Boardroom Synthesis"
+        description: "How the boardroom converges multiple data streams into one strategic view"
+        url: "boardroom-synthesis"
+    navigation:
+      next: "replace_the_fog"
+      back: "legend_as_synthesizer"
+
+  replace_the_fog:
+    narrative: "You did not build this company to spend your mornings reconciling conflicting dashboards. You built it to make decisions that matter. Business Infinity replaces the fog with a boardroom of legends who have read your data, synthesised the signals, and are ready to act—before you have finished your first coffee."
+    response: "Onboarding takes minutes. Within hours, your boardroom is connected to your systems and delivering its first synthesis. The three decisions you have been deferring because the data was unclear—the boardroom will surface them today."
+    actions:
+      - label: "Start Onboarding"
+        description: "Replace your dashboards with a living boardroom synthesis"
+        url: "onboarding"
+      - label: "Synthesis Brief"
+        description: "A focused conversation about your specific data and insight challenges"
+        url: "schedule"
+    navigation:
+      back: "boardroom_synthesis"

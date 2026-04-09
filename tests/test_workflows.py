@@ -227,6 +227,10 @@ class TestWorkflowRegistry:
         assert "crisis_response" in WORKFLOW_REGISTRY
         assert "quarterly_strategic_review" in WORKFLOW_REGISTRY
         assert "product_launch" in WORKFLOW_REGISTRY
+        assert "founder_sovereignty" in WORKFLOW_REGISTRY
+        assert "knowledge_continuity" in WORKFLOW_REGISTRY
+        assert "resilience_consultation" in WORKFLOW_REGISTRY
+        assert "data_synthesis" in WORKFLOW_REGISTRY
 
     def test_registry_entry_keys(self):
         """Each registry entry has the required keys."""
@@ -244,6 +248,10 @@ class TestWorkflowRegistry:
         assert WORKFLOW_REGISTRY["crisis_response"]["owner"] == "ceo"
         assert WORKFLOW_REGISTRY["quarterly_strategic_review"]["owner"] == "ceo"
         assert WORKFLOW_REGISTRY["product_launch"]["owner"] == "ceo"
+        assert WORKFLOW_REGISTRY["founder_sovereignty"]["owner"] == "ceo"
+        assert WORKFLOW_REGISTRY["knowledge_continuity"]["owner"] == "chro"
+        assert WORKFLOW_REGISTRY["resilience_consultation"]["owner"] == "cso"
+        assert WORKFLOW_REGISTRY["data_synthesis"]["owner"] == "cmo"
 
     def test_get_workflow_metadata(self):
         """get_workflow_metadata returns correct entry."""
@@ -266,7 +274,7 @@ class TestWorkflowRegistry:
     def test_list_registered_workflows(self):
         """list_registered_workflows returns a copy of the registry."""
         result = list_registered_workflows()
-        assert len(result) == 6
+        assert len(result) == 10
         assert result is not WORKFLOW_REGISTRY
 
     def test_pitch_backward_compatibility(self):
@@ -311,8 +319,8 @@ class TestWorkflowEditor:
             assert "actions" in step, f"{step_id} missing actions"
             assert isinstance(step["actions"], list), f"{step_id} actions not a list"
 
-    def test_load_workflow_yaml_all_six(self):
-        """load_workflow_yaml works for all six registered workflows."""
+    def test_load_workflow_yaml_all_workflows(self):
+        """load_workflow_yaml works for all registered workflows."""
         for workflow_id in WORKFLOW_REGISTRY:
             data = load_workflow_yaml(workflow_id)
             assert data["workflow_id"] == workflow_id
