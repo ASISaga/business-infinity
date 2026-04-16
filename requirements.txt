@@ -1,1 +1,2 @@
 azure-functions
+https://github.com/ASISaga/aos-client-sdk.git
