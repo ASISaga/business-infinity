@@ -1,5 +1,5 @@
-"""BusinessInfinity Azure Functions entry point."""
+"""Azure Functions runtime entry point for BusinessInfinity workflows."""
 
-from business_infinity.workflows import app  # noqa: F401
+from business_infinity.workflows import app
 
 functions = app.get_functions()
