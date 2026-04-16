@@ -93,6 +93,6 @@ jobs:
             .[]
             | .config.bindings as $bindings
             | select(any($bindings[]?; .type == "httpTrigger"))
-            | "- \(.name): \(.invokeUrlTemplate // "invokeUrlTemplate unavailable")"
+            | "- \(.name): \(.invokeUrlTemplate // "URL not provided by Azure API; check function binding configuration")"
           ' <<< "${FUNCTIONS_JSON}"
           echo "::endgroup::"
