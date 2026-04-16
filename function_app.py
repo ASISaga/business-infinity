@@ -1,9 +1,5 @@
-"""BusinessInfinity Azure Functions entry point.
+"""Azure Functions runtime entry point for BusinessInfinity workflows."""
 
-The SDK handles all Azure Functions scaffolding.  This file simply imports
-the ``AOSApp`` with registered workflows and generates the Functions triggers.
-"""
-
-from business_infinity.workflows import app  # noqa: F401
+from business_infinity.workflows import app
 
 functions = app.get_functions()
