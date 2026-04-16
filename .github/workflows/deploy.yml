@@ -151,7 +151,7 @@ jobs:
         shell: bash
         run: |
           echo "::group::Deployment context"
-          echo "  Application:  mcp-subconscious"
+          echo "  Application:  business-infinity"
           echo "  Environment:  ${{ needs.resolve-env.outputs.environment }}"
           echo "  Python:       3.11"
           echo "  Ref:          ${{ github.ref }}"
@@ -221,7 +221,7 @@ jobs:
         shell: bash
         env:
           KV_URL: ${{ needs.resolve-env.outputs.key_vault_url }}
-          SECRET_NAME: clientid-mcp-subconscious-${{ needs.resolve-env.outputs.environment }}
+          SECRET_NAME: clientid-business-infinity-${{ needs.resolve-env.outputs.environment }}
           FALLBACK_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         run: |
           set -euo pipefail
@@ -267,7 +267,7 @@ jobs:
         run: |
           set -euo pipefail
           export RESOURCE_GROUP="${AZURE_RESOURCE_GROUP:-rg-aos-${DEPLOY_ENV}}"
-          export PREFIX="func-mcp-subconscious-${DEPLOY_ENV}-"
+          export PREFIX="func-business-infinity-${DEPLOY_ENV}-"
 
           echo "::group::Resolving Azure Function App"
           echo "  Subscription:   ${AZURE_SUBSCRIPTION_ID}"
@@ -313,7 +313,7 @@ jobs:
       - name: Report deployment success
         shell: bash
         run: |
-          echo "::notice::mcp-subconscious deployed successfully"
+          echo "::notice::business-infinity deployed successfully"
           echo "::notice::Environment:    ${{ needs.resolve-env.outputs.environment }}"
           echo "::notice::Function App:   ${{ steps.resolve.outputs.function_app }}"
           echo "::notice::Resource Group: ${{ steps.resolve.outputs.resource_group }}"
