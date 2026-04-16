@@ -1,5 +1,6 @@
 """Azure Functions runtime entry point for BusinessInfinity workflows."""
 
-from business_infinity.workflows import app
+from business_infinity.workflows import app as workflows_app
 
-functions = app.get_functions()
+app = workflows_app.get_functions()
+functions = app

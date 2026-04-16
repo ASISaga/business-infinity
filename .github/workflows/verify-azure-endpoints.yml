@@ -1,0 +1,98 @@
+name: Verify Azure Function Endpoints
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+        default: staging
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  verify-endpoints:
+    name: Verify endpoints (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Resolve Function App name
+        id: resolve
+        shell: bash
+        env:
+          DEPLOY_ENV: ${{ inputs.environment }}
+          RESOURCE_GROUP_INPUT: ${{ vars.AZURE_RESOURCE_GROUP }}
+        run: |
+          set -euo pipefail
+          RESOURCE_GROUP="${RESOURCE_GROUP_INPUT:-rg-aos-${DEPLOY_ENV}}"
+          PREFIX="func-business-infinity-${DEPLOY_ENV}-"
+          FUNCTION_APP=$(az functionapp list \
+            --resource-group "${RESOURCE_GROUP}" \
+            --query "[?starts_with(name, '${PREFIX}')].name | [0]" \
+            --output tsv)
+
+          if [[ -z "${FUNCTION_APP}" ]]; then
+            echo "::error::No Function App with prefix '${PREFIX}' found in '${RESOURCE_GROUP}'"
+            exit 1
+          fi
+
+          echo "resource_group=${RESOURCE_GROUP}" >> "${GITHUB_OUTPUT}"
+          echo "function_app=${FUNCTION_APP}" >> "${GITHUB_OUTPUT}"
+          echo "::notice::Resolved Function App: ${FUNCTION_APP}"
+
+      - name: Verify deployed functions and endpoints
+        shell: bash
+        env:
+          FUNCTION_APP: ${{ steps.resolve.outputs.function_app }}
+          RESOURCE_GROUP: ${{ steps.resolve.outputs.resource_group }}
+        run: |
+          set -euo pipefail
+          FUNCTIONS_JSON=$(az functionapp function list \
+            --name "${FUNCTION_APP}" \
+            --resource-group "${RESOURCE_GROUP}" \
+            --output json)
+
+          COUNT=$(jq 'length' <<< "${FUNCTIONS_JSON}")
+          echo "::notice::Function count: ${COUNT}"
+
+          if [[ "${COUNT}" -eq 0 ]]; then
+            echo "::error::No functions discovered in ${FUNCTION_APP}"
+            echo "::group::Troubleshooting"
+            az functionapp config appsettings list \
+              --name "${FUNCTION_APP}" \
+              --resource-group "${RESOURCE_GROUP}" \
+              --query "[?name=='WEBSITE_RUN_FROM_PACKAGE' || name=='FUNCTIONS_WORKER_RUNTIME' || name=='PYTHONPATH']"
+            echo "::endgroup::"
+            exit 1
+          fi
+
+          echo "::group::Discovered functions"
+          jq -r '.[] | "- \(.name)"' <<< "${FUNCTIONS_JSON}"
+          echo "::endgroup::"
+
+          echo "::group::HTTP trigger endpoints"
+          jq -r '
+            .[]
+            | .config.bindings as $bindings
+            | select(any($bindings[]?; .type == "httpTrigger"))
+            | "- \(.name): \(.invokeUrlTemplate // "invokeUrlTemplate unavailable")"
+          ' <<< "${FUNCTIONS_JSON}"
+          echo "::endgroup::"
