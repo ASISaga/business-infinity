@@ -1188,129 +1188,185 @@ WORKFLOW_REGISTRY: Dict[str, Dict[str, str]] = {
 }
 
 
-def get_workflow_metadata(workflow_id: str) -> Dict[str, str]:
-    """Return metadata for a registered structured workflow.
+class WorkflowRegistryManager:
+    """Manages the structured workflow registry and metadata lookups.
 
-    Raises :class:`KeyError` if the workflow ID is not registered.
+    Provides class-level access to workflow registration, metadata retrieval,
+    and step ID resolution for all boardroom workflows.
     """
-    return WORKFLOW_REGISTRY[workflow_id]
+
+    #: The backing registry data.
+    _REGISTRY: Dict[str, Dict[str, str]] = WORKFLOW_REGISTRY
+
+    #: Pitch step IDs in presentation order, matching ``pitch.yaml``.
+    _PITCH_STEP_IDS: List[str] = [
+        "paul_graham_intro",
+        "paul_graham_dataset",
+        "lora_paul_graham",
+        "lora_werner_erhard",
+        "founder_ai_agent",
+        "boardroom_cxo",
+        "business_infinity_resonance",
+        "asi_saga_self_learning",
+        "final_reveal",
+    ]
+
+    @classmethod
+    def get_metadata(cls, workflow_id: str) -> Dict[str, str]:
+        """Return metadata for a registered structured workflow.
+
+        Raises :class:`KeyError` if the workflow ID is not registered.
+        """
+        return cls._REGISTRY[workflow_id]
+
+    @classmethod
+    def get_step_ids(cls, workflow_id: str) -> List[str]:
+        """Return ordered step IDs for a registered structured workflow.
+
+        Falls back to pitch step IDs for backward compatibility.
+
+        Raises :class:`NotImplementedError` for non-pitch workflows until
+        the aos-client-sdk YAML loader is available.
+        """
+        if workflow_id == "pitch_business_infinity":
+            return list(cls._PITCH_STEP_IDS)
+        raise NotImplementedError(
+            f"Runtime YAML step loading for '{workflow_id}' requires the "
+            f"aos-client-sdk workflow loader (see docs/workflow/pr/aos-client-sdk/)."
+        )
+
+    @classmethod
+    def list_all(cls) -> Dict[str, Dict[str, str]]:
+        """Return a copy of the full workflow registry."""
+        return dict(cls._REGISTRY)
+
+    @classmethod
+    def get_pitch_step_ids(cls) -> List[str]:
+        """Return a copy of the pitch step IDs."""
+        return list(cls._PITCH_STEP_IDS)
+
+
+class WorkflowYAMLManager:
+    """Handles YAML I/O for boardroom workflow definitions.
+
+    Provides loading, validation, and saving of structured workflow YAML
+    files stored in ``docs/workflow/samples/``.
+    """
+
+    @staticmethod
+    def _resolve_yaml_path(yaml_path: str) -> Path:
+        """Resolve a registry ``yaml_path`` to an absolute filesystem path.
+
+        The package lives at ``src/business_infinity/`` and the YAML files
+        are stored under ``docs/workflow/samples/`` at the project root.
+        This resolves the relative path from the registry against the project
+        root (three levels up from this file).
+        """
+        return Path(__file__).parent.parent.parent / yaml_path
+
+    @staticmethod
+    def _validate_data(data: Dict[str, Any]) -> None:
+        """Validate a workflow data dict before saving.
+
+        Raises :class:`ValueError` for any structural violation so the caller
+        can return a clear error to the frontend without writing a corrupt file.
+        """
+        if "workflow_id" not in data:
+            raise ValueError("workflow data must contain 'workflow_id'")
+        if "steps" not in data or not isinstance(data["steps"], dict):
+            raise ValueError("workflow data must contain a 'steps' dict")
+        steps: Dict[str, Any] = data["steps"]
+        for step_id, step in steps.items():
+            if not isinstance(step, dict):
+                raise ValueError(f"Step '{step_id}' must be a mapping")
+            if "narrative" not in step:
+                raise ValueError(f"Step '{step_id}' missing required field 'narrative'")
+            if "response" not in step:
+                raise ValueError(f"Step '{step_id}' missing required field 'response'")
+            if "actions" not in step or not isinstance(step["actions"], list):
+                raise ValueError(f"Step '{step_id}' missing required 'actions' list")
+            for i, action in enumerate(step["actions"]):
+                if not isinstance(action, dict):
+                    raise ValueError(f"Step '{step_id}' action[{i}] must be a mapping")
+                for field in ("label", "description", "url"):
+                    if field not in action:
+                        raise ValueError(
+                            f"Step '{step_id}' action[{i}] missing required field '{field}'"
+                        )
+
+    @classmethod
+    def load(cls, workflow_id: str) -> Dict[str, Any]:
+        """Load and parse the YAML file for a registered workflow.
+
+        Returns the full structured workflow data including all steps, suitable
+        for serialising to JSON and sending to the workflow editor frontend.
+
+        Raises :class:`KeyError` if *workflow_id* is not registered.
+        Raises :class:`FileNotFoundError` if the YAML file does not exist.
+        Raises :class:`ValueError` if the YAML file is malformed.
+        """
+        metadata = WorkflowRegistryManager.get_metadata(workflow_id)
+        yaml_path = cls._resolve_yaml_path(metadata["yaml_path"])
+        with open(str(yaml_path), "r", encoding="utf-8") as fh:
+            try:
+                return yaml.safe_load(fh)
+            except yaml.YAMLError as exc:
+                raise ValueError(
+                    f"Malformed YAML in workflow '{workflow_id}' "
+                    f"({metadata['yaml_path']}): {exc}"
+                ) from exc
+
+    @classmethod
+    def save(cls, workflow_id: str, data: Dict[str, Any]) -> None:
+        """Validate and save an updated workflow structure to its YAML file.
+
+        Raises :class:`KeyError` if *workflow_id* is not registered.
+        Raises :class:`ValueError` if *data* fails validation.
+        Raises :class:`FileNotFoundError` if the YAML file path is unreachable.
+        """
+        metadata = WorkflowRegistryManager.get_metadata(workflow_id)
+        cls._validate_data(data)
+        yaml_path = cls._resolve_yaml_path(metadata["yaml_path"])
+        with open(str(yaml_path), "w", encoding="utf-8") as fh:
+            yaml.dump(data, fh, default_flow_style=False, sort_keys=False, allow_unicode=True)
+
+
+# ── Backward-Compatible Free Functions ───────────────────────────────────────
+#
+# These thin wrappers delegate to the class methods above and preserve the
+# existing public API for tests and callers.
+
+
+def get_workflow_metadata(workflow_id: str) -> Dict[str, str]:
+    """Return metadata for a registered structured workflow."""
+    return WorkflowRegistryManager.get_metadata(workflow_id)
 
 
 def get_workflow_step_ids(workflow_id: str) -> List[str]:
-    """Return ordered step IDs for a registered structured workflow.
-
-    This reads the YAML file at runtime to extract the step order.
-    Falls back to :data:`_PITCH_STEP_IDS` for the pitch workflow
-    to maintain backward compatibility during the transition.
-
-    Raises :class:`NotImplementedError` for non-pitch workflows until
-    the aos-client-sdk YAML loader is available.
-    """
-    if workflow_id == "pitch_business_infinity":
-        return list(_PITCH_STEP_IDS)
-    # For other workflows, step IDs will be resolved at runtime from YAML
-    # by the aos-client-sdk YAML loader once it is available.
-    raise NotImplementedError(
-        f"Runtime YAML step loading for '{workflow_id}' requires the "
-        f"aos-client-sdk workflow loader (see docs/workflow/pr/aos-client-sdk/)."
-    )
+    """Return ordered step IDs for a registered structured workflow."""
+    return WorkflowRegistryManager.get_step_ids(workflow_id)
 
 
 def list_registered_workflows() -> Dict[str, Dict[str, str]]:
     """Return the full workflow registry."""
-    return dict(WORKFLOW_REGISTRY)
-
-
-# ── Workflow YAML I/O ────────────────────────────────────────────────────────
-
-
-def _resolve_yaml_path(yaml_path: str) -> Path:
-    """Resolve a registry ``yaml_path`` to an absolute filesystem path.
-
-    The package lives at ``src/business_infinity/`` and the YAML files
-    are stored under ``docs/workflow/samples/`` at the project root.
-    This resolves the relative path from the registry against the project
-    root (three levels up from this file).
-    """
-    return Path(__file__).parent.parent.parent / yaml_path
-
-
-def _validate_workflow_data(data: Dict[str, Any]) -> None:
-    """Validate a workflow data dict before saving.
-
-    Raises :class:`ValueError` for any structural violation so the caller
-    can return a clear error to the frontend without writing a corrupt file.
-    """
-    if "workflow_id" not in data:
-        raise ValueError("workflow data must contain 'workflow_id'")
-    if "steps" not in data or not isinstance(data["steps"], dict):
-        raise ValueError("workflow data must contain a 'steps' dict")
-    steps: Dict[str, Any] = data["steps"]
-    for step_id, step in steps.items():
-        if not isinstance(step, dict):
-            raise ValueError(f"Step '{step_id}' must be a mapping")
-        if "narrative" not in step:
-            raise ValueError(f"Step '{step_id}' missing required field 'narrative'")
-        if "response" not in step:
-            raise ValueError(f"Step '{step_id}' missing required field 'response'")
-        if "actions" not in step or not isinstance(step["actions"], list):
-            raise ValueError(f"Step '{step_id}' missing required 'actions' list")
-        # Validate each action entry
-        for i, action in enumerate(step["actions"]):
-            if not isinstance(action, dict):
-                raise ValueError(f"Step '{step_id}' action[{i}] must be a mapping")
-            for field in ("label", "description", "url"):
-                if field not in action:
-                    raise ValueError(
-                        f"Step '{step_id}' action[{i}] missing required field '{field}'"
-                    )
+    return WorkflowRegistryManager.list_all()
 
 
 def load_workflow_yaml(workflow_id: str) -> Dict[str, Any]:
-    """Load and parse the YAML file for a registered workflow.
-
-    Returns the full structured workflow data including all steps, suitable
-    for serialising to JSON and sending to the workflow editor frontend.
-
-    Raises :class:`KeyError` if *workflow_id* is not registered.
-    Raises :class:`FileNotFoundError` if the YAML file does not exist.
-    Raises :class:`ValueError` if the YAML file is malformed.
-    """
-    metadata = get_workflow_metadata(workflow_id)
-    yaml_path = _resolve_yaml_path(metadata["yaml_path"])
-    with open(str(yaml_path), "r", encoding="utf-8") as fh:
-        try:
-            return yaml.safe_load(fh)
-        except yaml.YAMLError as exc:
-            raise ValueError(
-                f"Malformed YAML in workflow '{workflow_id}' "
-                f"({metadata['yaml_path']}): {exc}"
-            ) from exc
+    """Load and parse the YAML file for a registered workflow."""
+    return WorkflowYAMLManager.load(workflow_id)
 
 
 def save_workflow_yaml(workflow_id: str, data: Dict[str, Any]) -> None:
-    """Validate and save an updated workflow structure to its YAML file.
-
-    The *data* dict must match the boardroom YAML schema documented in
-    ``docs/workflow/boardroom.yaml``.  Validation is applied before
-    writing so the file is never overwritten with an invalid structure.
-
-    Raises :class:`KeyError` if *workflow_id* is not registered.
-    Raises :class:`ValueError` if *data* fails validation.
-    Raises :class:`FileNotFoundError` if the YAML file path is unreachable.
-    """
-    metadata = get_workflow_metadata(workflow_id)
-    _validate_workflow_data(data)
-    yaml_path = _resolve_yaml_path(metadata["yaml_path"])
-    with open(str(yaml_path), "w", encoding="utf-8") as fh:
-        yaml.dump(data, fh, default_flow_style=False, sort_keys=False, allow_unicode=True)
+    """Validate and save an updated workflow structure to its YAML file."""
+    WorkflowYAMLManager.save(workflow_id, data)
 
 
-# ── Backward Compatibility ───────────────────────────────────────────────────
+# ── Backward Compatibility Constants ────────────────────────────────────────
 #
 # The following constants are preserved for backward compatibility with
 # existing tests and the current pitch-orchestration workflow.  New code
-# should use WORKFLOW_REGISTRY and the helper functions above.
+# should use WorkflowRegistryManager and WorkflowYAMLManager.
 
 #: Purpose statement for pitch delivery through the boardroom interface.
 PITCH_ORCHESTRATION_PURPOSE = WORKFLOW_REGISTRY["pitch_business_infinity"]["purpose"]
@@ -1319,16 +1375,6 @@ PITCH_ORCHESTRATION_PURPOSE = WORKFLOW_REGISTRY["pitch_business_infinity"]["purp
 PITCH_ORCHESTRATION_SCOPE = WORKFLOW_REGISTRY["pitch_business_infinity"]["scope"]
 
 #: Pitch step IDs in presentation order, matching ``pitch.yaml``.
-_PITCH_STEP_IDS = [
-    "paul_graham_intro",
-    "paul_graham_dataset",
-    "lora_paul_graham",
-    "lora_werner_erhard",
-    "founder_ai_agent",
-    "boardroom_cxo",
-    "business_infinity_resonance",
-    "asi_saga_self_learning",
-    "final_reveal",
-]
+_PITCH_STEP_IDS = list(WorkflowRegistryManager._PITCH_STEP_IDS)
 
 PITCH_STEP_IDS = list(_PITCH_STEP_IDS)
