@@ -72,6 +72,8 @@ async def strategic_review(request: WorkflowRequest):
 from aos_client import AOSApp
 from aos_client.observability import ObservabilityConfig
 
+from business_infinity.app_instance import set_app
+
 app = AOSApp(
     name="business-infinity",
     observability=ObservabilityConfig(
@@ -80,6 +82,7 @@ app = AOSApp(
         health_checks=["aos", "service-bus"],
     ),
 )
+set_app(app)
 from business_infinity import workflow_definitions  # register decorators
 functions = app.get_functions()
 ```

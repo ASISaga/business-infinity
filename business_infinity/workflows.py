@@ -1,14 +1,11 @@
 """Compatibility exports for BusinessInfinity workflow registration.
 
-This module intentionally imports :mod:`function_app` so existing imports
-(`from business_infinity.workflows import app`) still initialize the shared
-`AOSApp` instance before exports are accessed.
+Import ``function_app`` first so the shared ``AOSApp`` instance is initialized
+before these compatibility exports are accessed.
 """
 
 from __future__ import annotations
 
-# Ensure app initialization when using this legacy import path.
-import function_app  # noqa: F401  pylint: disable=unused-import
 from business_infinity.app_instance import get_app
 
 from business_infinity.workflow_definitions import (

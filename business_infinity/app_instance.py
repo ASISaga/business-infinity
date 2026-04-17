@@ -18,7 +18,7 @@ def get_app() -> AOSApp:
     app = _APP
     if app is None:
         raise RuntimeError(
-            "AOSApp has not been initialized. Ensure function_app.py is imported "
-            "before accessing workflow definitions."
+            "AOSApp has not been initialized. Import function_app before "
+            "accessing workflow definitions (for example: `import function_app`)."
         )
     return app
