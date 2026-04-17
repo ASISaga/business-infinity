@@ -23,7 +23,8 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["*"]
 
 [project.urls]
 Homepage = "https://github.com/ASISaga/business-infinity"
