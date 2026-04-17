@@ -75,6 +75,10 @@ from business_infinity import workflow_definitions  # register decorators
 functions = app.get_functions()
 ```
 
+The `workflow_definitions` import is intentional side-effect registration:
+decorators execute at import time and attach workflows/update handlers/tools to
+the shared `app` instance before `get_functions()` is called.
+
 ### `pyproject.toml`
 
 Project configuration:

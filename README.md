@@ -50,7 +50,9 @@ A lean Azure Functions application that demonstrates using the **Agent Operating
 ```python
 # workflow_definitions.py
 from aos_client import WorkflowRequest
-from function_app import app
+from business_infinity.app_instance import get_app
+
+app = get_app()
 
 @app.workflow("strategic-review")
 async def strategic_review(request: WorkflowRequest):

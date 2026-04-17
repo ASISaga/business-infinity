@@ -32,6 +32,7 @@ from aos_client import (
     workflow_template,
 )
 
+from business_infinity.app_instance import get_app
 from business_infinity.boardroom import (
     BOARDROOM_DEBATE_PURPOSE,
     BOARDROOM_DEBATE_SCOPE,
@@ -47,9 +48,9 @@ from business_infinity.boardroom import (
     load_workflow_yaml,
     save_workflow_yaml,
 )
-from function_app import app
 
 logger = logging.getLogger(__name__)
+app = get_app()  # pylint: disable=invalid-name
 
 # ── C-Suite Agent Selection ──────────────────────────────────────────────────
 
