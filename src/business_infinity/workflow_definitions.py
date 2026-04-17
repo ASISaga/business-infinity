@@ -33,7 +33,7 @@ from aos_client import (
     workflow_template,
 )
 
-from business_infinity.app_instance import get_app
+from business_infinity.app_instance import aos_app
 from business_infinity.boardroom import (
     BOARDROOM_DEBATE_PURPOSE,
     BOARDROOM_DEBATE_SCOPE,
@@ -53,7 +53,7 @@ from business_infinity.boardroom import (
 )
 
 logger = logging.getLogger(__name__)
-app = get_app()  # pylint: disable=invalid-name
+app = aos_app  # pylint: disable=invalid-name
 
 
 # ── C-Suite Agent Selector ───────────────────────────────────────────────────

@@ -7,13 +7,13 @@ description: "Azure Functions and AOS workflow patterns for Python repositories"
 
 ## AOSApp Setup
 
-Every workflow module starts with a single `AOSApp` instance:
+The `AOSApp` instance is created once in `app_instance.py` and imported wherever needed:
 
 ```python
 from aos_client import AOSApp, ObservabilityConfig
 
 # App name comes from repository spec — see .github/specs/repository.md
-app = AOSApp(
+aos_app = AOSApp(
     name="<app-name>",
     observability=ObservabilityConfig(
         structured_logging=True,
@@ -28,7 +28,9 @@ The SDK provisions HTTP triggers, Service Bus triggers, health endpoints, and au
 ## Workflow Registration
 
 ```python
-@app.workflow("workflow-name")
+from <package>.app_instance import aos_app
+
+@aos_app.workflow("workflow-name")
 async def workflow_fn(request: WorkflowRequest) -> Dict[str, Any]:
     ...
 ```
@@ -40,9 +42,13 @@ async def workflow_fn(request: WorkflowRequest) -> Dict[str, Any]:
 ## Azure Functions Entry Point
 
 ```python
-# function_app.py — zero boilerplate
-from <package>.workflows import app
-functions = app.get_functions()
+# function_app.py — blueprint pattern (Flex Consumption Plan)
+import azure.functions as func
+from <package>.workflows import aos_app
+
+bp = aos_app.get_blueprint()
+app = func.FunctionApp()
+app.register_blueprint(bp)
 ```
 
 Never add Azure Functions decorators directly to `function_app.py`.
@@ -96,7 +102,7 @@ status = await request.client.submit_orchestration(req)
 ## Update Handlers
 
 ```python
-@app.on_orchestration_update("workflow-name")
+@aos_app.on_orchestration_update("workflow-name")
 async def handle_update(update) -> None:
     logger.info("Update from %s: %s", update.agent_id, update.output)
 ```
@@ -104,7 +110,7 @@ async def handle_update(update) -> None:
 ## MCP Tool Registration
 
 ```python
-@app.mcp_tool("tool-name")
+@aos_app.mcp_tool("tool-name")
 async def my_tool(request) -> Any:
     return await request.client.call_mcp_tool("server", "method", request.body)
 ```

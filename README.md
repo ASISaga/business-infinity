@@ -8,8 +8,8 @@ A lean Azure Functions application that demonstrates using the **Agent Operating
 ┌─────────────────────────────────────────────────────┐
 │  BusinessInfinity (this app)                        │
 │  ┌───────────────────────────────────────────────┐  │
-│  │  workflows.py       @app.workflow decorators  │  │
-│  │  function_app.py    app.get_functions()       │  │
+│  │  workflows.py       @aos_app.workflow decs    │  │
+│  │  function_app.py    blueprint pattern         │  │
 │  │    └─ aos-client-sdk handles everything else  │  │
 │  └───────────────────────────────────────────────┘  │
 │  Zero Azure Functions boilerplate.                  │
@@ -50,11 +50,9 @@ A lean Azure Functions application that demonstrates using the **Agent Operating
 ```python
 # workflow_definitions.py
 from aos_client import WorkflowRequest
-from business_infinity.app_instance import get_app
+from business_infinity.app_instance import aos_app
 
-app = get_app()
-
-@app.workflow("strategic-review")
+@aos_app.workflow("strategic-review")
 async def strategic_review(request: WorkflowRequest):
     agents = await request.client.list_agents()
     c_suite = [a.agent_id for a in agents if a.agent_type in ("LeadershipAgent", "CMOAgent")]
@@ -65,26 +63,16 @@ async def strategic_review(request: WorkflowRequest):
     )
 ```
 
-### Azure Functions entry point (zero boilerplate)
+### Azure Functions entry point (blueprint pattern)
 
 ```python
 # function_app.py
-from aos_client import AOSApp
-from aos_client.observability import ObservabilityConfig
+import azure.functions as func
+from business_infinity.workflows import aos_app
 
-from business_infinity.app_instance import set_app
-
-app = AOSApp(
-    name="business-infinity",
-    observability=ObservabilityConfig(
-        structured_logging=True,
-        correlation_tracking=True,
-        health_checks=["aos", "service-bus"],
-    ),
-)
-set_app(app)
-from business_infinity import workflow_definitions  # register decorators
-functions = app.get_functions()
+bp = aos_app.get_blueprint()
+app = func.FunctionApp()
+app.register_blueprint(bp)
 ```
 
 ### Invoke via HTTP

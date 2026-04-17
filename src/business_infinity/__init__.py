@@ -12,10 +12,13 @@ and deployment.  BusinessInfinity just defines workflows.
 
 Usage::
 
-    from business_infinity.workflows import app
+    from business_infinity.workflows import aos_app
 
     # function_app.py:
-    functions = app.get_functions()
+    import azure.functions as func
+    bp = aos_app.get_blueprint()
+    app = func.FunctionApp()
+    app.register_blueprint(bp)
 """
 
 __version__ = "5.0.0"
