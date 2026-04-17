@@ -16,8 +16,8 @@ BusinessInfinity is a lean Python application that exposes business orchestratio
 ┌─────────────────────────────────────────────────────┐
 │  BusinessInfinity (this app)                        │
 │  ┌───────────────────────────────────────────────┐  │
-│  │  workflows.py       @app.workflow decorators  │  │
-│  │  function_app.py    app.get_functions()       │  │
+│  │  workflows.py       @aos_app.workflow decs    │  │
+│  │  function_app.py    blueprint pattern         │  │
 │  │    └─ aos-client-sdk handles everything else  │  │
 │  └───────────────────────────────────────────────┘  │
 │  Zero Azure Functions boilerplate.                  │
@@ -48,22 +48,14 @@ BusinessInfinity is a lean Python application that exposes business orchestratio
 
 ## Key Components
 
-### `src/business_infinity/workflows.py`
+### `src/business_infinity/app_instance.py`
 
-Compatibility export module. Provides:
-- Shared `app` instance import
-- C-suite agent ID constants and selection helpers
-
-Workflow definitions live in `src/business_infinity/workflow_definitions.py`.
-
-### `function_app.py`
-
-Zero-boilerplate Azure Functions entry point:
+Creates and exports the `AOSApp` instance as `aos_app`:
 ```python
 from aos_client import AOSApp
 from aos_client.observability import ObservabilityConfig
 
-app = AOSApp(
+aos_app = AOSApp(
     name="business-infinity",
     observability=ObservabilityConfig(
         structured_logging=True,
@@ -71,13 +63,32 @@ app = AOSApp(
         health_checks=["aos", "service-bus"],
     ),
 )
-from business_infinity import workflow_definitions  # register decorators
-functions = app.get_functions()
 ```
 
-The `workflow_definitions` import is intentional side-effect registration:
-decorators execute at import time and attach workflows/update handlers/tools to
-the shared `app` instance before `get_functions()` is called.
+### `src/business_infinity/workflows.py`
+
+Compatibility export module. Provides:
+- Shared `aos_app` instance import (also aliased as `app`)
+- C-suite agent ID constants and selection helpers
+
+Workflow definitions live in `src/business_infinity/workflow_definitions.py`.
+
+### `function_app.py`
+
+Azure Functions entry point using the blueprint pattern:
+```python
+import azure.functions as func
+from business_infinity.workflows import aos_app
+
+bp = aos_app.get_blueprint()
+app = func.FunctionApp()
+app.register_blueprint(bp)
+```
+
+The `aos_app.get_blueprint()` call builds an `azure.functions.Blueprint` with all
+registered HTTP triggers, Service Bus triggers, and health endpoints. The
+`func.FunctionApp()` is the Azure Functions runtime entry point, and
+`register_blueprint` attaches the blueprint's functions.
 
 ### `pyproject.toml`
 

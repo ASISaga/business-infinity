@@ -134,9 +134,11 @@ class TestAOSAppWorkflows:
     def test_observability_configured(self):
         assert app.observability is not None
 
-    def test_function_app_exports_functions(self):
-        assert hasattr(function_app, "functions")
-        assert function_app.functions is not None
+    def test_function_app_exposes_azure_function_app_instance(self):
+        """The runtime-discoverable app object is an Azure FunctionApp registered via blueprint."""
+        from azure.functions.decorators.function_app import FunctionApp
+        assert isinstance(function_app.app, FunctionApp)
+        assert not hasattr(function_app, "functions")
 
 
 class TestBoardroomPhilosophy:
