@@ -9,6 +9,6 @@ def test_function_app_exports_app_object() -> None:
     assert isinstance(function_app.app, FunctionApp)
 
 
-def test_function_app_compat_alias_points_to_same_object() -> None:
-    """Backward-compatible alias references the same object."""
-    assert function_app.functions is function_app.app
+def test_function_app_only_exposes_single_function_app_instance() -> None:
+    """Avoid duplicate top-level FunctionApp instances during indexing."""
+    assert not hasattr(function_app, "functions")
