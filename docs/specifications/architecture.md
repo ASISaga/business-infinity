@@ -50,18 +50,28 @@ BusinessInfinity is a lean Python application that exposes business orchestratio
 
 ### `src/business_infinity/workflows.py`
 
-The primary module. Contains:
-- `AOSApp` instance with observability config
+Compatibility export module. Provides:
+- Shared `app` instance import
 - C-suite agent ID constants and selection helpers
-- All `@app.workflow` decorated functions
-- `@app.on_orchestration_update` handlers
-- `@app.mcp_tool` registrations
+
+Workflow definitions live in `src/business_infinity/workflow_definitions.py`.
 
 ### `function_app.py`
 
 Zero-boilerplate Azure Functions entry point:
 ```python
-from business_infinity.workflows import app
+from aos_client import AOSApp
+from aos_client.observability import ObservabilityConfig
+
+app = AOSApp(
+    name="business-infinity",
+    observability=ObservabilityConfig(
+        structured_logging=True,
+        correlation_tracking=True,
+        health_checks=["aos", "service-bus"],
+    ),
+)
+from business_infinity import workflow_definitions  # register decorators
 functions = app.get_functions()
 ```
 

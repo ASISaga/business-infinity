@@ -2,6 +2,7 @@
 
 import pytest
 
+import function_app
 from business_infinity.workflows import (
     C_SUITE_AGENT_IDS,
     C_SUITE_TYPES,
@@ -132,6 +133,10 @@ class TestAOSAppWorkflows:
 
     def test_observability_configured(self):
         assert app.observability is not None
+
+    def test_function_app_exports_functions(self):
+        assert hasattr(function_app, "functions")
+        assert function_app.functions is not None
 
 
 class TestBoardroomPhilosophy:
