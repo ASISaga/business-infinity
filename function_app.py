@@ -2,5 +2,4 @@
 
 from business_infinity.workflows import app as workflow_app
 
-functions = workflow_app.get_functions()
-app = functions
+app = workflow_app.get_functions()
