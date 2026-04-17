@@ -1,8 +1,13 @@
-"""Azure Functions runtime entry point for BusinessInfinity workflows."""
-
 import azure.functions as func
 from business_infinity.workflows import aos_app
 
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+
+# Register the AOS Blueprint
 bp = aos_app.get_blueprint()
-app = func.FunctionApp()
 app.register_blueprint(bp)
+
+# Add this to force the host to acknowledge the app instance
+@app.route(route="ping", methods=["GET"])
+def ping(req: func.HttpRequest) -> func.HttpResponse:
+    return func.HttpResponse("BusinessInfinity Host Active", status_code=200)
