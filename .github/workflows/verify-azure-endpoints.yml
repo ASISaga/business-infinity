@@ -65,21 +65,64 @@ jobs:
           RESOURCE_GROUP: ${{ steps.resolve.outputs.resource_group }}
         run: |
           set -euo pipefail
-          FUNCTIONS_JSON=$(az functionapp function list \
+          MAX_ATTEMPTS=5
+          RETRY_DELAY_SECONDS=15
+          FUNCTIONS_JSON='[]'
+          COUNT=0
+
+          if ! az functionapp sync-functions \
             --name "${FUNCTION_APP}" \
             --resource-group "${RESOURCE_GROUP}" \
-            --output json)
+            --output none; then
+            echo "::warning::Failed to sync functions before verification. Continuing with discovery checks."
+          fi
 
-          COUNT=$(jq 'length' <<< "${FUNCTIONS_JSON}")
-          echo "::notice::Function count: ${COUNT}"
+          for ATTEMPT in $(seq 1 "${MAX_ATTEMPTS}"); do
+            FUNCTIONS_JSON=$(az functionapp function list \
+              --name "${FUNCTION_APP}" \
+              --resource-group "${RESOURCE_GROUP}" \
+              --output json)
+
+            COUNT=$(jq 'length' <<< "${FUNCTIONS_JSON}")
+            echo "::notice::Function count (attempt ${ATTEMPT}/${MAX_ATTEMPTS}): ${COUNT}"
+
+            if [[ "${COUNT}" -gt 0 ]]; then
+              break
+            fi
+
+            if [[ "${ATTEMPT}" -lt "${MAX_ATTEMPTS}" ]]; then
+              echo "::warning::No functions discovered yet. Waiting ${RETRY_DELAY_SECONDS}s before retrying..."
+              sleep "${RETRY_DELAY_SECONDS}"
+            fi
+          done
 
           if [[ "${COUNT}" -eq 0 ]]; then
-            echo "::error::No functions discovered in ${FUNCTION_APP}"
+            echo "::error::No functions discovered in ${FUNCTION_APP} after ${MAX_ATTEMPTS} attempts"
+            {
+              echo "### ❌ Endpoint verification failed"
+              echo ""
+              echo "- Function App: \`${FUNCTION_APP}\`"
+              echo "- Resource Group: \`${RESOURCE_GROUP}\`"
+              echo "- Function count after retries: \`${COUNT}\`"
+            } >> "${GITHUB_STEP_SUMMARY}"
+
             echo "::group::Troubleshooting"
+            az functionapp show \
+              --name "${FUNCTION_APP}" \
+              --resource-group "${RESOURCE_GROUP}" \
+              --query "{state:state, defaultHostName:defaultHostName, hostNames:hostNames, kind:kind, lastModifiedTimeUtc:lastModifiedTimeUtc}" \
+              --output json
+
+            az functionapp config show \
+              --name "${FUNCTION_APP}" \
+              --resource-group "${RESOURCE_GROUP}" \
+              --query "{linuxFxVersion:linuxFxVersion, alwaysOn:alwaysOn, minTlsVersion:minTlsVersion, preWarmedInstanceCount:preWarmedInstanceCount}" \
+              --output json
+
             az functionapp config appsettings list \
               --name "${FUNCTION_APP}" \
               --resource-group "${RESOURCE_GROUP}" \
-              --query "[?name=='WEBSITE_RUN_FROM_PACKAGE' || name=='FUNCTIONS_WORKER_RUNTIME' || name=='PYTHONPATH']"
+              --query "[?name=='WEBSITE_RUN_FROM_PACKAGE' || name=='FUNCTIONS_EXTENSION_VERSION' || name=='FUNCTIONS_WORKER_RUNTIME' || name=='PYTHONPATH' || name=='SCM_DO_BUILD_DURING_DEPLOYMENT']"
             echo "::endgroup::"
             exit 1
           fi
@@ -87,6 +130,11 @@ jobs:
           echo "::group::Discovered functions"
           jq -r '.[] | "- \(.name)"' <<< "${FUNCTIONS_JSON}"
           echo "::endgroup::"
+
+          HTTP_TRIGGER_COUNT=$(jq '
+            map(select(any(.config.bindings[]?; .type == "httpTrigger")))
+            | length
+          ' <<< "${FUNCTIONS_JSON}")
 
           echo "::group::HTTP trigger endpoints"
           jq -r '
@@ -96,3 +144,16 @@ jobs:
             | "- \(.name): \(.invokeUrlTemplate // "No URL provided by Azure API")"
           ' <<< "${FUNCTIONS_JSON}"
           echo "::endgroup::"
+
+          {
+            echo "### ✅ Endpoint verification passed"
+            echo ""
+            echo "- Function App: \`${FUNCTION_APP}\`"
+            echo "- Resource Group: \`${RESOURCE_GROUP}\`"
+            echo "- Functions discovered: \`${COUNT}\`"
+            echo "- HTTP triggers discovered: \`${HTTP_TRIGGER_COUNT}\`"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+          if [[ "${HTTP_TRIGGER_COUNT}" -eq 0 ]]; then
+            echo "::warning::No HTTP triggers discovered. Verify function bindings if HTTP endpoints are expected."
+          fi
