@@ -48,10 +48,11 @@ A lean Azure Functions application that demonstrates using the **Agent Operating
 ### Define workflows with decorators
 
 ```python
-# workflows.py
-from aos_client import AOSApp, WorkflowRequest
+# workflow_definitions.py
+from aos_client import WorkflowRequest
+from business_infinity.app_instance import get_app
 
-app = AOSApp(name="business-infinity")
+app = get_app()
 
 @app.workflow("strategic-review")
 async def strategic_review(request: WorkflowRequest):
@@ -68,7 +69,21 @@ async def strategic_review(request: WorkflowRequest):
 
 ```python
 # function_app.py
-from business_infinity.workflows import app
+from aos_client import AOSApp
+from aos_client.observability import ObservabilityConfig
+
+from business_infinity.app_instance import set_app
+
+app = AOSApp(
+    name="business-infinity",
+    observability=ObservabilityConfig(
+        structured_logging=True,
+        correlation_tracking=True,
+        health_checks=["aos", "service-bus"],
+    ),
+)
+set_app(app)
+from business_infinity import workflow_definitions  # register decorators
 functions = app.get_functions()
 ```
 
