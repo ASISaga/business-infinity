@@ -7,14 +7,14 @@ from typing import Dict
 from azure.functions.decorators.function_app import FunctionApp
 
 import function_app
-from business_infinity.additional_blueprints import (
+from business_infinity.blueprints import (
     boardroom_workflow_details,
     boardroom_workflows,
     seo_category_details,
     seo_summary,
 )
-from business_infinity.boardroom import list_registered_workflows
-from business_infinity.seo import PAIN_TAXONOMY, total_query_count
+from business_infinity.boardroom import WorkflowRegistryManager
+from business_infinity.seo import PAIN_TAXONOMY, PainTaxonomy
 
 
 @dataclass
@@ -44,13 +44,14 @@ def test_function_app_registers_additional_blueprints() -> None:
     assert "boardroom_workflow_details" in function_names
     assert "seo_summary" in function_names
     assert "seo_category_details" in function_names
+    assert "ping" in function_names
 
 
 def test_boardroom_workflows_returns_registry_payload() -> None:
     """Boardroom list endpoint mirrors registry data."""
     response = boardroom_workflows(RequestStub())
     payload = json.loads(response.get_body().decode("utf-8"))
-    registry = list_registered_workflows()
+    registry = WorkflowRegistryManager.list_all()
     assert response.status_code == 200
     assert payload["count"] == len(registry)
     assert payload["workflows"] == registry
@@ -76,7 +77,7 @@ def test_boardroom_workflow_details_returns_404_for_unknown_workflow() -> None:
 
 def test_boardroom_workflow_details_returns_metadata_for_known_workflow() -> None:
     """Boardroom details endpoint returns metadata and steps for known IDs."""
-    workflow_id = next(iter(list_registered_workflows()))
+    workflow_id = next(iter(WorkflowRegistryManager.list_all()))
     response = boardroom_workflow_details(
         RequestStub(route_params={"workflow_id": workflow_id})
     )
@@ -92,7 +93,7 @@ def test_seo_summary_returns_total_query_count() -> None:
     response = seo_summary(RequestStub())
     payload = json.loads(response.get_body().decode("utf-8"))
     assert response.status_code == 200
-    assert payload["total_queries"] == total_query_count()
+    assert payload["total_queries"] == PainTaxonomy.total_query_count()
 
 
 def test_seo_category_details_returns_400_when_missing_slug() -> None:

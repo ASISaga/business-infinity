@@ -18,18 +18,10 @@ from business_infinity.seo import (
     GITHUB_REPO,
     PAIN_TAXONOMY,
     SITE_URL,
-    chatroom_deep_link,
-    generate_faq_jsonld,
-    generate_knowledge_graph_jsonld,
-    generate_workflow_spec_jsonld,
-    get_category_by_number,
-    get_category_by_slug,
-    github_yaml_url,
-    pillar_page_url,
-    render_jsonld_script,
-    spec_page_url,
-    total_query_count,
+    PainTaxonomy,
 )
+from business_infinity.seo.deep_links import DeepLinkBuilder
+from business_infinity.seo.jsonld import JsonLDGenerator
 
 # ── Taxonomy Structure ───────────────────────────────────────────────────────
 
@@ -72,7 +64,7 @@ class TestPainTaxonomy:
 
     def test_total_queries_exceeds_100(self) -> None:
         """The Entropy Index must index 100+ raw panic-driven queries."""
-        assert total_query_count() > 100
+        assert PainTaxonomy.total_query_count() > 100
 
     def test_each_category_has_at_least_7_queries(self) -> None:
         for cat in PAIN_TAXONOMY:
@@ -126,22 +118,22 @@ class TestCategoryLookups:
     """Validate category lookup helpers."""
 
     def test_get_by_slug_returns_correct_category(self) -> None:
-        cat = get_category_by_slug("culture-dilution-at-scale")
+        cat = PainTaxonomy.get_by_slug("culture-dilution-at-scale")
         assert cat["number"] == 6
         assert cat["owner_legend"] == "Peter Drucker"
 
     def test_get_by_number_returns_correct_category(self) -> None:
-        cat = get_category_by_number(8)
+        cat = PainTaxonomy.get_by_number(8)
         assert cat["slug"] == "exit-due-diligence-anxiety"
         assert cat["owner_legend"] == "Warren Buffett"
 
     def test_get_by_slug_raises_on_unknown(self) -> None:
         with pytest.raises(KeyError):
-            get_category_by_slug("nonexistent")
+            PainTaxonomy.get_by_slug("nonexistent")
 
     def test_get_by_number_raises_on_unknown(self) -> None:
         with pytest.raises(KeyError):
-            get_category_by_number(99)
+            PainTaxonomy.get_by_number(99)
 
 
 # ── Parametric Deep-Links ────────────────────────────────────────────────────
@@ -151,24 +143,24 @@ class TestDeepLinks:
     """Validate parametric chatroom deep-links."""
 
     def test_chatroom_deep_link_format(self) -> None:
-        link = chatroom_deep_link("exit_readiness", "cfo")
+        link = DeepLinkBuilder.chatroom("exit_readiness", "cfo")
         assert link == f"{CHATROOM_URL}?workflow=exit_readiness&agent=cfo"
 
     def test_github_yaml_url_format(self) -> None:
-        url = github_yaml_url("docs/workflow/samples/pitch.yaml")
+        url = DeepLinkBuilder.github_yaml("docs/workflow/samples/pitch.yaml")
         assert url == f"{GITHUB_REPO}/blob/main/docs/workflow/samples/pitch.yaml"
 
     def test_spec_page_url_format(self) -> None:
-        url = spec_page_url("founder_sovereignty")
+        url = DeepLinkBuilder.spec_page("founder_sovereignty")
         assert url == f"{SITE_URL}/specs/founder-sovereignty"
 
     def test_pillar_page_url_format(self) -> None:
-        url = pillar_page_url("ai-sprawl-agentic-risk")
+        url = DeepLinkBuilder.pillar_page("ai-sprawl-agentic-risk")
         assert url == f"{SITE_URL}/entropy-index/ai-sprawl-agentic-risk"
 
     def test_every_category_produces_valid_deep_link(self) -> None:
         for cat in PAIN_TAXONOMY:
-            link = chatroom_deep_link(cat["workflow_id"], cat["owner_agent"])
+            link = DeepLinkBuilder.chatroom(cat["workflow_id"], cat["owner_agent"])
             assert "workflow=" in link
             assert "agent=" in link
             assert cat["workflow_id"] in link
@@ -183,35 +175,35 @@ class TestFAQJsonLD:
 
     def test_faq_type_is_faq_page(self) -> None:
         cat = PAIN_TAXONOMY[0]
-        ld = generate_faq_jsonld(cat)
+        ld = JsonLDGenerator.faq(cat)
         assert ld["@type"] == "FAQPage"
 
     def test_faq_has_schema_context(self) -> None:
         cat = PAIN_TAXONOMY[0]
-        ld = generate_faq_jsonld(cat)
+        ld = JsonLDGenerator.faq(cat)
         assert ld["@context"] == "https://schema.org"
 
     def test_faq_question_count_matches_queries(self) -> None:
         for cat in PAIN_TAXONOMY:
-            ld = generate_faq_jsonld(cat)
+            ld = JsonLDGenerator.faq(cat)
             assert len(ld["mainEntity"]) == len(cat["queries"])
 
     def test_faq_questions_contain_raw_queries(self) -> None:
         cat = PAIN_TAXONOMY[5]  # Culture Dilution
-        ld = generate_faq_jsonld(cat)
+        ld = JsonLDGenerator.faq(cat)
         query_texts = {q["name"] for q in ld["mainEntity"]}
         for q in cat["queries"]:
             assert q["q"] in query_texts
 
     def test_faq_answers_contain_diagnostics(self) -> None:
         cat = PAIN_TAXONOMY[7]  # Exit Readiness
-        ld = generate_faq_jsonld(cat)
+        ld = JsonLDGenerator.faq(cat)
         for i, entity in enumerate(ld["mainEntity"]):
             assert entity["acceptedAnswer"]["text"] == cat["queries"][i]["diagnostic"]
 
     def test_faq_is_valid_json(self) -> None:
         for cat in PAIN_TAXONOMY:
-            ld = generate_faq_jsonld(cat)
+            ld = JsonLDGenerator.faq(cat)
             # Should be serializable to valid JSON
             json.dumps(ld)
 
@@ -220,26 +212,26 @@ class TestKnowledgeGraphJsonLD:
     """Validate the site-wide Knowledge Graph."""
 
     def test_knowledge_graph_type(self) -> None:
-        kg = generate_knowledge_graph_jsonld()
+        kg = JsonLDGenerator.knowledge_graph()
         assert kg["@type"] == "ItemList"
 
     def test_knowledge_graph_has_10_items(self) -> None:
-        kg = generate_knowledge_graph_jsonld()
+        kg = JsonLDGenerator.knowledge_graph()
         assert kg["numberOfItems"] == 10
         assert len(kg["itemListElement"]) == 10
 
     def test_knowledge_graph_items_are_services(self) -> None:
-        kg = generate_knowledge_graph_jsonld()
+        kg = JsonLDGenerator.knowledge_graph()
         for item in kg["itemListElement"]:
             assert item["@type"] == "Service"
 
     def test_knowledge_graph_provider_is_asi_saga(self) -> None:
-        kg = generate_knowledge_graph_jsonld()
+        kg = JsonLDGenerator.knowledge_graph()
         for item in kg["itemListElement"]:
             assert item["provider"]["name"] == "ASI Saga"
 
     def test_knowledge_graph_offers_contain_legends(self) -> None:
-        kg = generate_knowledge_graph_jsonld()
+        kg = JsonLDGenerator.knowledge_graph()
         legend_names = {cat["owner_legend"] for cat in PAIN_TAXONOMY}
         for item in kg["itemListElement"]:
             offer_name = item["offers"]["name"]
@@ -249,7 +241,7 @@ class TestKnowledgeGraphJsonLD:
             ), f"Offer {offer_name!r} does not mention a legend"
 
     def test_knowledge_graph_is_valid_json(self) -> None:
-        kg = generate_knowledge_graph_jsonld()
+        kg = JsonLDGenerator.knowledge_graph()
         json.dumps(kg)
 
 
@@ -258,17 +250,17 @@ class TestWorkflowSpecJsonLD:
 
     def test_spec_type_is_software_source_code(self) -> None:
         cat = PAIN_TAXONOMY[0]
-        ld = generate_workflow_spec_jsonld(cat)
+        ld = JsonLDGenerator.workflow_spec(cat)
         assert ld["@type"] == "SoftwareSourceCode"
 
     def test_spec_has_github_repository_link(self) -> None:
         for cat in PAIN_TAXONOMY:
-            ld = generate_workflow_spec_jsonld(cat)
+            ld = JsonLDGenerator.workflow_spec(cat)
             assert GITHUB_REPO in ld["codeRepository"]
 
     def test_spec_language_is_yaml(self) -> None:
         cat = PAIN_TAXONOMY[0]
-        ld = generate_workflow_spec_jsonld(cat)
+        ld = JsonLDGenerator.workflow_spec(cat)
         assert ld["programmingLanguage"] == "YAML"
 
 
@@ -280,13 +272,13 @@ class TestRenderJsonLD:
 
     def test_renders_script_tag(self) -> None:
         data = {"@type": "Thing", "name": "Test"}
-        result = render_jsonld_script(data)
+        result = JsonLDGenerator.render_script(data)
         assert result.startswith('<script type="application/ld+json">')
         assert result.endswith("</script>")
 
     def test_contains_valid_json(self) -> None:
         data = {"@type": "FAQPage", "mainEntity": []}
-        result = render_jsonld_script(data)
+        result = JsonLDGenerator.render_script(data)
         # Extract JSON from between script tags
         json_str = result.split("\n", 1)[1].rsplit("\n", 1)[0]
         parsed = json.loads(json_str)

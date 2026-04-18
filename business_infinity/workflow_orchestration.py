@@ -17,8 +17,7 @@ from business_infinity.app_instance import aos_app
 from business_infinity.boardroom import (
     WORKFLOW_REGISTRY,
     BoardroomStateManager,
-    get_workflow_metadata,
-    get_workflow_step_ids,
+    WorkflowRegistryManager,
 )
 from business_infinity.workflow_utils import OwnerStateLoader
 
@@ -44,7 +43,7 @@ class GenericWorkflowOrchestration:
             raise ValueError("workflow_id is required in request body")
 
         try:
-            metadata = get_workflow_metadata(workflow_id)
+            metadata = WorkflowRegistryManager.get_metadata(workflow_id)
         except KeyError:
             registered = list(WORKFLOW_REGISTRY.keys())
             raise ValueError(
@@ -75,7 +74,7 @@ class GenericWorkflowOrchestration:
             )
 
         try:
-            step_ids = get_workflow_step_ids(workflow_id)
+            step_ids = WorkflowRegistryManager.get_step_ids(workflow_id)
         except NotImplementedError:
             step_ids = []
         step_id = request.body.get(
