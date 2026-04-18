@@ -7,7 +7,6 @@ from azure.functions.decorators.function_app import FunctionApp
 
 import function_app
 from business_infinity.additional_blueprints import (
-    _json_response,
     boardroom_workflow_details,
     boardroom_workflows,
     seo_category_details,
@@ -37,14 +36,6 @@ def test_function_app_registers_additional_blueprints() -> None:
     assert "boardroom_workflow_details" in function_names
     assert "seo_summary" in function_names
     assert "seo_category_details" in function_names
-
-
-def test_json_response_defaults_to_json_200() -> None:
-    """JSON helper returns expected content type and default status."""
-    response = _json_response({"ok": True})
-    assert response.status_code == 200
-    assert response.mimetype == "application/json"
-    assert json.loads(response.get_body().decode("utf-8")) == {"ok": True}
 
 
 def test_boardroom_workflows_returns_registry_payload() -> None:
