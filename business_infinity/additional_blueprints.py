@@ -24,6 +24,18 @@ def _json_response(payload: Dict[str, Any], status_code: int = 200) -> func.Http
     )
 
 
+def _require_route_param(
+    req: func.HttpRequest, param_name: str
+) -> tuple[str | None, func.HttpResponse | None]:
+    """Return a required route parameter value or a 400 response."""
+    value = req.route_params.get(param_name)
+    if not value:
+        return None, _json_response(
+            {"error": f"{param_name} route parameter is required"}, 400
+        )
+    return value, None
+
+
 boardroom_blueprint = func.Blueprint()
 seo_blueprint = func.Blueprint()
 
@@ -43,9 +55,9 @@ def boardroom_workflows(_req: func.HttpRequest) -> func.HttpResponse:
 @boardroom_blueprint.route(route="boardroom/workflows/{workflow_id}", methods=["GET"])
 def boardroom_workflow_details(req: func.HttpRequest) -> func.HttpResponse:
     """Return metadata and step IDs for a single workflow."""
-    workflow_id = req.route_params.get("workflow_id", "")
-    if not workflow_id:
-        return _json_response({"error": "workflow_id route parameter is required"}, 400)
+    workflow_id, error_response = _require_route_param(req, "workflow_id")
+    if error_response:
+        return error_response
 
     try:
         metadata = get_workflow_metadata(workflow_id)
@@ -75,9 +87,9 @@ def seo_summary(_req: func.HttpRequest) -> func.HttpResponse:
 @seo_blueprint.route(route="seo/categories/{slug}", methods=["GET"])
 def seo_category_details(req: func.HttpRequest) -> func.HttpResponse:
     """Return a single SEO taxonomy category by slug."""
-    slug = req.route_params.get("slug", "")
-    if not slug:
-        return _json_response({"error": "slug route parameter is required"}, 400)
+    slug, error_response = _require_route_param(req, "slug")
+    if error_response:
+        return error_response
 
     try:
         category = get_category_by_slug(slug)
