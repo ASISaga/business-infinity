@@ -1,7 +1,20 @@
 """Tests for Azure Functions entrypoint wiring."""
 
-import function_app
+import json
+from types import SimpleNamespace
+
 from azure.functions.decorators.function_app import FunctionApp
+
+import function_app
+from business_infinity.additional_blueprints import (
+    _json_response,
+    boardroom_workflow_details,
+    boardroom_workflows,
+    seo_category_details,
+    seo_summary,
+)
+from business_infinity.boardroom import list_registered_workflows
+from business_infinity.seo import PAIN_TAXONOMY, total_query_count
 
 
 def test_function_app_exports_app_object() -> None:
@@ -24,3 +37,86 @@ def test_function_app_registers_additional_blueprints() -> None:
     assert "boardroom_workflow_details" in function_names
     assert "seo_summary" in function_names
     assert "seo_category_details" in function_names
+
+
+def test_json_response_defaults_to_json_200() -> None:
+    """JSON helper returns expected content type and default status."""
+    response = _json_response({"ok": True})
+    assert response.status_code == 200
+    assert response.mimetype == "application/json"
+    assert json.loads(response.get_body().decode("utf-8")) == {"ok": True}
+
+
+def test_boardroom_workflows_returns_registry_payload() -> None:
+    """Boardroom list endpoint mirrors registry data."""
+    response = boardroom_workflows(SimpleNamespace())
+    payload = json.loads(response.get_body().decode("utf-8"))
+    registry = list_registered_workflows()
+    assert response.status_code == 200
+    assert payload["count"] == len(registry)
+    assert payload["workflows"] == registry
+
+
+def test_boardroom_workflow_details_returns_400_when_missing_route_param() -> None:
+    """Boardroom details endpoint validates workflow_id route param."""
+    response = boardroom_workflow_details(SimpleNamespace(route_params={}))
+    payload = json.loads(response.get_body().decode("utf-8"))
+    assert response.status_code == 400
+    assert "workflow_id route parameter is required" in payload["error"]
+
+
+def test_boardroom_workflow_details_returns_404_for_unknown_workflow() -> None:
+    """Boardroom details endpoint returns 404 for unknown workflow IDs."""
+    response = boardroom_workflow_details(
+        SimpleNamespace(route_params={"workflow_id": "does-not-exist"})
+    )
+    payload = json.loads(response.get_body().decode("utf-8"))
+    assert response.status_code == 404
+    assert "Unknown workflow_id" in payload["error"]
+
+
+def test_boardroom_workflow_details_returns_metadata_for_known_workflow() -> None:
+    """Boardroom details endpoint returns metadata and steps for known IDs."""
+    workflow_id = next(iter(list_registered_workflows()))
+    response = boardroom_workflow_details(
+        SimpleNamespace(route_params={"workflow_id": workflow_id})
+    )
+    payload = json.loads(response.get_body().decode("utf-8"))
+    assert response.status_code == 200
+    assert payload["workflow_id"] == workflow_id
+    assert "metadata" in payload
+    assert "step_ids" in payload
+
+
+def test_seo_summary_returns_total_query_count() -> None:
+    """SEO summary endpoint returns global taxonomy metrics."""
+    response = seo_summary(SimpleNamespace())
+    payload = json.loads(response.get_body().decode("utf-8"))
+    assert response.status_code == 200
+    assert payload["total_queries"] == total_query_count()
+
+
+def test_seo_category_details_returns_400_when_missing_slug() -> None:
+    """SEO details endpoint validates slug route param."""
+    response = seo_category_details(SimpleNamespace(route_params={}))
+    payload = json.loads(response.get_body().decode("utf-8"))
+    assert response.status_code == 400
+    assert "slug route parameter is required" in payload["error"]
+
+
+def test_seo_category_details_returns_404_for_unknown_slug() -> None:
+    """SEO details endpoint returns 404 for unknown category slugs."""
+    response = seo_category_details(SimpleNamespace(route_params={"slug": "unknown"}))
+    payload = json.loads(response.get_body().decode("utf-8"))
+    assert response.status_code == 404
+    assert "Unknown category slug" in payload["error"]
+
+
+def test_seo_category_details_returns_category_for_known_slug() -> None:
+    """SEO details endpoint returns category payload for known slug."""
+    slug = PAIN_TAXONOMY[0]["slug"]
+    response = seo_category_details(SimpleNamespace(route_params={"slug": slug}))
+    payload = json.loads(response.get_body().decode("utf-8"))
+    assert response.status_code == 200
+    assert payload["slug"] == slug
+    assert payload["category"]["slug"] == slug

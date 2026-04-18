@@ -29,9 +29,8 @@ seo_blueprint = func.Blueprint()
 
 
 @boardroom_blueprint.route(route="boardroom/workflows", methods=["GET"])
-def boardroom_workflows(req: func.HttpRequest) -> func.HttpResponse:
+def boardroom_workflows(_req: func.HttpRequest) -> func.HttpResponse:
     """Return all registered boardroom workflows."""
-    del req
     workflows = list_registered_workflows()
     return _json_response(
         {
@@ -64,9 +63,8 @@ def boardroom_workflow_details(req: func.HttpRequest) -> func.HttpResponse:
 
 
 @seo_blueprint.route(route="seo/summary", methods=["GET"])
-def seo_summary(req: func.HttpRequest) -> func.HttpResponse:
+def seo_summary(_req: func.HttpRequest) -> func.HttpResponse:
     """Return SEO taxonomy summary metrics."""
-    del req
     return _json_response(
         {
             "total_queries": total_query_count(),
