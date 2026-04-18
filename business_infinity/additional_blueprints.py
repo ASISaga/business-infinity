@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Tuple
 
 import azure.functions as func
 
@@ -26,7 +26,7 @@ def _json_response(payload: Dict[str, Any], status_code: int = 200) -> func.Http
 
 def _require_route_param(
     req: func.HttpRequest, param_name: str
-) -> tuple[str | None, func.HttpResponse | None]:
+) -> Tuple[Optional[str], Optional[func.HttpResponse]]:
     """Return a required route parameter value or a 400 response."""
     value = req.route_params.get(param_name)
     if not value:

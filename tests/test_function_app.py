@@ -2,6 +2,7 @@
 
 import json
 from dataclasses import dataclass, field
+from typing import Dict
 
 from azure.functions.decorators.function_app import FunctionApp
 
@@ -20,7 +21,7 @@ from business_infinity.seo import PAIN_TAXONOMY, total_query_count
 class RequestStub:
     """Minimal request stub with route params for endpoint tests."""
 
-    route_params: dict[str, str] = field(default_factory=dict)
+    route_params: Dict[str, str] = field(default_factory=dict)
 
 
 def test_function_app_exports_app_object() -> None:
