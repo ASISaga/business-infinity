@@ -361,10 +361,8 @@ class TestWorkflowEditor:
         fake_samples.mkdir(parents=True)
         shutil.copy(real_yaml, fake_samples / "pitch.yaml")
 
-        # Patch the yaml_manager module's __file__ so _resolve_yaml_path points at
-        # our temp directory (three levels up from the boardroom sub-package).
-        fake_pkg = fake_project / "business_infinity" / "boardroom" / "yaml_manager.py"
-        monkeypatch.setattr(yaml_manager_module, "__file__", str(fake_pkg))
+        # Patch PROJECT_ROOT where yaml_manager imported it.
+        monkeypatch.setattr(yaml_manager_module, "PROJECT_ROOT", fake_project)
 
         original = WorkflowYAMLManager.load("pitch_business_infinity")
         # Mutate one step's narrative

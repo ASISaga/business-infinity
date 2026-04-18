@@ -31,9 +31,13 @@ def boardroom_workflow_details(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
         metadata = WorkflowRegistryManager.get_metadata(workflow_id)
-        step_ids = WorkflowRegistryManager.get_step_ids(workflow_id)
     except KeyError:
         return json_response({"error": f"Unknown workflow_id '{workflow_id}'"}, 404)
+
+    try:
+        step_ids = WorkflowRegistryManager.get_step_ids(workflow_id)
+    except NotImplementedError:
+        step_ids = []
 
     return json_response(
         {

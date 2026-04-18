@@ -24,6 +24,8 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, List, Set
 
+from business_infinity._paths import PROJECT_ROOT
+
 
 class BoardroomStateManager:
     """Manages segregated boardroom state documents.
@@ -38,10 +40,10 @@ class BoardroomStateManager:
     """
 
     #: Path to the ``boardroom/mind/collective/`` directory (shared state).
-    _STATE_DIR: Path = Path(__file__).parent.parent.parent / "boardroom" / "mind" / "collective"
+    _STATE_DIR: Path = PROJECT_ROOT / "boardroom" / "mind" / "collective"
 
     #: Path to the ``boardroom/mind/`` directory relative to the project root.
-    _MIND_DIR: Path = Path(__file__).parent.parent.parent / "boardroom" / "mind"
+    _MIND_DIR: Path = PROJECT_ROOT / "boardroom" / "mind"
 
     #: Mapping from agent ID to state filename stem (without extension).
     #: All agent state files use the ``.jsonld`` extension.
@@ -266,9 +268,7 @@ class BoardroomStateManager:
     }
 
     #: Path to the ``boardroom/mind/schemas/`` directory.
-    _SCHEMAS_DIR: Path = (
-        Path(__file__).parent.parent.parent / "boardroom" / "mind" / "schemas"
-    )
+    _SCHEMAS_DIR: Path = PROJECT_ROOT / "boardroom" / "mind" / "schemas"
 
     @classmethod
     def _state_path(cls, filename: str) -> Path:

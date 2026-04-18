@@ -11,6 +11,7 @@ from typing import Any, Dict
 
 import yaml
 
+from business_infinity._paths import PROJECT_ROOT
 from business_infinity.boardroom.registry import WorkflowRegistryManager
 
 
@@ -20,7 +21,7 @@ class WorkflowYAMLManager:
     @staticmethod
     def _resolve_yaml_path(yaml_path: str) -> Path:
         """Resolve a registry ``yaml_path`` to an absolute filesystem path."""
-        return Path(__file__).parent.parent.parent / yaml_path
+        return PROJECT_ROOT / yaml_path
 
     @staticmethod
     def _validate_data(data: Dict[str, Any]) -> None:
