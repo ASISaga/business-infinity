@@ -20,7 +20,7 @@ from business_infinity.boardroom import (
     BoardroomStateManager,
     CXO_DOMAINS,
 )
-from business_infinity.workflow_utils import CSuiteAgentSelector
+from business_infinity.workflows._utils import CSuiteAgentSelector
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +37,10 @@ class BoardroomDebateWorkflows:
     """
 
     @staticmethod
-    async def debate(request: WorkflowRequest) -> Dict[str, Any]:
+    async def debate(request: WorkflowRequest, agents=None) -> Dict[str, Any]:
         """Start a purpose-driven boardroom debate orchestration."""
-        agents = await CSuiteAgentSelector.select(request.client)
+        if agents is None:
+            agents = await CSuiteAgentSelector.select(request.client)
         agent_ids = [a.agent_id for a in agents]
 
         if not agent_ids:

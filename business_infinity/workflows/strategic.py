@@ -13,7 +13,7 @@ from typing import Any, Dict
 from aos_client import WorkflowRequest
 
 from business_infinity.app_instance import aos_app
-from business_infinity.workflow_utils import (
+from business_infinity.workflows._utils import (
     CSuiteAgentSelector,
     OrchestrationUpdateHandlers,
     c_suite_orchestration,

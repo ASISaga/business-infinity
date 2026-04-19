@@ -112,7 +112,7 @@ class OwnerStateLoader:
         owner_agent_id: str, workflow_label: str
     ) -> Dict[str, Dict[str, Any]]:
         """Load owner state for workflow payloads with safe defaults."""
-        from business_infinity.boardroom import BoardroomStateManager  # avoid circular: boardroom.py imports workflow_utils indirectly
+        from business_infinity.boardroom import BoardroomStateManager  # avoid circular: boardroom.py imports _utils indirectly
 
         try:
             return {
