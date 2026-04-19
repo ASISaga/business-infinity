@@ -267,7 +267,7 @@ jobs:
         run: |
           set -euo pipefail
           export RESOURCE_GROUP="${AZURE_RESOURCE_GROUP:-rg-aos-${DEPLOY_ENV}}"
-          export PREFIX="func-business-infinity-${DEPLOY_ENV}-"
+          export PREFIX="fa-business-infin-${DEPLOY_ENV}-"
 
           echo "::group::Resolving Azure Function App"
           echo "  Subscription:   ${AZURE_SUBSCRIPTION_ID}"
