@@ -5,13 +5,14 @@ from business_infinity.blueprints import (
     health_blueprint,
     seo_blueprint,
 )
-from business_infinity.workflows import aos_app
+# from business_infinity.workflows import aos_app
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 # Register the AOS Blueprint
-bp = aos_app.get_blueprint()
-app.register_blueprint(bp)
+# bp = aos_app.get_blueprint()
+# app.register_blueprint(bp)
+
 app.register_blueprint(boardroom_blueprint)
 app.register_blueprint(seo_blueprint)
 app.register_blueprint(health_blueprint)
