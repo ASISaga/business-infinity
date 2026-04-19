@@ -19,7 +19,7 @@ from business_infinity.boardroom import (
     BoardroomStateManager,
     WorkflowRegistryManager,
 )
-from business_infinity.workflow_utils import OwnerStateLoader
+from business_infinity.workflows._utils import OwnerStateLoader
 
 logger = logging.getLogger(__name__)
 

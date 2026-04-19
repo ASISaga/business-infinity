@@ -19,7 +19,7 @@ from aos_client import (
 )
 
 from business_infinity.app_instance import aos_app
-from business_infinity.workflow_utils import CSuiteAgentSelector
+from business_infinity.workflows._utils import CSuiteAgentSelector
 
 logger = logging.getLogger(__name__)
 

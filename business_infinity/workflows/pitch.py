@@ -19,7 +19,7 @@ from business_infinity.boardroom import (
     PITCH_STEP_IDS,
     BoardroomStateManager,
 )
-from business_infinity.workflow_utils import CSuiteAgentSelector, OwnerStateLoader
+from business_infinity.workflows._utils import CSuiteAgentSelector, OwnerStateLoader
 
 logger = logging.getLogger(__name__)
 
