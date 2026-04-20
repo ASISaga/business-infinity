@@ -29,8 +29,12 @@ boardroom/mind/
 │   │   └── action-plan.jsonld        # Agent's action plan toward the initial company purpose
 │   ├── Ahankara/                     # Identity — the ego that constrains the intellect
 │   │   └── ahankara.jsonld           # Identity, contextual axis, non-negotiables, intellect constraint
-│   └── Chitta/                       # Pure intelligence — mind without memory
-│       └── chitta.jsonld             # Universal principles, cosmic connection, beyond identity
+│   ├── Chitta/                       # Pure intelligence — mind without memory
+│   │   └── chitta.jsonld             # Universal principles, cosmic connection, beyond identity
+│   └── Responsibilities/             # Role responsibilities across the three functional dimensions
+│       ├── entrepreneur.jsonld       # Responsibilities as Visionary/Future author
+│       ├── manager.jsonld            # Responsibilities as Organizational/Present author
+│       └── domain-expert.jsonld      # Responsibilities as Domain Specialist/Work author
 └── collective/                       # Shared boardroom mind (no individual owner)
     ├── boardroom.jsonld              # Collective consciousness, resonance ledger, directives
     ├── company.jsonld                # ASI Saga entity — full enriched manifest
@@ -83,6 +87,41 @@ Loaded by `BoardroomStateManager.load_agent_chitta(agent_id)`.
 | `cosmic_connection` | How this presence connects to universal intelligence |
 | `beyond_identity` | What transcends the Ahankara — the awareness before the persona |
 | `consciousness_basis` | Connection to the basis of creation/consciousness within |
+
+### Responsibilities layer (functional role commitments)
+
+The `Responsibilities/` subdirectory holds three JSON-LD files — one per functional dimension — expressing the agent's objective responsibilities in the language of **Werner Erhard's definition of responsibility**: being the committed source and author of outcomes in one's domain, not a manager of circumstances.
+
+| File | Dimension | Frame |
+|------|-----------|-------|
+| `entrepreneur.jsonld` | Entrepreneur (Visionary/Future) | The agent as the author of the future — the vision, strategy, and innovation in their domain that does not yet exist |
+| `manager.jsonld` | Manager (Organizational/Present) | The agent as the author of order — the systems, processes, and execution reliability in their domain |
+| `domain-expert.jsonld` | DomainExpert (Specialist/Work) | The agent as the author of excellence — the mastery and depth of knowledge that earns the right to the judgments their role demands |
+
+Each file follows this schema:
+
+```json
+{
+  "@context": "https://asisaga.com/contexts/responsibilities.jsonld",
+  "@id": "agent:{agent_id}/responsibilities/{dimension}",
+  "@type": "RoleResponsibilities",
+  "role": "<ROLE>",
+  "dimension": "<Dimension>",
+  "dimension_frame": "Prose description of what this dimension means for this role",
+  "erhard_principle": "First-person declaration of ownership — the Erhard framing for this role/dimension",
+  "responsibilities": [
+    {
+      "@type": "Responsibility",
+      "title": "Short responsibility name",
+      "commitment": "I am the committed source of ...",
+      "scope": "What is encompassed by this responsibility",
+      "accountability": "The measurable evidence that this commitment is being honored"
+    }
+  ]
+}
+```
+
+Responsibilities are sourced from `roles.md` and expanded into objective, authored commitments using Werner Erhard's principle: *responsibility is not obligation — it is being the cause in the matter, the author of your domain's reality, independent of external circumstances*.
 
 ---
 
@@ -153,6 +192,7 @@ JSON Schema files for each mind file type live in `boardroom/mind/schemas/`:
 | `chitta.schema.json` | `Chitta/chitta.jsonld` — pure intelligence document |
 | `entity-context.schema.json` | `Manas/context/{entity}.jsonld` — immutable entity perspective |
 | `entity-content.schema.json` | `Manas/content/{entity}.jsonld` — mutable entity perspective |
+| `responsibilities.schema.json` | `{agent_id}/Responsibilities/{dimension}.jsonld` — role responsibilities per dimension |
 
 `BoardroomStateManager` uses these schemas to validate mind files when they are loaded via:
 
