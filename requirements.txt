@@ -1,3 +1,5 @@
 azure-functions
 aos-client-sdk @ git+https://github.com/ASISaga/aos-client-sdk.git
 pyyaml
+msgraph-sdk>=1.56.0
+azure-identity>=1.25.3
