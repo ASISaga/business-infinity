@@ -22,7 +22,7 @@ Environment variables consumed by this module:
 from __future__ import annotations
 
 import os
-from typing import Optional
+from typing import List, Optional
 
 from azure.identity import DefaultAzureCredential
 from kiota_authentication_azure.azure_identity_authentication_provider import (
@@ -63,7 +63,7 @@ class PlannerClient:
     def __init__(
         self,
         tenant_id: Optional[str] = None,
-        scopes: Optional[list[str]] = None,
+        scopes: Optional[List[str]] = None,
         credential: Optional[DefaultAzureCredential] = None,
     ) -> None:
         self._tenant_id = (

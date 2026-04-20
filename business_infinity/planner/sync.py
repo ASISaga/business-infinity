@@ -46,6 +46,7 @@ from msgraph.generated.models.planner_plan_container import PlannerPlanContainer
 from msgraph.generated.models.planner_container_type import PlannerContainerType
 from msgraph.generated.models.planner_task import PlannerTask
 from msgraph.generated.models.planner_task_details import PlannerTaskDetails
+from msgraph.generated.models.o_data_errors.o_data_error import ODataError
 
 from business_infinity.planner.client import PlannerClient
 from business_infinity.planner.responsibilities import (
@@ -372,7 +373,7 @@ class PlannerSync:
                     accountability=resp.accountability,
                 )
                 result.tasks_created += 1
-            except Exception as exc:  # noqa: BLE001
+            except (ODataError, ValueError, RuntimeError) as exc:
                 msg = f"Failed to create task {resp.title!r}: {exc}"
                 logger.error(msg)
                 result.errors.append(msg)

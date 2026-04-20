@@ -42,7 +42,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import asdict
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from aos_client import WorkflowRequest
 
@@ -66,8 +66,8 @@ class PlannerWorkflows:
         (optional) from ``request.body``.
         """
         agent_id: str = request.body["agent_id"]
-        group_id: str | None = request.body.get("group_id")
-        dimension: str | None = request.body.get("dimension")
+        group_id: Optional[str] = request.body.get("group_id")
+        dimension: Optional[str] = request.body.get("dimension")
 
         client = PlannerClient()
         syncer = PlannerSync(client)
@@ -85,8 +85,8 @@ class PlannerWorkflows:
 
         Reads ``role`` or ``plan_id`` from ``request.body``.
         """
-        role: str | None = request.body.get("role")
-        plan_id: str | None = request.body.get("plan_id")
+        role: Optional[str] = request.body.get("role")
+        plan_id: Optional[str] = request.body.get("plan_id")
 
         if not role and not plan_id:
             raise ValueError("Request body must include 'role' or 'plan_id'.")

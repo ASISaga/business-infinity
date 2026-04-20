@@ -251,12 +251,12 @@ class TestPlannerSync:
         # Simulate a pre-existing plan with tasks for all three dimensions.
         existing_plan = _make_graph_plan("plan-existing", "CEO Responsibilities")
         all_tasks: List[MagicMock] = []
-        for idx, (slug, dim) in enumerate(
+        for idx, (slug, dimension_name) in enumerate(
             [("entrepreneur", "Entrepreneur"), ("manager", "Manager"), ("domain-expert", "DomainExpert")]
         ):
-            dim_data = _make_responsibility_jsonld("ceo", "CEO", dim, slug)
-            for i, resp in enumerate(dim_data["responsibilities"]):
-                all_tasks.append(_make_graph_task(f"t{idx}{i}", resp["title"]))
+            dim_data = _make_responsibility_jsonld("ceo", "CEO", dimension_name, slug)
+            for resp_idx, resp in enumerate(dim_data["responsibilities"]):
+                all_tasks.append(_make_graph_task(f"t{idx}{resp_idx}", resp["title"]))
 
         graph = self._build_graph_mock(
             existing_plans=[existing_plan],
