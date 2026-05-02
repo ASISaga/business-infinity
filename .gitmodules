@@ -48,9 +48,9 @@
 	path = boardroom/c-suite/chro
 	url = https://github.com/ASISaga/chro
 
-[submodule "founder"]
-	path = boardroom/founder
-	url = https://github.com/ASISaga/founder
+[submodule "founder-agent"]
+	path = boardroom/founder-agent
+	url = https://github.com/ASISaga/founder-agent
 
 [submodule "investor"]
 	path = boardroom/investor
